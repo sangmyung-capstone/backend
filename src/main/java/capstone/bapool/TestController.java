@@ -1,5 +1,7 @@
 package capstone.bapool;
 
+import org.apache.coyote.Response;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -8,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/test")
 public class TestController {
 
-    @GetMapping("/log")
-    public String test(){
-        return "밥풀 테스트 요청 성공";
+    @GetMapping("/info")
+    public ResponseEntity<String> test() throws Exception {
+        return ResponseEntity.ok().body("성공");
     }
 }
