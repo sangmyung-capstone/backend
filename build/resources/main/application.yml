@@ -1,0 +1,24 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: bapool
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/testdb
+    username: root
+    password: 3025894k^^
+    driver-class-name: com.mysql.cj.jdbc.Driver # mysql 8
+  sql:
+    init:
+      platform: mysql
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+jwt:
+  secret-key: c8fjj34ba-1554-48a4-b549-b926f5fedf23
