@@ -17,12 +17,15 @@ public class TestController {
     }
 
     @GetMapping("/list")
-    public List<Integer> testList(){
+    public TestDto testList(){
+
         List<Integer> list = new ArrayList<>();
         list.add(1);
         list.add(2);
         list.add(3);
 
-        return list;
+        TestDto testDto = new TestDto("최테스트", list);
+
+        return testDto;
     }
 }
