@@ -30,50 +30,40 @@ public class UserService {
     private final JwtUtils jwtUtils;
     private final SocialUtils socialUtils;
 
-    public SignUpRes signupNaver(SignUpReq signUpReq) throws BaseException {
-        try {
-            HttpURLConnection con = socialUtils.connectNaverResourceServer(signUpReq);
-            socialUtils.validateSocialAccessToken(con);
+    public SignUpRes signupNaver(SignUpReq signUpReq) throws BaseException,IOException {
+        HttpURLConnection con = socialUtils.connectNaverResourceServer(signUpReq);
+        socialUtils.validateSocialAccessToken(con);
 
-            String result = socialUtils.findSocialLoginUsersInfo(con);
+        String result = socialUtils.findSocialLoginUsersInfo(con);
 
-            Map<String, String> response = socialUtils.findResponseFromNaver(result);
-            User user = User.builder()
-                    .email((String) response.get("email"))
-                    .name((String) response.get("name"))
-                    .birthDay((String) response.get("birthday"))
-                    .build();
-            User savedUser = saveOrFind(user);
-            SignUpRes signUpRes = jwtUtils.generateTokens(savedUser.getId());
-            updateRefreshToken(savedUser.getId(), signUpRes.getRefreshToken());
-            return signUpRes;
-        } catch (IOException e) {
-            throw new BaseException(SOCIAL_LOGIN_FAILURE);
-        }
+        Map<String, String> response = socialUtils.findResponseFromNaver(result);
+        User user = User.builder()
+                .email((String) response.get("email"))
+                .name((String) response.get("name"))
+                .birthDay((String) response.getOrDefault("birthday", null))
+                .build();
+        User savedUser = saveOrFind(user);
+        SignUpRes signUpRes = jwtUtils.generateTokens(savedUser.getId());
+        updateRefreshToken(savedUser.getId(), signUpRes.getRefreshToken());
+        return signUpRes;
     }
 
-    public SignUpRes signupKakao(SignUpReq signUpReq) throws BaseException {
-        try {
-            HttpURLConnection con = socialUtils.connectKakaoResourceServer(signUpReq);
-            socialUtils.validateSocialAccessToken(con);
+    public SignUpRes signupKakao(SignUpReq signUpReq) throws BaseException, IOException {
+        HttpURLConnection con = socialUtils.connectKakaoResourceServer(signUpReq);
+        socialUtils.validateSocialAccessToken(con);
 
-            String result = socialUtils.findSocialLoginUsersInfo(con);
+        String result = socialUtils.findSocialLoginUsersInfo(con);
 
-            log.debug("result = " + result);
-
-            Map<String, String> response = socialUtils.findResponseFromKakako(result);
-            User user = User.builder()
-                    .email((String) response.get("email"))
-                    .name((String) response.get("nickname"))
-                    .birthDay((String) response.getOrDefault("birthday", null))
-                    .build();
-            User savedUser = saveOrFind(user);
-            SignUpRes signUpRes = jwtUtils.generateTokens(savedUser.getId());
-            updateRefreshToken(savedUser.getId(), signUpRes.getRefreshToken());
-            return signUpRes;
-        } catch (IOException e) {
-            throw new BaseException(SOCIAL_LOGIN_FAILURE);
-        }
+        Map<String, String> response = socialUtils.findResponseFromKakako(result);
+        User user = User.builder()
+                .email((String) response.get("email"))
+                .name((String) response.get("nickname"))
+                .birthDay((String) response.getOrDefault("birthday", null))
+                .build();
+        User savedUser = saveOrFind(user);
+        SignUpRes signUpRes = jwtUtils.generateTokens(savedUser.getId());
+        updateRefreshToken(savedUser.getId(), signUpRes.getRefreshToken());
+        return signUpRes;
     }
 
     public User saveOrFind(User user) {
@@ -91,9 +81,8 @@ public class UserService {
     }
 
     public SignUpRes reissueAccessToken(SignUpReq signUpReq) throws BaseException {
-        if (!jwtUtils.validateToken(signUpReq.getRefreshToken())) {
-            throw new BaseException(EXPIRATION_TOKEN);
-        }
+        // validate를 함수로 
+        jwtUtils.validate(signUpReq.getRefreshToken());
 
         User user = userDao.findUserByRefreshToken(signUpReq.getRefreshToken())
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));

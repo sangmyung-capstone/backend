@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/auth")
 public class UserController {
@@ -21,13 +23,13 @@ public class UserController {
     }
 
     @PostMapping(value = "/kakao/signup")
-    public ResponseEntity<Object> kakaoSignup(@RequestBody SignUpReq signUpReq) throws BaseException {
+    public ResponseEntity<Object> kakaoSignup(@RequestBody SignUpReq signUpReq) throws BaseException, IOException {
         SignUpRes signupRes = userService.signupKakao(signUpReq);
         return ResponseEntity.ok().body(ResponseDto.res(signupRes));
     }
 
     @PostMapping(value = "/naver/signup")
-    public ResponseEntity<ResponseDto> naverSignup(@RequestBody SignUpReq signUpReq) throws BaseException {
+    public ResponseEntity<ResponseDto> naverSignup(@RequestBody SignUpReq signUpReq) throws BaseException, IOException {
         SignUpRes signupRes = userService.signupNaver(signUpReq);
         return ResponseEntity.ok().body(ResponseDto.res(signupRes));
     }

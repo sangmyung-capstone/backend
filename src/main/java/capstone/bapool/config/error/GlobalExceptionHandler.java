@@ -29,6 +29,14 @@ public class GlobalExceptionHandler {
                 .body(makeErrorResponse(statusEnum.getCode(), statusEnum.getMessage()));
     }
 
+    @ExceptionHandler(BaseException.class)
+    public ResponseEntity<ErrorResponse> handleBaseException(BaseException e) {
+        StatusEnum statusEnum = e.getStatusEnum();
+        return ResponseEntity
+                .status(statusEnum.getCode())
+                .body(makeErrorResponse(statusEnum.getCode(), statusEnum.getMessage()));
+    }
+
     private ErrorResponse makeErrorResponse(Integer code, String message) {
         return ErrorResponse.builder()
                 .code(code)

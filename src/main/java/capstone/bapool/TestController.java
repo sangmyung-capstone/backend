@@ -12,6 +12,7 @@ public class TestController {
 
     @GetMapping("/info")
     public ResponseEntity<String> test() throws Exception {
-        return ResponseEntity.ok().body("성공");
+//        return ResponseEntity.ok().body("성공");
+        throw new Exception();
     }
 }

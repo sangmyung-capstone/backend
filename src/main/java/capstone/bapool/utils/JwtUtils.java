@@ -98,7 +98,13 @@ public class JwtUtils {
         return validateToken(jwtToken);
     }
 
-    public boolean validateToken(String jwtToken) {
+    public void validate(String jwtToken) throws BaseException {
+        if (!validateToken(jwtToken)) {
+            throw new BaseException(EXPIRATION_TOKEN);
+        }
+    }
+
+    private boolean validateToken(String jwtToken) {
         Jws<Claims> claims = Jwts.parserBuilder()
                 .setSigningKey(getSecretKey())
                 .build()

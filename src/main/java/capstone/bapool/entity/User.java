@@ -40,6 +40,7 @@ public class User{
         this.refreshToken = refreshToken;
     }
 
+    // 변경 감지
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
