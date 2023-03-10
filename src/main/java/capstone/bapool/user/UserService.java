@@ -31,12 +31,7 @@ public class UserService {
     private final SocialUtils socialUtils;
 
     public SignUpRes signupNaver(SignUpReq signUpReq) throws BaseException,IOException {
-        HttpURLConnection con = socialUtils.connectNaverResourceServer(signUpReq);
-        socialUtils.validateSocialAccessToken(con);
-
-        String result = socialUtils.findSocialLoginUsersInfo(con);
-
-        Map<String, String> response = socialUtils.findResponseFromNaver(result);
+        Map<String, String> response = socialUtils.makeUserInfoByNaver(signUpReq);
         User user = User.builder()
                 .email((String) response.get("email"))
                 .name((String) response.get("name"))
@@ -49,12 +44,7 @@ public class UserService {
     }
 
     public SignUpRes signupKakao(SignUpReq signUpReq) throws BaseException, IOException {
-        HttpURLConnection con = socialUtils.connectKakaoResourceServer(signUpReq);
-        socialUtils.validateSocialAccessToken(con);
-
-        String result = socialUtils.findSocialLoginUsersInfo(con);
-
-        Map<String, String> response = socialUtils.findResponseFromKakako(result);
+        Map<String, String> response = socialUtils.makeUserInfoByKakao(signUpReq);
         User user = User.builder()
                 .email((String) response.get("email"))
                 .name((String) response.get("nickname"))
@@ -81,7 +71,7 @@ public class UserService {
     }
 
     public SignUpRes reissueAccessToken(SignUpReq signUpReq) throws BaseException {
-        // validate를 함수로 
+        // validate를 함수로
         jwtUtils.validate(signUpReq.getRefreshToken());
 
         User user = userDao.findUserByRefreshToken(signUpReq.getRefreshToken())
