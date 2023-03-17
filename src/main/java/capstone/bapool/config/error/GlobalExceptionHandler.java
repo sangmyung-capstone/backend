@@ -15,6 +15,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
+        e.printStackTrace();
         StatusEnum errorStatus = StatusEnum.INTERNET_SERVER_ERROR;
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)

@@ -2,8 +2,9 @@ package capstone.bapool.user;
 
 import capstone.bapool.config.error.BaseException;
 import capstone.bapool.entity.User;
-import capstone.bapool.user.dto.SignUpReq;
-import capstone.bapool.user.dto.SignUpRes;
+import capstone.bapool.user.dto.ReissueReq;
+import capstone.bapool.user.dto.ReissueRes;
+import capstone.bapool.user.dto.SocialAccessToken;
 import capstone.bapool.utils.JwtUtils;
 import capstone.bapool.utils.SocialUtils;
 import lombok.RequiredArgsConstructor;
@@ -12,13 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.util.Map;
 import java.util.Optional;
 
-import static capstone.bapool.config.error.StatusEnum.EXPIRATION_TOKEN;
 import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_USER_FAILURE;
-import static capstone.bapool.config.error.StatusEnum.SOCIAL_LOGIN_FAILURE;
 
 @Slf4j
 @Service
@@ -30,30 +28,40 @@ public class UserService {
     private final JwtUtils jwtUtils;
     private final SocialUtils socialUtils;
 
-    public SignUpRes signupNaver(SignUpReq signUpReq) throws BaseException,IOException {
-        Map<String, String> response = socialUtils.makeUserInfoByNaver(signUpReq);
+    public ReissueRes signInNaver(SocialAccessToken socialAccessToken) throws BaseException,IOException {
+        Map<String, String> response = socialUtils.makeUserInfoByNaver(socialAccessToken);
         User user = User.builder()
                 .email((String) response.get("email"))
                 .name((String) response.get("name"))
                 .birthDay((String) response.getOrDefault("birthday", null))
                 .build();
         User savedUser = saveOrFind(user);
-        SignUpRes signUpRes = jwtUtils.generateTokens(savedUser.getId());
-        updateRefreshToken(savedUser.getId(), signUpRes.getRefreshToken());
-        return signUpRes;
+        ReissueRes reissueRes = jwtUtils.generateTokens(savedUser.getId());
+        updateRefreshToken(savedUser.getId(), reissueRes.getRefreshToken());
+        return reissueRes;
     }
 
-    public SignUpRes signupKakao(SignUpReq signUpReq) throws BaseException, IOException {
-        Map<String, String> response = socialUtils.makeUserInfoByKakao(signUpReq);
+    public ReissueRes signInKakao(SocialAccessToken socialAccessToken) throws BaseException, IOException {
+        Map<String, String> response = socialUtils.makeUserInfoByKakao(socialAccessToken);
         User user = User.builder()
                 .email((String) response.get("email"))
                 .name((String) response.get("nickname"))
                 .birthDay((String) response.getOrDefault("birthday", null))
                 .build();
         User savedUser = saveOrFind(user);
-        SignUpRes signUpRes = jwtUtils.generateTokens(savedUser.getId());
-        updateRefreshToken(savedUser.getId(), signUpRes.getRefreshToken());
-        return signUpRes;
+        ReissueRes reissueRes = jwtUtils.generateTokens(savedUser.getId());
+        updateRefreshToken(savedUser.getId(), reissueRes.getRefreshToken());
+        return reissueRes;
+    }
+
+    public Boolean signInKakaoAready(SocialAccessToken socialAccessToken) throws IOException, BaseException{
+        String email = socialUtils.makeUserInfoByKakao(socialAccessToken).get("email");
+        return !userDao.findUserByEmail(email).isEmpty();
+    }
+
+    public Boolean signInNaverAready(SocialAccessToken socialAccessToken) throws IOException, BaseException{
+        String email = socialUtils.makeUserInfoByNaver(socialAccessToken).get("email");
+        return !userDao.findUserByEmail(email).isEmpty();
     }
 
     public User saveOrFind(User user) {
@@ -70,15 +78,15 @@ public class UserService {
         user.updateRefreshToken(refreshToken);
     }
 
-    public SignUpRes reissueAccessToken(SignUpReq signUpReq) throws BaseException {
+    public ReissueRes reissueAccessToken(ReissueReq reissueReq) throws BaseException {
         // validate를 함수로
-        jwtUtils.validate(signUpReq.getRefreshToken());
+        jwtUtils.validate(reissueReq.getRefreshToken());
 
-        User user = userDao.findUserByRefreshToken(signUpReq.getRefreshToken())
+        User user = userDao.findUserByRefreshToken(reissueReq.getRefreshToken())
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
 
-        SignUpRes signUpRes = jwtUtils.generateTokens(user.getId());
-        user.updateRefreshToken(signUpRes.getRefreshToken());
-        return signUpRes;
+        ReissueRes reissueRes = jwtUtils.generateTokens(user.getId());
+        user.updateRefreshToken(reissueRes.getRefreshToken());
+        return reissueRes;
     }
 }

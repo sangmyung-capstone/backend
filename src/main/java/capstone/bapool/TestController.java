@@ -14,6 +14,6 @@ public class TestController {
 
     @GetMapping("/info")
     public ResponseEntity<String> test() throws Exception {
-        throw new BaseException(StatusEnum.EXPIRATION_TOKEN);
+        return ResponseEntity.ok().body("test");
     }
 }

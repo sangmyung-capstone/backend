@@ -2,7 +2,7 @@ package capstone.bapool.utils;
 
 import capstone.bapool.config.error.BaseException;
 import capstone.bapool.config.error.StatusEnum;
-import capstone.bapool.user.dto.SignUpRes;
+import capstone.bapool.user.dto.ReissueRes;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
@@ -32,11 +32,11 @@ public class JwtUtils {
     private String secretKey;
 
 
-    public SignUpRes generateTokens(Long userId) {
+    public ReissueRes generateTokens(Long userId) {
         String accessToken = createAccessToken(userId);
         String refreshToken = createRefreshToken(userId);
-        SignUpRes signUpRes = new SignUpRes(accessToken, refreshToken);
-        return signUpRes;
+        ReissueRes reissueRes = new ReissueRes(userId, accessToken, refreshToken);
+        return reissueRes;
     }
 
     private String createAccessToken(Long userId) {

@@ -1,7 +1,7 @@
 package capstone.bapool.utils;
 
 import capstone.bapool.config.error.BaseException;
-import capstone.bapool.user.dto.SignUpReq;
+import capstone.bapool.user.dto.SocialAccessToken;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +24,8 @@ public class SocialUtils {
     private static final String naverApiURL = "https://openapi.naver.com/v1/nid/me";
     private static final String kakaoApiURL = "https://kapi.kakao.com/v2/user/me";
 
-    public Map<String, String> makeUserInfoByKakao(SignUpReq signUpReq) throws IOException {
-        HttpURLConnection con = connectKakaoResourceServer(signUpReq);
+    public Map<String, String> makeUserInfoByKakao(SocialAccessToken socialAccessToken) throws IOException {
+        HttpURLConnection con = connectKakaoResourceServer(socialAccessToken);
         validateSocialAccessToken(con);
 
         String result = findSocialLoginUsersInfo(con);
@@ -34,16 +34,16 @@ public class SocialUtils {
         return response;
     }
 
-    private HttpURLConnection connectKakaoResourceServer(SignUpReq signUpReq) throws IOException {
+    private HttpURLConnection connectKakaoResourceServer(SocialAccessToken socialAccessToken ) throws IOException {
         URL url = new URL(kakaoApiURL);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
-        conn.setRequestProperty("Authorization", "Bearer " + signUpReq.getAccessToken());
+        conn.setRequestProperty("Authorization", "Bearer " + socialAccessToken.getAccessToken());
         return conn;
     }
 
-    public Map<String, String> makeUserInfoByNaver(SignUpReq signUpReq) throws IOException {
-        HttpURLConnection con = connectNaverResourceServer(signUpReq);
+    public Map<String, String> makeUserInfoByNaver(SocialAccessToken socialAccessToken) throws IOException {
+        HttpURLConnection con = connectNaverResourceServer(socialAccessToken);
         validateSocialAccessToken(con);
 
         String result = findSocialLoginUsersInfo(con);
@@ -52,11 +52,11 @@ public class SocialUtils {
         return response;
     }
 
-    private HttpURLConnection connectNaverResourceServer(SignUpReq signUpReq) throws IOException {
+    private HttpURLConnection connectNaverResourceServer(SocialAccessToken socialAccessToken) throws IOException {
         URL url = new URL(naverApiURL);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
-        con.setRequestProperty("Authorization", "Bearer " + signUpReq.getAccessToken());
+        con.setRequestProperty("Authorization", "Bearer " + socialAccessToken.getAccessToken());
         return con;
     }
 
