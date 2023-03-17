@@ -24,7 +24,7 @@ public class TestController {
         list.add(2);
         list.add(3);
 
-        TestDto testDto = new TestDto("최테스트", list);
+        TestDto testDto = new TestDto("최테스트", "언더스코어가 적용될지", list);
 
         return testDto;
     }

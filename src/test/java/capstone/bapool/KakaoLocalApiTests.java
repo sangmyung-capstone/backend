@@ -12,15 +12,19 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 
-public class KakaoMapApiTests {
+public class KakaoLocalApiTests {
 
     @Test
     public void searchByKeyword(){
 
         System.out.println("테스트 실행");
         try{
-//            String base = "https://dapi.kakao.com/v2/local/search/keyword.json?query=떡볶이";
-            URL url = new URL("https://dapi.kakao.com/v2/local/search/keyword.json?query=noodle");
+            String food = "떡볶이";
+            String encodeFood = URLEncoder.encode(food, "UTF-8");
+            URL url = new URL("https://dapi.kakao.com/v2/local/search/keyword.json?query=" + encodeFood);
+            System.out.println("base = " + food);
+            System.out.println("encodeUrl = " + encodeFood);
+            System.out.println("url = " + url.getPath());
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
             System.out.println("1");
@@ -41,7 +45,8 @@ public class KakaoMapApiTests {
             // 200 아닐경우 예외처리 필요
 
             //요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+//            new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(),"UTF-8"))
             String line = "";
             String result = "";
 
