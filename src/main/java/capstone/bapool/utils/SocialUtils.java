@@ -24,7 +24,7 @@ public class SocialUtils {
     private static final String naverApiURL = "https://openapi.naver.com/v1/nid/me";
     private static final String kakaoApiURL = "https://kapi.kakao.com/v2/user/me";
 
-    public Map<String, String> makeUserInfoByKakao(SocialAccessToken socialAccessToken) throws IOException {
+    public Map<String, String> makeUserInfoByKakao(String socialAccessToken) throws IOException {
         HttpURLConnection con = connectKakaoResourceServer(socialAccessToken);
         validateSocialAccessToken(con);
 
@@ -34,15 +34,15 @@ public class SocialUtils {
         return response;
     }
 
-    private HttpURLConnection connectKakaoResourceServer(SocialAccessToken socialAccessToken ) throws IOException {
+    private HttpURLConnection connectKakaoResourceServer(String socialAccessToken ) throws IOException {
         URL url = new URL(kakaoApiURL);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
-        conn.setRequestProperty("Authorization", "Bearer " + socialAccessToken.getAccessToken());
+        conn.setRequestProperty("Authorization", "Bearer " + socialAccessToken);
         return conn;
     }
 
-    public Map<String, String> makeUserInfoByNaver(SocialAccessToken socialAccessToken) throws IOException {
+    public Map<String, String> makeUserInfoByNaver(String socialAccessToken) throws IOException {
         HttpURLConnection con = connectNaverResourceServer(socialAccessToken);
         validateSocialAccessToken(con);
 
@@ -52,11 +52,11 @@ public class SocialUtils {
         return response;
     }
 
-    private HttpURLConnection connectNaverResourceServer(SocialAccessToken socialAccessToken) throws IOException {
+    private HttpURLConnection connectNaverResourceServer(String socialAccessToken) throws IOException {
         URL url = new URL(naverApiURL);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
-        con.setRequestProperty("Authorization", "Bearer " + socialAccessToken.getAccessToken());
+        con.setRequestProperty("Authorization", "Bearer " + socialAccessToken);
         return con;
     }
 

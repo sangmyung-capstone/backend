@@ -4,6 +4,7 @@ import capstone.bapool.config.error.BaseException;
 import capstone.bapool.config.response.ResponseDto;
 import capstone.bapool.user.dto.ReissueReq;
 import capstone.bapool.user.dto.ReissueRes;
+import capstone.bapool.user.dto.SignUpReq;
 import capstone.bapool.user.dto.SocialAccessToken;
 import capstone.bapool.utils.JwtUtils;
 import io.swagger.annotations.Api;
@@ -38,6 +39,13 @@ public class UserController {
         return ResponseEntity.ok().body(ResponseDto.res(signupRes));
     }
 
+    @PostMapping(value = "/kakao/signup")
+    @ApiOperation(value = "카카오 회원가입")
+    public ResponseEntity<ResponseDto> SignUpKakao(@RequestBody SignUpReq signUpReq) throws BaseException, IOException {
+        ReissueRes signupRes = userService.signUpKakao(signUpReq);
+        return ResponseEntity.ok().body(ResponseDto.res(signupRes));
+    }
+
     @PostMapping(value = "/kakao/signin/already")
     @ApiOperation(value = "카카오 회원인지 확인하는 로직 ")
     public ResponseEntity<Object> SignInKakaoAlready(@RequestBody SocialAccessToken socialAccessToken) throws BaseException, IOException {
@@ -48,6 +56,13 @@ public class UserController {
     @ApiOperation(value = "네이버 로그인")
     public ResponseEntity<ResponseDto> SignInNaver(@RequestBody SocialAccessToken socialAccessToken) throws BaseException, IOException {
         ReissueRes signupRes = userService.signInNaver(socialAccessToken);
+        return ResponseEntity.ok().body(ResponseDto.res(signupRes));
+    }
+
+    @PostMapping(value = "/naver/signup")
+    @ApiOperation(value = "네이버 회원가입")
+    public ResponseEntity<ResponseDto> SignUpNaver(@RequestBody SignUpReq signUpReq) throws BaseException, IOException {
+        ReissueRes signupRes = userService.signUpNaver(signUpReq);
         return ResponseEntity.ok().body(ResponseDto.res(signupRes));
     }
 

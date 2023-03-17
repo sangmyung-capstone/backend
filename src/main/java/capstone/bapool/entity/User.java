@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -19,26 +20,31 @@ public class User{
     @Column(name = "user_id")
     private Long id;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 20, unique = true)
     private String name;
 
     @Column(nullable = false, length = 50, unique = true)
     private String email;
 
-    @Column
-    private String birthDay;
+    @Column(nullable = false, columnDefinition = "smallint(6)")
+    private Integer profileImgId;
 
     @Column
     private String refreshToken;
 
+    @Column
+    private LocalDateTime atCreateTime;
+
     @Builder
-    public User(Long id, String name, String email, String birthDay, String refreshToken) {
+    public User(Long id, String name, String email, Integer profileImgId, String refreshToken, LocalDateTime atCreateTime) {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.birthDay = birthDay;
+        this.profileImgId = profileImgId;
         this.refreshToken = refreshToken;
+        this.atCreateTime = atCreateTime;
     }
+
 
     // 변경 감지
     public void updateRefreshToken(String refreshToken) {
