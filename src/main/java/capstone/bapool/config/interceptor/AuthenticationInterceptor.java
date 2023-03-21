@@ -12,6 +12,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
+
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 
@@ -34,10 +36,14 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         if (!jwtUtils.validateRequest(request)) {
             Gson gson = new Gson();
             String exception = gson.toJson(new ResponseEntity<>(UNAUTHORIZED));
-            response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().print(exception);
+            makeResponse(response, exception);
             return false;
         }
         return true;
+    }
+
+    private void makeResponse(HttpServletResponse response, String exception) throws IOException {
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().print(exception);
     }
 }

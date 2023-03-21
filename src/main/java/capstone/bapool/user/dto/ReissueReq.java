@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SignUpReq {
+public class ReissueReq {
     private String accessToken;
-    private Integer profileImgId;
-    private String nickName;
+    private String refreshToken;
 }

@@ -22,8 +22,10 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authenticationInterceptor)
+                // / 로 시작하는 모든 URL 에 적용을 하겠다.
                 .addPathPatterns("/**")
-                .excludePathPatterns("/auth/**", "/swagger-ui/**", "/v2/api-docs", "/swagger-resources/**");
+                // 이 URL 로 시작하는 코드는 적용을 하지 않겠다.
+                .excludePathPatterns("/auth/**", "/swagger-ui/**","/v2/api-docs","/swagger-resources/**", "/test/**");
     }
 
 }
