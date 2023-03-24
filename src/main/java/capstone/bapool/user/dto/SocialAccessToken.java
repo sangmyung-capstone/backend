@@ -1,13 +1,13 @@
 package capstone.bapool.user.dto;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
-@ToString
-public class SignUpRes {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class SocialAccessToken {
     private String accessToken;
-    private String refreshToken;
 }

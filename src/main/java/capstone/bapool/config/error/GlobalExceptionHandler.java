@@ -15,6 +15,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
+        e.printStackTrace();
         StatusEnum errorStatus = StatusEnum.INTERNET_SERVER_ERROR;
         e.printStackTrace();
         return ResponseEntity
@@ -28,6 +29,14 @@ public class GlobalExceptionHandler {
         e.printStackTrace();
         return ResponseEntity
                 .status(NON_AUTHORITATIVE_INFORMATION)
+                .body(makeErrorResponse(statusEnum.getCode(), statusEnum.getMessage()));
+    }
+
+    @ExceptionHandler(BaseException.class)
+    public ResponseEntity<ErrorResponse> handleBaseException(BaseException e) {
+        StatusEnum statusEnum = e.getStatusEnum();
+        return ResponseEntity
+                .status(statusEnum.getCode())
                 .body(makeErrorResponse(statusEnum.getCode(), statusEnum.getMessage()));
     }
 
