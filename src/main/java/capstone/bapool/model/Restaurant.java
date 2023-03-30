@@ -1,12 +1,13 @@
 package capstone.bapool.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Restaurant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="resto_id")
+    @Column(name="restaurant_id")
     private Long id;
 
     private String name;
@@ -20,4 +21,7 @@ public class Restaurant {
     private String category;
 
     private String phone;
+
+//    @OneToMany(mappedBy = "restaurant")
+//    private List<Party> parties;
 }

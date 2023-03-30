@@ -2,15 +2,15 @@ package capstone.bapool.model;
 
 import net.bytebuddy.asm.Advice;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-@Table(name="gruops")
 @Entity
-public class Group {
+public class Party {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="grp_id")
+    @Column(name="party_id")
     private Long id;
 
     private boolean isClose;
@@ -31,10 +31,10 @@ public class Group {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
-    @CreationTimestamp
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "resto_id")
+    @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 }
