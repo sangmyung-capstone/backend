@@ -60,6 +60,12 @@ public class KakaoLocalApiTests {
             JsonParser parser = new JsonParser();
             JsonElement element = parser.parse(result);
 
+            JsonArray documents = element.getAsJsonObject().get("documents").getAsJsonArray();
+            System.out.println("documents.get(0) = " + documents.get(0).toString());
+            JsonObject restaurant = documents.get(0).getAsJsonObject();
+            String placeName = restaurant.get("place_name").toString();
+            System.out.println("placeName = " + placeName);
+
             // 응답 바디에서 토큰값 읽어오기
 //            String accessToken = element.getAsJsonObject().get("access_token").getAsString();
 //            String refreshToken = element.getAsJsonObject().get("refresh_token").getAsString();
