@@ -10,7 +10,7 @@ import java.util.List;
 public class GetRestaurantInfoRes {
     List<RestaurantInfo> restaurants = new ArrayList<>();
 
-    public void addrestaurant(RestaurantInfo abbbb){
-        restaurants.add(abbbb);
+    public void addrestaurant(RestaurantInfo restaurantInfo){
+        restaurants.add(restaurantInfo);
     }
 }

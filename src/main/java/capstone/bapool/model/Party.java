@@ -1,6 +1,7 @@
 package capstone.bapool.model;
 
 import net.bytebuddy.asm.Advice;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -13,13 +14,14 @@ public class Party {
     @Column(name="party_id")
     private Long id;
 
+    @Column(columnDefinition = "tinyint(4)")
+    @ColumnDefault("false")
     private boolean isClose;
 
     private String name;
 
+    @ColumnDefault("0")
     private int maxPeople;
-
-    private int participants;
 
     private LocalDateTime startDate;
 
