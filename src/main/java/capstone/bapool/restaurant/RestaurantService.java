@@ -36,75 +36,68 @@ public class RestaurantService {
 
         String baseUrl = "https://dapi.kakao.com/v2/local/search/category.json?category_group_code=FD6";
         String resultUrl;
+        List<RestaurantInfo> restaurantInfoList = new ArrayList<>();
 
+        for(int page=1; page<=3; page++){
+            try{
+                resultUrl = baseUrl + "&rect=" + rect + "&page=" + page;
+                URL url = new URL(resultUrl);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-        try{
-            resultUrl = baseUrl + "&rect=" + rect;
-            URL url = new URL(resultUrl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("Authorization", "KakaoAK c7c0edb9f622d6932c33a50bd0a2aa07");
 
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("Authorization", "KakaoAK c7c0edb9f622d6932c33a50bd0a2aa07");
+                conn.connect();
 
-            conn.connect();
+                // 결과 코드가 200이라면 성공
+                // 200 아닐경우 예외처리 필요
+                System.out.println("conn.getResponseCode() = " + conn.getResponseCode());
+                System.out.println("conn.getResponseMessage() = " + conn.getResponseMessage());
 
-            // 결과 코드가 200이라면 성공
-            // 200 아닐경우 예외처리 필요
-            System.out.println("conn.getResponseCode() = " + conn.getResponseCode());
-            System.out.println("conn.getResponseMessage() = " + conn.getResponseMessage());
+                // 요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
+                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+                String line = "";
+                String result = "";
 
-            // 요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-            String line = "";
-            String result = "";
+                while ((line = br.readLine()) != null) {
+                    result += line;
+                }
+                System.out.println("result = " + result);
 
-            while ((line = br.readLine()) != null) {
-                result += line;
+                //Gson 라이브러리에 포함된 클래스로 JSON파싱 객체 생성
+                JsonElement element = JsonParser.parseString(result);
+
+                // 응답 바디에서 필요한 값 뽑아내기
+                RestaurantInfo restaurantInfo;
+                JsonArray documents = element.getAsJsonObject().get("documents").getAsJsonArray();
+
+                for(int i=0; i<documents.size(); i++){
+                    JsonObject restaurant = documents.get(i).getAsJsonObject();
+                    restaurantInfo = RestaurantInfo.builder()
+                            .restaurant_id(restaurant.get("id").getAsLong())
+                            .restaurant_name(restaurant.get("place_name").getAsString())
+                            .restaurant_address(restaurant.get("road_address_name").getAsString())
+                            .category(restaurant.get("category_name").getAsString())
+                            .num_of_party(101)
+                            .imgUrl("https://temp/imgUrl")
+                            .restaurant_longitude(restaurant.get("x").getAsDouble())
+                            .restaurant_latitude(restaurant.get("y").getAsDouble())
+                            .build();
+                    restaurantInfoList.add(restaurantInfo);
+                }
+
+                br.close();
+
+                for(RestaurantInfo info : restaurantInfoList){
+                    System.out.println(info);
+                    System.out.println();
+                }
+
+            }catch (IOException e) {
+                e.printStackTrace();
             }
-            System.out.println("result = " + result);
-
-            //Gson 라이브러리에 포함된 클래스로 JSON파싱 객체 생성
-            JsonElement element = JsonParser.parseString(result);
-
-            // 응답 바디에서 필요한 값 뽑아내기
-            List<RestaurantInfo> restaurantInfoList = new ArrayList<>();
-            RestaurantInfo restaurantInfo;
-            JsonArray documents = element.getAsJsonObject().get("documents").getAsJsonArray();
-//            System.out.println("documents.size() = " + documents.size());
-//            restaurantInfo = RestaurantInfo.builder()
-//                    .restaurant_id(1L)
-//                    .build();
-//
-//            System.out.println("restaurantInfo.getRestaurant_id() = " + restaurantInfo.getRestaurant_id());
-
-            for(int i=0; i<documents.size(); i++){
-                JsonObject restaurant = documents.get(i).getAsJsonObject();
-                restaurantInfo = RestaurantInfo.builder()
-                        .restaurant_id(restaurant.get("id").getAsLong())
-                        .restaurant_name(restaurant.get("place_name").getAsString())
-                        .restaurant_address(restaurant.get("road_address_name").getAsString())
-                        .category(restaurant.get("category_name").getAsString())
-                        .num_of_party(101)
-                        .imgUrl("https://temp/imgUrl")
-                        .restaurant_longitude(restaurant.get("x").getAsDouble())
-                        .restaurant_latitude(restaurant.get("y").getAsDouble())
-                        .build();
-                restaurantInfoList.add(restaurantInfo);
-            }
-
-            br.close();
-
-            for(RestaurantInfo info : restaurantInfoList){
-                System.out.println(info);
-                System.out.println();
-            }
-
-//            System.out.println("restaurantInfoList = " + restaurantInfoList.get(0).getRestaurant_name());
-
-            return restaurantInfoList;
-        }catch (IOException e) {
-            e.printStackTrace();
-            return null;
         }
+
+        return restaurantInfoList;
     }
 }
