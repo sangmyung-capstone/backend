@@ -14,17 +14,97 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class RestaurantService {
 
-    public GetRestaurantInfoRes getRestaurantInfo(){
-        RestaurantInfo restaurants  = new RestaurantInfo(1l,"a","b","c","d",1,1d,1d);
+    public GetRestaurantInfoRes getRestaurantInfo(String rect){
         GetRestaurantInfoRes restaurantInfos = new GetRestaurantInfoRes();
-        restaurantInfos.addrestaurant(restaurants);
-        RestaurantInfo restaurantss  = new RestaurantInfo(5l,"a","fdsad","c","d",1,1d,1d);
-        restaurantInfos.addrestaurant(restaurantss);
+        List<RestaurantInfo> temp = searchByCategory(rect);
+        restaurantInfos.setRestaurants(temp);
+//        RestaurantInfo restaurants  = new RestaurantInfo();
+//        restaurantInfos.addrestaurant(restaurants);
+//        RestaurantInfo restaurantss  = new RestaurantInfo(5l,"a","fdsad","c","d",1,1d,1d);
+//        restaurantInfos.addrestaurant(restaurantss);
 
         return restaurantInfos;
+    }
+
+    public List<RestaurantInfo> searchByCategory(String rect){
+
+        String baseUrl = "https://dapi.kakao.com/v2/local/search/category.json?category_group_code=FD6";
+        String resultUrl;
+
+
+        try{
+            resultUrl = baseUrl + "&rect=" + rect;
+            URL url = new URL(resultUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Authorization", "KakaoAK c7c0edb9f622d6932c33a50bd0a2aa07");
+
+            conn.connect();
+
+            // 결과 코드가 200이라면 성공
+            // 200 아닐경우 예외처리 필요
+            System.out.println("conn.getResponseCode() = " + conn.getResponseCode());
+            System.out.println("conn.getResponseMessage() = " + conn.getResponseMessage());
+
+            // 요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+            String line = "";
+            String result = "";
+
+            while ((line = br.readLine()) != null) {
+                result += line;
+            }
+            System.out.println("result = " + result);
+
+            //Gson 라이브러리에 포함된 클래스로 JSON파싱 객체 생성
+            JsonElement element = JsonParser.parseString(result);
+
+            // 응답 바디에서 필요한 값 뽑아내기
+            List<RestaurantInfo> restaurantInfoList = new ArrayList<>();
+            RestaurantInfo restaurantInfo;
+            JsonArray documents = element.getAsJsonObject().get("documents").getAsJsonArray();
+//            System.out.println("documents.size() = " + documents.size());
+//            restaurantInfo = RestaurantInfo.builder()
+//                    .restaurant_id(1L)
+//                    .build();
+//
+//            System.out.println("restaurantInfo.getRestaurant_id() = " + restaurantInfo.getRestaurant_id());
+
+            for(int i=0; i<documents.size(); i++){
+                JsonObject restaurant = documents.get(i).getAsJsonObject();
+                restaurantInfo = RestaurantInfo.builder()
+                        .restaurant_id(restaurant.get("id").getAsLong())
+                        .restaurant_name(restaurant.get("place_name").getAsString())
+                        .restaurant_address(restaurant.get("road_address_name").getAsString())
+                        .category(restaurant.get("category_name").getAsString())
+                        .num_of_party(101)
+                        .imgUrl("https://temp/imgUrl")
+                        .restaurant_longitude(restaurant.get("x").getAsDouble())
+                        .restaurant_latitude(restaurant.get("y").getAsDouble())
+                        .build();
+                restaurantInfoList.add(restaurantInfo);
+            }
+
+            br.close();
+
+            for(RestaurantInfo info : restaurantInfoList){
+                System.out.println(info);
+                System.out.println();
+            }
+
+//            System.out.println("restaurantInfoList = " + restaurantInfoList.get(0).getRestaurant_name());
+
+            return restaurantInfoList;
+        }catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

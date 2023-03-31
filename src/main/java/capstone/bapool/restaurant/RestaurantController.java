@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 public class RestaurantController {
 
     RestaurantService restaurantService;
+
     public RestaurantController(RestaurantService restaurantService){
         this.restaurantService = restaurantService;
     }
@@ -19,6 +20,6 @@ public class RestaurantController {
         System.out.println("userId = " + userId);
         System.out.println("rect = " + rect);
 
-        return restaurantService.getRestaurantInfo();
+        return restaurantService.getRestaurantInfo(rect);
     }
 }

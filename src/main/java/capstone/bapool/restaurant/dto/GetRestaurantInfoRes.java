@@ -13,4 +13,8 @@ public class GetRestaurantInfoRes {
     public void addrestaurant(RestaurantInfo restaurantInfo){
         restaurants.add(restaurantInfo);
     }
+
+    public void setRestaurants(List<RestaurantInfo> temp){
+        this.restaurants = temp;
+    }
 }
