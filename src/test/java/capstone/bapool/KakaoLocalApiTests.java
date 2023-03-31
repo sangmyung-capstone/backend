@@ -97,7 +97,7 @@ public class KakaoLocalApiTests {
 
         String baseUrl = "https://dapi.kakao.com/v2/local/search/category.json?category_group_code=FD6";
         String resultUrl;
-        String rect = "126.97066333769715,37.55480549198552,126.98611286230346,37.57841303757132";
+        String rect = "126.95183815039371,37.604931017231365,126.96028675855888,37.59783306277512";
 
 
         try{
@@ -162,6 +162,11 @@ public class KakaoLocalApiTests {
             }
 
 //            System.out.println("restaurantInfoList = " + restaurantInfoList.get(0).getRestaurant_name());
+
+            JsonObject meta = element.getAsJsonObject().get("meta").getAsJsonObject();
+            boolean isEnd = meta.getAsJsonObject().get("is_end").getAsBoolean();
+
+            System.out.println("isEnd = " + isEnd);
 
             return;
         }catch (IOException e) {

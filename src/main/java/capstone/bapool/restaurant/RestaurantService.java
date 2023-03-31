@@ -93,6 +93,13 @@ public class RestaurantService {
                     System.out.println();
                 }
 
+                JsonObject meta = element.getAsJsonObject().get("meta").getAsJsonObject();
+                boolean isEnd = meta.getAsJsonObject().get("is_end").getAsBoolean();
+                if(isEnd){
+                    break;
+                }
+
+                System.out.println("isEnd = " + isEnd);
             }catch (IOException e) {
                 e.printStackTrace();
             }
