@@ -1,5 +1,6 @@
 package capstone.bapool;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,7 +10,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/test")
+@RequiredArgsConstructor
 public class TestController {
+
 
     @GetMapping("/log")
     public String test(){
@@ -28,4 +31,5 @@ public class TestController {
 
         return testDto;
     }
+
 }
