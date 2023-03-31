@@ -1,20 +1,17 @@
 package capstone.bapool.model;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Restaurant {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     @Column(name = "restaurant_id")
     private Long id;
 
@@ -30,4 +27,14 @@ public class Restaurant {
 
     private String phone;
 
+    @Builder
+    public Restaurant(Long id, String name, String address, String imgUrl, String siteUrl, String category, String phone) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.imgUrl = imgUrl;
+        this.siteUrl = siteUrl;
+        this.category = category;
+        this.phone = phone;
+    }
 }

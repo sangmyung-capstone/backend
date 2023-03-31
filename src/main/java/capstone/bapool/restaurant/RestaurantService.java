@@ -7,6 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,6 +21,7 @@ import java.util.List;
 @Service
 public class RestaurantService {
 
+    @Transactional
     public GetRestaurantInfoRes getRestaurantInfo(String rect){
         GetRestaurantInfoRes restaurantInfos = new GetRestaurantInfoRes();
         List<RestaurantInfo> temp = searchByCategory(rect);
