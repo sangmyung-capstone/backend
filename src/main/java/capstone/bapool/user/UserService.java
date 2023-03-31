@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
+import static capstone.bapool.config.error.StatusEnum.EXIST_NAME;
 import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_USER_FAILURE;
 
 @Slf4j
@@ -38,6 +39,9 @@ public class UserService {
     }
 
     public ReissueRes signUpKakao(SignUpReq signUpReq) throws IOException {
+        if (userDao.findUserByName(signUpReq.getNickName()).isPresent()) {
+            throw new BaseException(EXIST_NAME);
+        }
         Map<String, String> response = socialUtils.makeUserInfoByKakao(signUpReq.getAccessToken());
         User user = User.builder()
                 .email((String) response.get("email"))
@@ -65,6 +69,9 @@ public class UserService {
     }
 
     public ReissueRes signUpNaver(SignUpReq signUpReq) throws IOException{
+        if (userDao.findUserByName(signUpReq.getNickName()).isPresent()) {
+            throw new BaseException(EXIST_NAME);
+        }
         Map<String, String> response = socialUtils.makeUserInfoByNaver(signUpReq.getAccessToken());
         User user = User.builder()
                 .email((String) response.get("email"))
