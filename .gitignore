@@ -38,3 +38,5 @@ out/
 
 # yml파일
 application.yml
+serviceAccountKey.json
+google-services.json
