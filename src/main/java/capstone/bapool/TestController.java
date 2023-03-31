@@ -26,7 +26,7 @@ public class TestController {
     }
 
     @GetMapping("/info")
-    public ResponseEntity<String> test() throws Exception {
+    public ResponseEntity<String> testinfo() throws Exception {
         return ResponseEntity.ok().body("test");
     }
 

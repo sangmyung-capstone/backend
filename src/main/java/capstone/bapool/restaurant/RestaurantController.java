@@ -5,7 +5,7 @@ import capstone.bapool.restaurant.dto.RestaurantInfo;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/restaurants")
+@RequestMapping(path = {"/restaurants", "/test/restaurants"})
 public class RestaurantController {
 
     RestaurantService restaurantService;
