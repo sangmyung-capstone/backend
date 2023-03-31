@@ -17,6 +17,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
         e.printStackTrace();
         StatusEnum errorStatus = StatusEnum.INTERNET_SERVER_ERROR;
+        e.printStackTrace();
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(makeErrorResponse(errorStatus.getCode(), errorStatus.getMessage()));
@@ -25,6 +26,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IOException.class)
     public ResponseEntity<ErrorResponse> handleIOException(BaseException e) {
         StatusEnum statusEnum = e.getStatusEnum();
+        e.printStackTrace();
         return ResponseEntity
                 .status(NON_AUTHORITATIVE_INFORMATION)
                 .body(makeErrorResponse(statusEnum.getCode(), statusEnum.getMessage()));
