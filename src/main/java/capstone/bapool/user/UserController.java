@@ -21,7 +21,6 @@ import java.io.IOException;
 @Slf4j
 @RestController
 @RequestMapping("/auth")
-@Api(value = "Auth")
 public class UserController {
 
     private final UserService userService;
@@ -33,47 +32,41 @@ public class UserController {
     }
 
     @PostMapping(value = "/kakao/signin")
-    @ApiOperation(value = "카카오 로그인")
     public ResponseEntity<Object> SignInKakao(@RequestBody SocialAccessToken socialAccessToken) throws BaseException, IOException {
         ReissueRes signupRes = userService.signInKakao(socialAccessToken);
         return ResponseEntity.ok().body(ResponseDto.res(signupRes));
     }
 
     @PostMapping(value = "/kakao/signup")
-    @ApiOperation(value = "카카오 회원가입")
     public ResponseEntity<ResponseDto> SignUpKakao(@RequestBody SignUpReq signUpReq) throws BaseException, IOException {
         ReissueRes signupRes = userService.signUpKakao(signUpReq);
         return ResponseEntity.ok().body(ResponseDto.res(signupRes));
     }
 
     @PostMapping(value = "/kakao/signin/already")
-    @ApiOperation(value = "카카오 회원인지 확인하는 로직 ")
     public ResponseEntity<Object> SignInKakaoAlready(@RequestBody SocialAccessToken socialAccessToken) throws BaseException, IOException {
         return ResponseEntity.ok().body(ResponseDto.res(userService.signInKakaoAready(socialAccessToken)));
     }
 
     @PostMapping(value = "/naver/signin")
-    @ApiOperation(value = "네이버 로그인")
     public ResponseEntity<ResponseDto> SignInNaver(@RequestBody SocialAccessToken socialAccessToken) throws BaseException, IOException {
         ReissueRes signupRes = userService.signInNaver(socialAccessToken);
         return ResponseEntity.ok().body(ResponseDto.res(signupRes));
     }
 
     @PostMapping(value = "/naver/signup")
-    @ApiOperation(value = "네이버 회원가입")
     public ResponseEntity<ResponseDto> SignUpNaver(@RequestBody SignUpReq signUpReq) throws BaseException, IOException {
+        log.info("네이버 회원 가입 ");
         ReissueRes signupRes = userService.signUpNaver(signUpReq);
         return ResponseEntity.ok().body(ResponseDto.res(signupRes));
     }
 
     @PostMapping(value = "/naver/signin/already")
-    @ApiOperation(value = "네이버 회원인지 확인하는 로직 ")
     public ResponseEntity<Object> SignInNaverAlready(@RequestBody SocialAccessToken socialAccessToken) throws BaseException, IOException {
         return ResponseEntity.ok().body(ResponseDto.res(userService.signInNaverAready(socialAccessToken)));
     }
 
     @PostMapping(value = "/reissuance")
-    @ApiOperation(value = "토큰 재발급")
     public ResponseEntity<Object> reissueAccessToken(@RequestBody ReissueReq reissueReq) throws BaseException {
         ReissueRes signupRes = userService.reissueAccessToken(reissueReq);
         return ResponseEntity.ok().body(ResponseDto.res(signupRes));
