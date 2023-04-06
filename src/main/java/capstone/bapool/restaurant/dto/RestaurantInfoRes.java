@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class GetRestaurantInfoRes {
+public class RestaurantInfoRes {
     List<RestaurantInfo> restaurants = new ArrayList<>();
 
     public void addrestaurant(RestaurantInfo restaurantInfo){

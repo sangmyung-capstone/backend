@@ -54,8 +54,8 @@ dependencies {
 	implementation("io.springfox:springfox-boot-starter:3.0.0")
 	implementation("io.springfox:springfox-swagger-ui:3.0.0")
 
-	// 파이어 베이스 리얼타임 데이터 베이스
-	implementation 'com.google.firebase:firebase-admin:9.1.1'
+	// 웹 크롤링 - 셀레니움
+	implementation 'org.seleniumhq.selenium:selenium-java:4.0.0'
 }
 
 tasks.named('test') {

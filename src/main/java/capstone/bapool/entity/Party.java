@@ -1,6 +1,5 @@
-package capstone.bapool.model;
+package capstone.bapool.entity;
 
-import net.bytebuddy.asm.Advice;
 import org.hibernate.annotations.ColumnDefault;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,7 +9,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

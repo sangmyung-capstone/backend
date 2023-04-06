@@ -1,7 +1,8 @@
 package capstone.bapool.restaurant;
 
-import capstone.bapool.restaurant.dto.GetRestaurantInfoRes;
+import capstone.bapool.restaurant.dto.RestaurantInfoRes;
 import capstone.bapool.restaurant.dto.RestaurantInfo;
+import capstone.bapool.utils.SeleniumService;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -14,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,8 +22,8 @@ import java.util.List;
 public class RestaurantService {
 
     @Transactional
-    public GetRestaurantInfoRes getRestaurantInfo(String rect){
-        GetRestaurantInfoRes restaurantInfos = new GetRestaurantInfoRes();
+    public RestaurantInfoRes getRestaurantInfo(String rect){
+        RestaurantInfoRes restaurantInfos = new RestaurantInfoRes();
         List<RestaurantInfo> temp = searchByCategory(rect);
         restaurantInfos.setRestaurants(temp);
 //        RestaurantInfo restaurants  = new RestaurantInfo();
@@ -81,9 +81,9 @@ public class RestaurantService {
                             .restaurant_address(restaurant.get("road_address_name").getAsString())
                             .category(restaurant.get("category_name").getAsString())
                             .num_of_party(101)
-                            .imgUrl("https://temp/imgUrl")
                             .restaurant_longitude(restaurant.get("x").getAsDouble())
                             .restaurant_latitude(restaurant.get("y").getAsDouble())
+                            .imgUrl(seleniumService.useDriver(restaurant.get("place_url").getAsString()))
                             .build();
                     restaurantInfoList.add(restaurantInfo);
                 }
@@ -109,4 +109,10 @@ public class RestaurantService {
 
         return restaurantInfoList;
     }
+
+    SeleniumService seleniumService;
+    public RestaurantService(SeleniumService seleniumService){
+        this.seleniumService = seleniumService;
+    }
+
 }

@@ -1,4 +1,4 @@
-package capstone.bapool.model;
+package capstone.bapool.entity;
 
 import lombok.*;
 

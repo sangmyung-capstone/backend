@@ -1,6 +1,6 @@
 package capstone.bapool.restaurant;
 
-import capstone.bapool.model.Restaurant;
+import capstone.bapool.entity.Restaurant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

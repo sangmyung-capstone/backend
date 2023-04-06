@@ -1,7 +1,5 @@
 package capstone.bapool.restaurant;
 
-import capstone.bapool.restaurant.dto.GetRestaurantInfoRes;
-import capstone.bapool.restaurant.dto.RestaurantInfo;
 import capstone.bapool.restaurant.dto.TempResponse;
 import org.springframework.web.bind.annotation.*;
 
