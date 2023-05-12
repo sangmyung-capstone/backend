@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 
 @Repository
 public class RestaurantRepository {
@@ -19,4 +20,6 @@ public class RestaurantRepository {
     public void save(Restaurant restaurant){
         em.persist(restaurant);
     }
+
+
 }

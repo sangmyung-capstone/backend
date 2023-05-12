@@ -1,5 +1,6 @@
 package capstone.bapool.restaurant;
 
+import capstone.bapool.party.PartyRepository;
 import capstone.bapool.restaurant.dto.RestaurantInfoRes;
 import capstone.bapool.restaurant.dto.RestaurantInfo;
 import capstone.bapool.utils.SeleniumService;
@@ -7,6 +8,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,22 +20,32 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class RestaurantService {
 
+    private final RestaurantRepository restaurantRepository;
+    private final PartyRepository partyRepository;
+    private final SeleniumService seleniumService;
+
+    /**
+     *주변 식당정보를 리스트에 저장
+     * @param rect 화면의 꼭짓점 값
+     * @return
+     */
     @Transactional
     public RestaurantInfoRes getRestaurantInfo(String rect){
         RestaurantInfoRes restaurantInfos = new RestaurantInfoRes();
         List<RestaurantInfo> temp = searchByCategory(rect);
         restaurantInfos.setRestaurants(temp);
-//        RestaurantInfo restaurants  = new RestaurantInfo();
-//        restaurantInfos.addrestaurant(restaurants);
-//        RestaurantInfo restaurantss  = new RestaurantInfo(5l,"a","fdsad","c","d",1,1d,1d);
-//        restaurantInfos.addrestaurant(restaurantss);
-
         return restaurantInfos;
     }
 
+    /**
+     * 음식점 검색해서 리스트로 만듦, 이미지 크롤링하고, 식당정보 저장
+     * @param rect 화면의 꼭짓점 값
+     * @return
+     */
     public List<RestaurantInfo> searchByCategory(String rect){
 
         String baseUrl = "https://dapi.kakao.com/v2/local/search/category.json?category_group_code=FD6";
@@ -83,7 +95,8 @@ public class RestaurantService {
                             .num_of_party(101)
                             .restaurant_longitude(restaurant.get("x").getAsDouble())
                             .restaurant_latitude(restaurant.get("y").getAsDouble())
-                            .imgUrl(seleniumService.useDriver(restaurant.get("place_url").getAsString()))
+//                            .imgUrl(seleniumService.useDriver(restaurant.get("place_url").getAsString()))//이미지 크롤링해옴
+                            .imgUrl(null)
                             .build();
                     restaurantInfoList.add(restaurantInfo);
                 }
@@ -110,9 +123,7 @@ public class RestaurantService {
         return restaurantInfoList;
     }
 
-    SeleniumService seleniumService;
-    public RestaurantService(SeleniumService seleniumService){
-        this.seleniumService = seleniumService;
+    public int countParty(){
+        return partyRepository.countParty();
     }
-
 }

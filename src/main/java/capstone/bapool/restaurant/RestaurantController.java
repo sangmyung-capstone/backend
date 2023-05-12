@@ -1,6 +1,9 @@
 package capstone.bapool.restaurant;
 
+import capstone.bapool.config.response.ResponseDto;
+import capstone.bapool.restaurant.dto.RestaurantInfoRes;
 import capstone.bapool.restaurant.dto.TempResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,13 +17,13 @@ public class RestaurantController {
     }
 
     @GetMapping("/{user-id}")
-    public TempResponse getRestaurantInfo(@PathVariable(name = "user-id")Long userId, @RequestParam String rect){
+    public ResponseEntity<Object> getRestaurantInfo(@PathVariable(name = "user-id")Long userId, @RequestParam String rect){
 
         System.out.println("userId = " + userId);
         System.out.println("rect = " + rect);
 
+        ResponseDto responseDto = new ResponseDto<RestaurantInfoRes>(200,"요청성공",restaurantService.getRestaurantInfo(rect));
 
-        TempResponse tempResponse = new TempResponse(restaurantService.getRestaurantInfo(rect));
-        return tempResponse;
+        return ResponseEntity.ok().body(ResponseDto.res(restaurantService.getRestaurantInfo(rect)));
     }
 }

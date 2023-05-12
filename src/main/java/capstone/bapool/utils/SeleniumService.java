@@ -39,10 +39,10 @@ public class SeleniumService {
 
     public String useDriver(String url) {
         driver.get(url) ;
-        driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);  // 페이지 불러오는 여유시간.
+        driver.manage().timeouts().implicitlyWait(50, TimeUnit.MILLISECONDS);  // 페이지 불러오는 여유시간.
         System.out.println("driver.getTitle() = " + driver.getTitle());
 
-
+        //여기서 이미지 크롤링한다
         try{
             //        WebElement searchLabel = driver.findElement(By.id("kakaoBtnSearch"));
             WebElement searchLabel = driver.findElement(By.className("bg_present"));
