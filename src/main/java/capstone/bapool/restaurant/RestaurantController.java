@@ -25,4 +25,5 @@ public class RestaurantController {
         TempResponse tempResponse = new TempResponse(restaurantService.getRestaurantInfo(rect));
         return tempResponse;
     }
+    
 }
