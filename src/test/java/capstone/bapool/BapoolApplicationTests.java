@@ -8,6 +8,11 @@ class BapoolApplicationTests {
 
 	@Test
 	void contextLoads() {
+
+		String name = "wfwf";
+		if (name.length() > 20){
+			System.out.println("name = " + name);
+		}
 	}
 
 }

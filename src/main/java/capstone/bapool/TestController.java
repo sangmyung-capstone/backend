@@ -16,4 +16,9 @@ public class TestController {
     public ResponseEntity<String> test() throws Exception {
         return ResponseEntity.ok().body("test");
     }
+
+//    @GetMapping("/throw")
+//    public ResponseEntity<String> testThrow() {
+//        return new BaseException(StatusEnum.INTERNET_SERVER_ERROR);
+//    }
 }
