@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class FireBaseUser {
-    private int userId;
+    private Long userId;
     private String name;
+    private Integer imgUrl;
 }
