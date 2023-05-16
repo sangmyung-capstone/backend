@@ -1,7 +1,7 @@
 package capstone.bapool.user;
 
 import capstone.bapool.config.error.BaseException;
-import capstone.bapool.entity.User;
+import capstone.bapool.model.User;
 import capstone.bapool.firebase.FireBaseUserDao;
 import capstone.bapool.firebase.dto.FireBaseUser;
 import capstone.bapool.user.dto.ReissueReq;

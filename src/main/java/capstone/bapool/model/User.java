@@ -1,4 +1,4 @@
-package capstone.bapool.entity;
+package capstone.bapool.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
