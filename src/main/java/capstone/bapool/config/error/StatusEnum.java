@@ -10,13 +10,6 @@ public enum StatusEnum {
     SUCCESS(200, "OK"),
 
     /**
-     * 중복 오류 코드
-     * redirection 이 필요한 경우
-     */
-
-    EXIST_NAME(300, "EXIST NICKNAME"),
-
-    /**
      * 인증 오류
      * 401 오류
      */
