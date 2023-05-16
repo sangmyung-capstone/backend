@@ -3,20 +3,25 @@ package capstone.bapool.entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class User{
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
 
@@ -26,13 +31,13 @@ public class User{
     @Column(nullable = false, length = 50, unique = true)
     private String email;
 
-    @Column(nullable = false, columnDefinition = "smallint(6)")
+    @Column(name="profile_img_id", nullable = false, columnDefinition = "smallint(6)")
     private Integer profileImgId;
 
-    @Column
+    @Column(name="refresh_token")
     private String refreshToken;
 
-    @Column
+    @Column(name="created_at")
     private LocalDateTime atCreateTime;
 
     @Builder
