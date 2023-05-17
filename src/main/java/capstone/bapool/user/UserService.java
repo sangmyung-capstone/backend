@@ -32,6 +32,7 @@ public class UserService {
 
     private final FireBaseUserDao fireBaseUserDao;
 
+    @Transactional(readOnly = false)
     public ReissueRes signInKakao(SocialAccessToken socialAccessToken) throws BaseException, IOException {
         String email = socialUtils.makeUserInfoByKakao(socialAccessToken.getAccessToken()).get("email");
         User user = userDao.findUserByEmail(email).orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
@@ -60,6 +61,7 @@ public class UserService {
         return !userDao.findUserByEmail(email).isEmpty();
     }
 
+    @Transactional(readOnly = false)
     public ReissueRes signInNaver(SocialAccessToken socialAccessToken) throws BaseException,IOException {
         String email = socialUtils.makeUserInfoByNaver(socialAccessToken.getAccessToken()).get("email");
         User user = userDao.findUserByEmail(email).orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
