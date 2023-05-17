@@ -29,7 +29,8 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
+    implementation 'org.jetbrains:annotations:20.1.0'
+    compileOnly 'org.projectlombok:lombok'
 	testCompileOnly 'org.projectlombok:lombok:1.18.12' // 테스트 의존성 추가
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.12' // 테스트 의존성 추가
 	runtimeOnly 'com.mysql:mysql-connector-j'
@@ -50,9 +51,12 @@ dependencies {
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}" // querydsl 라이브러리
 	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}" //  Querydsl 관련 코드 생성 기능 제공
 
-	// https://mvnrepository.com/artifact/io.springfox/springfox-boot-starter
+//	// https://mvnrepository.com/artifact/io.springfox/springfox-boot-starter
 	implementation("io.springfox:springfox-boot-starter:3.0.0")
 	implementation("io.springfox:springfox-swagger-ui:3.0.0")
+
+	// @Valid 를 위한 의존관계 추가
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 	// 파이어 베이스 리얼타임 데이터 베이스
 	implementation 'com.google.firebase:firebase-admin:9.1.1'
