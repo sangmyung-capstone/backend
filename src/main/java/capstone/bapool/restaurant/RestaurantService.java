@@ -1,5 +1,6 @@
 package capstone.bapool.restaurant;
 
+import capstone.bapool.entity.Restaurant;
 import capstone.bapool.party.PartyRepository;
 import capstone.bapool.restaurant.dto.RestaurantInfoRes;
 import capstone.bapool.restaurant.dto.RestaurantInfo;
@@ -92,6 +93,7 @@ public class RestaurantService {
                             .restaurant_name(restaurant.get("place_name").getAsString())
                             .restaurant_address(restaurant.get("road_address_name").getAsString())
                             .category(restaurant.get("category_name").getAsString())
+//                            .num_of_party(countParty(Restaurant))
                             .num_of_party(101)
                             .restaurant_longitude(restaurant.get("x").getAsDouble())
                             .restaurant_latitude(restaurant.get("y").getAsDouble())
@@ -124,6 +126,10 @@ public class RestaurantService {
     }
 
     public int countParty(){
-        return partyRepository.countParty();
+        return partyRepository.countParty(restaurant);
+    }
+
+    public RestaurantInfoRes selectRestaurant(String rect){
+        return getRestaurantInfo(rect);
     }
 }
