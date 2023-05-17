@@ -1,16 +1,11 @@
-package capstone.bapool.restaurant;
+package capstone.bapool.utils;
 
-import capstone.bapool.party.PartyRepository;
-import capstone.bapool.restaurant.dto.RestaurantInfoRes;
-import capstone.bapool.restaurant.dto.RestaurantInfo;
-import capstone.bapool.utils.SeleniumService;
+import capstone.bapool.utils.dto.KakaoRestaurant;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,37 +15,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-@RequiredArgsConstructor
 @Service
-public class RestaurantService {
+public class KakaoLocalApiService {
 
-    private final RestaurantRepository restaurantRepository;
-    private final PartyRepository partyRepository;
-    private final SeleniumService seleniumService;
-
-    /**
-     *주변 식당정보를 리스트에 저장
-     * @param rect 화면의 꼭짓점 값
-     * @return
-     */
-    @Transactional
-    public RestaurantInfoRes getRestaurantInfo(String rect){
-        RestaurantInfoRes restaurantInfos = new RestaurantInfoRes();
-        List<RestaurantInfo> temp = searchByCategory(rect);
-        restaurantInfos.setRestaurants(temp);
-        return restaurantInfos;
-    }
-
-    /**
-     * 음식점 검색해서 리스트로 만듦, 이미지 크롤링하고, 식당정보 저장
-     * @param rect 화면의 꼭짓점 값
-     * @return
-     */
-    public List<RestaurantInfo> searchByCategory(String rect){
-
+    public List<KakaoRestaurant> searchByCategory(String rect){
         String baseUrl = "https://dapi.kakao.com/v2/local/search/category.json?category_group_code=FD6";
         String resultUrl;
-        List<RestaurantInfo> restaurantInfoList = new ArrayList<>();
+        List<KakaoRestaurant> kakaoRestaurantList = new ArrayList<>();
 
         for(int page=1; page<=3; page++){
             try{
@@ -82,32 +53,29 @@ public class RestaurantService {
                 JsonElement element = JsonParser.parseString(result);
 
                 // 응답 바디에서 필요한 값 뽑아내기
-                RestaurantInfo restaurantInfo;
                 JsonArray documents = element.getAsJsonObject().get("documents").getAsJsonArray();
 
                 for(int i=0; i<documents.size(); i++){
                     JsonObject restaurant = documents.get(i).getAsJsonObject();
-                    restaurantInfo = RestaurantInfo.builder()
-                            .restaurant_id(restaurant.get("id").getAsLong())
-                            .restaurant_name(restaurant.get("place_name").getAsString())
-                            .restaurant_address(restaurant.get("road_address_name").getAsString())
+                    KakaoRestaurant kakaoRestaurant = KakaoRestaurant.builder()
+                            .id(restaurant.get("id").getAsLong())
+                            .name(restaurant.get("place_name").getAsString())
+                            .address(restaurant.get("road_address_name").getAsString())
                             .category(restaurant.get("category_name").getAsString())
-                            .num_of_party(101)
-                            .restaurant_longitude(restaurant.get("x").getAsDouble())
-                            .restaurant_latitude(restaurant.get("y").getAsDouble())
-//                            .imgUrl(seleniumService.useDriver(restaurant.get("place_url").getAsString()))//이미지 크롤링해옴
-                            .imgUrl(null)
+                            .longitude(restaurant.get("x").getAsDouble())
+                            .latitude(restaurant.get("y").getAsDouble())
                             .build();
-                    restaurantInfoList.add(restaurantInfo);
+                    kakaoRestaurantList.add(kakaoRestaurant);
                 }
 
                 br.close();
 
-                for(RestaurantInfo info : restaurantInfoList){
-                    System.out.println(info);
-                    System.out.println();
-                }
+//                for(RestaurantInfo info : kakaoRestaurants){
+//                    System.out.println(info);
+//                    System.out.println();
+//                }
 
+                // 이게 마지막 페이지이면 끝내기
                 JsonObject meta = element.getAsJsonObject().get("meta").getAsJsonObject();
                 boolean isEnd = meta.getAsJsonObject().get("is_end").getAsBoolean();
                 if(isEnd){
@@ -120,10 +88,6 @@ public class RestaurantService {
             }
         }
 
-        return restaurantInfoList;
+        return kakaoRestaurantList;
     }
-
-//    public int countParty(){
-//        return partyRepository.countParty();
-//    }
 }

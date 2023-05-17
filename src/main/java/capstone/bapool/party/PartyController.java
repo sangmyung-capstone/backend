@@ -15,7 +15,7 @@ public class PartyController {
 
     private final PartyService partyService;
 
-    // 식당안의 파디리스트 조회
+    // 식당안의 파티리스트 조회
     @GetMapping("/{user-id}/{restaurant-id}")
     public ResponseDto<PartiesInRestaurantRes> partyInRestaurantList(@PathVariable("user-id")Long userId, @PathVariable("restaurant-id")Long restaurantId){
 
