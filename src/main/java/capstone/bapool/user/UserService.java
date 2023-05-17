@@ -2,8 +2,6 @@ package capstone.bapool.user;
 
 import capstone.bapool.config.error.BaseException;
 import capstone.bapool.model.User;
-import capstone.bapool.firebase.FireBaseUserDao;
-import capstone.bapool.firebase.dto.FireBaseUser;
 import capstone.bapool.user.dto.ReissueReq;
 import capstone.bapool.user.dto.ReissueRes;
 import capstone.bapool.user.dto.SignUpReq;
@@ -29,8 +27,6 @@ public class UserService {
     private final UserDao userDao;
     private final JwtUtils jwtUtils;
     private final SocialUtils socialUtils;
-
-    private final FireBaseUserDao fireBaseUserDao;
 
     @Transactional(readOnly = false)
     public ReissueRes signInKakao(SocialAccessToken socialAccessToken) throws BaseException, IOException {
@@ -87,7 +83,6 @@ public class UserService {
 
     private User saveUser(User user) {
         User savedUser = userDao.save(user);
-        fireBaseUserDao.save(new FireBaseUser(savedUser.getId(), savedUser.getName(), savedUser.getProfileImgId()));
         return savedUser;
     }
 
