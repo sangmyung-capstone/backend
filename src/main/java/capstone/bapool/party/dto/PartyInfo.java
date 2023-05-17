@@ -1,5 +1,7 @@
 package capstone.bapool.party.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -7,19 +9,37 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
+//파티정보
 @Getter
+@JsonPropertyOrder({"partyId", "partyName", "menu", "detail", "hasBlockUser", "participants", "maxPeople", "startDate", "endDate", "rating", "hashtag"})
 public class PartyInfo {
 
+    @JsonProperty(value = "party_id")
     private Long partyId;
+
+    @JsonProperty(value = "party_name")
     private String partyName;
+
     private int participants;
+
+    @JsonProperty(value = "max_people")
     private int maxPeople;
+
+    @JsonProperty(value = "start_date")
     private LocalDateTime startDate;
+
+    @JsonProperty(value = "end_date")
     private LocalDateTime endDate;
+
     private String menu;
+
     private List<Integer> hastag;
+
     private String detail;
+
+    @JsonProperty(value = "has_block_user")
     private boolean hasBlockUser;
+
     private List<Integer> rating;
 
     @Builder

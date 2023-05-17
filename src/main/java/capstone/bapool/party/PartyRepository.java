@@ -29,6 +29,7 @@ public class PartyRepository {
                 .getSingleResult();
     }
 
+    // 식당안의 파티리스트 조회
     public List<Party> selectPartisInRestaurant(Restaurant restaurant){
 
         String query = "select p\n" +

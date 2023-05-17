@@ -19,6 +19,7 @@ public class PartyService {
     private final RestaurantRepository restaurantRepository;
     private final PartyRepository partyRepository;
 
+    // 식당안의 파티리스트 조회
     public PartiesInRestaurantRes findPartiesInRestaurant(Long userId, Long restaurantId){
 
         PartiesInRestaurantRes partiesInRestaurantRes = new PartiesInRestaurantRes();

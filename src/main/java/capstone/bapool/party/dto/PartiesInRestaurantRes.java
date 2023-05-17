@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
+//식당안의 파티리스트 API의 response body
 @Getter
 @AllArgsConstructor
 public class PartiesInRestaurantRes {
