@@ -123,7 +123,7 @@ public class RestaurantService {
         return restaurantInfoList;
     }
 
-    public int countParty(){
-        return partyRepository.countParty();
-    }
+//    public int countParty(){
+//        return partyRepository.countParty();
+//    }
 }

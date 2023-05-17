@@ -17,7 +17,7 @@ public class SeleniumService {
 
     private WebDriver driver;
     public static String WEB_DRIVER_ID = "webdriver.chrome.driver"; // Properties 설정
-    public static String WEB_DRIVER_PATH = "C:\\Program Files (x86)\\chromedriver_win32\\chromedriver.exe"; // WebDriver 경로
+    public static String WEB_DRIVER_PATH = "C:\\DevTool\\chromedriver_win32\\chromedriver.exe"; // WebDriver 경로
 
     private void chrome() {
         System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
