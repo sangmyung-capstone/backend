@@ -1,6 +1,6 @@
 package capstone.bapool.user;
 
-import capstone.bapool.entity.User;
+import capstone.bapool.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
