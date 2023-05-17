@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -12,18 +13,24 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class User{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
+
+    @OneToMany(mappedBy = "user")
+    private List<PartyAndUser> partyAndUsers = new ArrayList<PartyAndUser>();
 
     @Column(nullable = false, length = 20, unique = true)
     private String name;
@@ -38,6 +45,7 @@ public class User{
     private String refreshToken;
 
     @Column(name="created_at")
+    @CreationTimestamp
     private LocalDateTime atCreateTime;
 
     @Builder

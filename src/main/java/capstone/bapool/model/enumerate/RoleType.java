@@ -1,2 +1,5 @@
-package capstone.bapool.model.enumerate;public enum RoleType {
+package capstone.bapool.model.enumerate;
+
+public enum RoleType {
+    LEADER, MEMBER
 }
