@@ -2,6 +2,7 @@ package capstone.bapool.user;
 
 import capstone.bapool.config.error.BaseException;
 import capstone.bapool.config.response.ResponseDto;
+import capstone.bapool.user.dto.KakaoSignUpReq;
 import capstone.bapool.user.dto.ReissueReq;
 import capstone.bapool.user.dto.ReissueRes;
 import capstone.bapool.user.dto.SignUpReq;
@@ -37,7 +38,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/kakao/signup")
-    public ResponseEntity<ResponseDto> SignUpKakao(@Valid @RequestBody SignUpReq signUpReq) throws BaseException, IOException {
+    public ResponseEntity<ResponseDto> SignUpKakao(@Valid @RequestBody KakaoSignUpReq signUpReq) throws BaseException, IOException {
         ReissueRes signupRes = userService.signUpKakao(signUpReq);
         return ResponseEntity.ok().body(ResponseDto.res(signupRes));
     }

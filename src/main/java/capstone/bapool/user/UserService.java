@@ -4,6 +4,7 @@ import capstone.bapool.config.error.BaseException;
 import capstone.bapool.model.User;
 import capstone.bapool.firebase.FireBaseUserDao;
 import capstone.bapool.firebase.dto.FireBaseUser;
+import capstone.bapool.user.dto.KakaoSignUpReq;
 import capstone.bapool.user.dto.ReissueReq;
 import capstone.bapool.user.dto.ReissueRes;
 import capstone.bapool.user.dto.SignUpReq;
@@ -30,7 +31,7 @@ public class UserService {
     private final JwtUtils jwtUtils;
     private final SocialUtils socialUtils;
 
-    private final FireBaseUserDao fireBaseUserDao;
+//    private final FireBaseUserDao fireBaseUserDao;
 
     @Transactional(readOnly = false)
     public ReissueRes signInKakao(SocialAccessToken socialAccessToken) throws BaseException, IOException {
@@ -42,10 +43,11 @@ public class UserService {
     }
 
     @Transactional(readOnly = false)
-    public ReissueRes signUpKakao(SignUpReq signUpReq) throws IOException {
+    public ReissueRes signUpKakao(KakaoSignUpReq signUpReq) throws IOException {
         Map<String, String> response = socialUtils.makeUserInfoByKakao(signUpReq.getAccessToken());
         User user = User.builder()
-                .email((String) response.get("email"))
+                .email(signUpReq.getEmail())
+//                .email((String) response.get("email"))
                 .name((String) response.get("name"))
                 .profileImgId(signUpReq.getProfileImgId())
                 .name(signUpReq.getNickName())
@@ -87,7 +89,7 @@ public class UserService {
 
     private User saveUser(User user) {
         User savedUser = userDao.save(user);
-        fireBaseUserDao.save(new FireBaseUser(savedUser.getId(), savedUser.getName(), savedUser.getProfileImgId()));
+//        fireBaseUserDao.save(new FireBaseUser(savedUser.getId(), savedUser.getName(), savedUser.getProfileImgId()));
         return savedUser;
     }
 
