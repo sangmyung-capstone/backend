@@ -18,13 +18,13 @@ public class PartyRepository {
         this.em = em;
     }
 
-    public int countParty(Restaurant restaurant){
+    public Long countParty(Restaurant restaurant){
 
 //        TypedQuery<Integer> query = em.createQuery("select count(*) from Party as p where p.restaurant = :restaurant",Integer.class)
 //                .setParameter("restaurant", restaurant);
 //        return query.getSingleResult();
 
-        return em.createQuery("select count(*) from Party as p where p.restaurant = :restaurant",Integer.class)
+        return em.createQuery("select count(*) from Party as p where p.restaurant = :restaurant", Long.class)
                 .setParameter("restaurant", restaurant)
                 .getSingleResult();
     }

@@ -1,6 +1,6 @@
 package capstone.bapool;
 
-import capstone.bapool.restaurant.dto.RestaurantInfo2;
+import capstone.bapool.restaurant.dto.RestaurantInfo;
 import com.google.gson.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -126,8 +126,8 @@ public class KakaoLocalApiTests {
             JsonElement element = JsonParser.parseString(result);
 
             // 응답 바디에서 필요한 값 뽑아내기
-            List<RestaurantInfo2> restaurantInfoList = new ArrayList<>();
-            RestaurantInfo2 restaurantInfo;
+            List<RestaurantInfo> restaurantInfoList = new ArrayList<>();
+            RestaurantInfo restaurantInfo;
             JsonArray documents = element.getAsJsonObject().get("documents").getAsJsonArray();
 //            System.out.println("documents.size() = " + documents.size());
 //            restaurantInfo = RestaurantInfo.builder()
@@ -138,7 +138,7 @@ public class KakaoLocalApiTests {
             
             for(int i=0; i<documents.size(); i++){
                 JsonObject restaurant = documents.get(i).getAsJsonObject();
-                restaurantInfo = RestaurantInfo2.builder()
+                restaurantInfo = RestaurantInfo.builder()
                         .restaurant_id(restaurant.get("id").getAsLong())
                         .restaurant_name(restaurant.get("place_name").getAsString())
                         .restaurant_address(restaurant.get("road_address_name").getAsString())
@@ -153,7 +153,7 @@ public class KakaoLocalApiTests {
 
             br.close();
 
-            for(RestaurantInfo2 info : restaurantInfoList){
+            for(RestaurantInfo info : restaurantInfoList){
                 System.out.println(info);
                 System.out.println();
             }

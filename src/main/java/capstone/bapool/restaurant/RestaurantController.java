@@ -6,12 +6,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = {"/restaurants/v2", "/test/restaurants/v2"})
-public class RestaurantController2 {
+@RequestMapping(path = {"/restaurants", "/test/restaurants"})
+public class RestaurantController {
 
-    RestaurantService2 restaurantService;
+    RestaurantService restaurantService;
 
-    public RestaurantController2(RestaurantService2 restaurantService){
+    public RestaurantController(RestaurantService restaurantService){
         this.restaurantService = restaurantService;
     }
 
