@@ -9,10 +9,13 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Party {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,17 +27,23 @@ public class Party {
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
-    @Column(columnDefinition = "tinyint(4)")
+    @OneToMany(mappedBy = "party")
+    private List<PartyAndUser> partyAndUsers = new ArrayList<PartyAndUser>();
+
+    @Column(name = "is_close", columnDefinition = "tinyint(4)")
     @ColumnDefault("false")
     private boolean isClose;
 
     private String name;
 
     @ColumnDefault("0")
+    @Column(name = "max_people")
     private int maxPeople;
 
+    @Column(name = "start_date")
     private LocalDateTime startDate;
 
+    @Column(name = "end_date")
     private LocalDateTime endDate;
 
     private String menu;
@@ -42,9 +51,10 @@ public class Party {
     private String detail;
 
     @CreationTimestamp
-    private LocalDateTime createdAt = LocalDateTime.now();;
+    @Column(name = "create_at")
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    private LocalDateTime updatedAt = LocalDateTime.now();;
-
+    @Column(name = "update_at")
+    private LocalDateTime updatedAt;
 }

@@ -25,7 +25,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 // / 로 시작하는 모든 URL 에 적용을 하겠다.
                 .addPathPatterns("/**")
                 // 이 URL 로 시작하는 코드는 적용을 하지 않겠다.
-                .excludePathPatterns("/auth/**", "/test/**", "/firebase/**");
+                .excludePathPatterns("/users/**", "/test/**", "/firebase/**");
     }
 
 }

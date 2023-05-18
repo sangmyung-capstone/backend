@@ -26,4 +26,5 @@ public class RestaurantController {
 
         return ResponseEntity.ok().body(ResponseDto.res(restaurantService.findRestaurantsOnMap(rect)));
     }
+    
 }
