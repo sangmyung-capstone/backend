@@ -1,8 +1,8 @@
 package capstone.bapool.restaurant;
 
-import capstone.bapool.restaurant.dto.GetRestaurantInfoRes;
-import capstone.bapool.restaurant.dto.RestaurantInfo;
-import capstone.bapool.restaurant.dto.TempResponse;
+import capstone.bapool.config.response.ResponseDto;
+import capstone.bapool.restaurant.dto.RestaurantsOnMapRes;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,15 +15,16 @@ public class RestaurantController {
         this.restaurantService = restaurantService;
     }
 
+    // 홈화면
     @GetMapping("/{user-id}")
-    public TempResponse getRestaurantInfo(@PathVariable(name = "user-id")Long userId, @RequestParam String rect){
+    public ResponseEntity<Object> restaurantOnMapList(@PathVariable(name = "user-id")Long userId, @RequestParam String rect){
 
         System.out.println("userId = " + userId);
         System.out.println("rect = " + rect);
 
+        ResponseDto responseDto = new ResponseDto<RestaurantsOnMapRes>(200,"요청성공",restaurantService.findRestaurantsOnMap(rect));
 
-        TempResponse tempResponse = new TempResponse(restaurantService.getRestaurantInfo(rect));
-        return tempResponse;
+        return ResponseEntity.ok().body(ResponseDto.res(restaurantService.findRestaurantsOnMap(rect)));
     }
     
 }

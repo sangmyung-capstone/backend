@@ -2,14 +2,11 @@ package capstone.bapool;
 
 import capstone.bapool.restaurant.dto.RestaurantInfo;
 import com.google.gson.*;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;

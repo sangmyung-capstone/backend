@@ -1,112 +1,61 @@
 package capstone.bapool.restaurant;
 
-import capstone.bapool.restaurant.dto.GetRestaurantInfoRes;
+import capstone.bapool.entity.Restaurant;
+import capstone.bapool.party.PartyRepository;
+import capstone.bapool.restaurant.dto.RestaurantsOnMapRes;
 import capstone.bapool.restaurant.dto.RestaurantInfo;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import capstone.bapool.utils.KakaoLocalApiService;
+import capstone.bapool.utils.dto.KakaoRestaurant;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class RestaurantService {
 
-    @Transactional
-    public GetRestaurantInfoRes getRestaurantInfo(String rect){
-        GetRestaurantInfoRes restaurantInfos = new GetRestaurantInfoRes();
-        List<RestaurantInfo> temp = searchByCategory(rect);
-        restaurantInfos.setRestaurants(temp);
-//        RestaurantInfo restaurants  = new RestaurantInfo();
-//        restaurantInfos.addrestaurant(restaurants);
-//        RestaurantInfo restaurantss  = new RestaurantInfo(5l,"a","fdsad","c","d",1,1d,1d);
-//        restaurantInfos.addrestaurant(restaurantss);
+    private final KakaoLocalApiService kakaoLocalApiService;
+    private final RestaurantRepository restaurantRepository;
+    private final PartyRepository partyRepository;
 
-        return restaurantInfos;
-    }
+    /**
+     * 지도화면을 위한 식당리스트 조회
+     * @param rect 화면의 꼭짓점 값
+     * @return
+     */
+    public RestaurantsOnMapRes findRestaurantsOnMap(String rect){
 
-    public List<RestaurantInfo> searchByCategory(String rect){
+        // 카카오 로컬 api 통신
+        List<KakaoRestaurant> kakaoRestaurantList = kakaoLocalApiService.searchByCategory(rect);
 
-        String baseUrl = "https://dapi.kakao.com/v2/local/search/category.json?category_group_code=FD6";
-        String resultUrl;
         List<RestaurantInfo> restaurantInfoList = new ArrayList<>();
 
-        for(int page=1; page<=3; page++){
-            try{
-                resultUrl = baseUrl + "&rect=" + rect + "&page=" + page;
-                URL url = new URL(resultUrl);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-                conn.setRequestMethod("GET");
-                conn.setRequestProperty("Authorization", "KakaoAK c7c0edb9f622d6932c33a50bd0a2aa07");
-
-                conn.connect();
-
-                // 결과 코드가 200이라면 성공
-                // 200 아닐경우 예외처리 필요
-                System.out.println("conn.getResponseCode() = " + conn.getResponseCode());
-                System.out.println("conn.getResponseMessage() = " + conn.getResponseMessage());
-
-                // 요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
-                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-                String line = "";
-                String result = "";
-
-                while ((line = br.readLine()) != null) {
-                    result += line;
-                }
-                System.out.println("result = " + result);
-
-                //Gson 라이브러리에 포함된 클래스로 JSON파싱 객체 생성
-                JsonElement element = JsonParser.parseString(result);
-
-                // 응답 바디에서 필요한 값 뽑아내기
-                RestaurantInfo restaurantInfo;
-                JsonArray documents = element.getAsJsonObject().get("documents").getAsJsonArray();
-
-                for(int i=0; i<documents.size(); i++){
-                    JsonObject restaurant = documents.get(i).getAsJsonObject();
-                    restaurantInfo = RestaurantInfo.builder()
-                            .restaurant_id(restaurant.get("id").getAsLong())
-                            .restaurant_name(restaurant.get("place_name").getAsString())
-                            .restaurant_address(restaurant.get("road_address_name").getAsString())
-                            .category(restaurant.get("category_name").getAsString())
-                            .num_of_party(101)
-                            .imgUrl("https://temp/imgUrl")
-                            .restaurant_longitude(restaurant.get("x").getAsDouble())
-                            .restaurant_latitude(restaurant.get("y").getAsDouble())
-                            .build();
-                    restaurantInfoList.add(restaurantInfo);
-                }
-
-                br.close();
-
-                for(RestaurantInfo info : restaurantInfoList){
-                    System.out.println(info);
-                    System.out.println();
-                }
-
-                JsonObject meta = element.getAsJsonObject().get("meta").getAsJsonObject();
-                boolean isEnd = meta.getAsJsonObject().get("is_end").getAsBoolean();
-                if(isEnd){
-                    break;
-                }
-
-                System.out.println("isEnd = " + isEnd);
-            }catch (IOException e) {
-                e.printStackTrace();
+        // 카카오와 통신한 응답값으로부터 원하는 값만 추출해 리스트에 추가하기
+        for(KakaoRestaurant kakaoRestaurant : kakaoRestaurantList){
+            // 식당 안의 파티개수
+            int partyNum = 0;
+            Restaurant restaurant = restaurantRepository.findOne(kakaoRestaurant.getId());
+            if(restaurant != null){ // 식당이 db에 저장되어 있으면
+                partyNum = partyRepository.countParty(restaurant).intValue();
             }
+
+            RestaurantInfo restaurantInfo2 = RestaurantInfo.builder()
+                    .restaurantId(kakaoRestaurant.getId())
+                    .restaurantName(kakaoRestaurant.getName())
+                    .restaurantAddress(kakaoRestaurant.getAddress())
+                    .category(kakaoRestaurant.getCategory())
+                    .numOfParty(partyNum)
+                    .restaurantLongitude(kakaoRestaurant.getLongitude())
+                    .restaurantLatitude(kakaoRestaurant.getLatitude())
+                    .build();
+
+            restaurantInfoList.add(restaurantInfo2);
         }
 
-        return restaurantInfoList;
+        return new RestaurantsOnMapRes(restaurantInfoList);
     }
 }

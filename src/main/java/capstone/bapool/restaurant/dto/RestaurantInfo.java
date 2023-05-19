@@ -1,36 +1,50 @@
 package capstone.bapool.restaurant.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.*;
 
 @Getter
 @NoArgsConstructor
+@JsonPropertyOrder({"restaurantId", "restaurantName", "restaurantAddress", "category", "numOfParty", "restaurantLongitude", "restaurantLatitude"})
 public class RestaurantInfo {
-    private Long restaurant_id;
-    private String restaurant_name;
-    private String restaurant_address;
+
+    @JsonProperty("restaurant_id")
+    private Long restaurantId;
+
+    @JsonProperty("restaurant_name")
+    private String restaurantName;
+
+    @JsonProperty("restaurant_address")
+    private String restaurantAddress;
+
     private String category;
-    private String imgUrl;
-    private int num_of_party;
-    private double restaurant_longitude;
-    private double restaurant_latitude;
+
+    @JsonProperty("num_of_party")
+    private int numOfParty;
+
+    @JsonProperty("restaurant_longitude")
+    private double restaurantLongitude; //x
+
+    @JsonProperty("restaurant_latitude")
+    private double restaurantLatitude; //y
 
     @Builder
-    public RestaurantInfo(Long restaurant_id, String restaurant_name, String restaurant_address, String category, String imgUrl, int num_of_party, double restaurant_longitude, double restaurant_latitude) {
-        this.restaurant_id = restaurant_id;
-        this.restaurant_name = restaurant_name;
-        this.restaurant_address = restaurant_address;
+    public RestaurantInfo(Long restaurantId, String restaurantName, String restaurantAddress, String category, int numOfParty, double restaurantLongitude, double restaurantLatitude) {
+        this.restaurantId = restaurantId;
+        this.restaurantName = restaurantName;
+        this.restaurantAddress = restaurantAddress;
         this.category = category;
-        this.imgUrl = imgUrl;
-        this.num_of_party = num_of_party;
-        this.restaurant_longitude = restaurant_longitude;
-        this.restaurant_latitude = restaurant_latitude;
+        this.numOfParty = numOfParty;
+        this.restaurantLongitude = restaurantLongitude;
+        this.restaurantLatitude = restaurantLatitude;
     }
 
     @Override
     public String toString(){
-        return "id="+ restaurant_id +"\nname=" + restaurant_name
-                +"\naddress=" + restaurant_address + "\ncategory=" + category
-                +"\nimgUrl=" + imgUrl + "\nnumOfParty=" + num_of_party
-                +"\nlong=" +restaurant_longitude + "\nlat=" + restaurant_latitude;
+        return "id="+ restaurantId +"\nname=" + restaurantName
+                +"\naddress=" + restaurantAddress + "\ncategory=" + category
+                + "\nnumOfParty=" + numOfParty
+                +"\nlong=" + restaurantLongitude + "\nlat=" + restaurantLatitude;
     }
 }

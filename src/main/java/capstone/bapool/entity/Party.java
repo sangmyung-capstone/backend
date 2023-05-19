@@ -1,6 +1,5 @@
-package capstone.bapool.model;
+package capstone.bapool.entity;
 
-import net.bytebuddy.asm.Advice;
 import org.hibernate.annotations.ColumnDefault;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -15,8 +14,8 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Party {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

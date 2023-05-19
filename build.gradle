@@ -55,6 +55,8 @@ dependencies {
 	implementation("io.springfox:springfox-boot-starter:3.0.0")
 	implementation("io.springfox:springfox-swagger-ui:3.0.0")
 
+	// 웹 크롤링 - 셀레니움
+	implementation 'org.seleniumhq.selenium:selenium-java:4.0.0'
 	// @Valid 를 위한 의존관계 추가
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
