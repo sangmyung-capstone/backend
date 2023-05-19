@@ -1,7 +1,7 @@
 package capstone.bapool.party;
 
-import capstone.bapool.entity.Party;
-import capstone.bapool.entity.Restaurant;
+import capstone.bapool.model.Party;
+import capstone.bapool.model.Restaurant;
 import capstone.bapool.party.dto.PartiesInRestaurantRes;
 import capstone.bapool.party.dto.PartyInfo;
 import capstone.bapool.restaurant.RestaurantRepository;

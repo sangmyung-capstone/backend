@@ -1,12 +1,11 @@
 package capstone.bapool.party;
 
-import capstone.bapool.entity.Party;
-import capstone.bapool.entity.Restaurant;
+import capstone.bapool.model.Party;
+import capstone.bapool.model.Restaurant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Repository

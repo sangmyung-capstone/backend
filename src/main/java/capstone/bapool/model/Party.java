@@ -1,5 +1,6 @@
-package capstone.bapool.entity;
+package capstone.bapool.model;
 
+import capstone.bapool.model.Restaurant;
 import org.hibernate.annotations.ColumnDefault;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,7 +11,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity

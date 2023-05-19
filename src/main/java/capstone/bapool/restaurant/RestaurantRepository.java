@@ -1,11 +1,10 @@
 package capstone.bapool.restaurant;
 
-import capstone.bapool.entity.Restaurant;
+import capstone.bapool.model.Restaurant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 
 @Repository
 public class RestaurantRepository {
