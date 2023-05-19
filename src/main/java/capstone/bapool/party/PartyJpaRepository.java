@@ -1,0 +1,42 @@
+package capstone.bapool.party;
+
+import capstone.bapool.model.Party;
+import capstone.bapool.model.Restaurant;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
+import java.util.List;
+
+@Repository
+public class PartyJpaRepository {
+    private EntityManager em;
+
+    @Autowired
+    public PartyJpaRepository(EntityManager em){
+        this.em = em;
+    }
+
+    public Long countParty(Restaurant restaurant){
+
+//        TypedQuery<Integer> query = em.createQuery("select count(*) from Party as p where p.restaurant = :restaurant",Integer.class)
+//                .setParameter("restaurant", restaurant);
+//        return query.getSingleResult();
+
+        return em.createQuery("select count(*) from Party as p where p.restaurant = :restaurant", Long.class)
+                .setParameter("restaurant", restaurant)
+                .getSingleResult();
+    }
+
+    // 식당안의 파티리스트 조회
+    public List<Party> selectPartisInRestaurant(Restaurant restaurant){
+
+        String query = "select p\n" +
+                "from Party as p\n" +
+                "where p.restaurant = :restaurant";
+
+        return em.createQuery(query, Party.class)
+                .setParameter("restaurant", restaurant)
+                .getResultList();
+    }
+}
