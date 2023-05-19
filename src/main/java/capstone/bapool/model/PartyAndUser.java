@@ -1,12 +1,13 @@
 package capstone.bapool.model;
 
+import capstone.bapool.model.enumerate.RoleType;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,16 +28,24 @@ public class PartyAndUser {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Enumerated(value = EnumType.STRING)
+    private RoleType roleType;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "party_id")
     private Party party;
 
 
-    public PartyAndUser(User user, Party party) {
+    private PartyAndUser(User user, Party party, RoleType roleType) {
         this.user = user;
         this.party = party;
         user.getPartyAndUsers().add(this);
         party.getPartyAndUsers().add(this);
+        this.roleType = roleType;
+    }
+
+    public static PartyAndUser makeMapping(User user, Party party,RoleType roleType) {
+        return new PartyAndUser(user, party, roleType);
     }
 
 }
