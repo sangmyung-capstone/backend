@@ -9,6 +9,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
@@ -17,14 +18,17 @@ import java.util.Map;
 
 import static com.google.firebase.database.DatabaseError.UNKNOWN_ERROR;
 
+@Slf4j
 @Repository
 public class FireBaseUserDao {
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
+    private DatabaseReference tempDatabaseReference;
 
     public FireBaseUserDao() {
         this.firebaseDatabase = FirebaseDatabase.getInstance();
         this.databaseReference = firebaseDatabase.getReference("/test/Users");
+        this.tempDatabaseReference = firebaseDatabase.getReference("Groups");
     }
 
     // 저장
@@ -70,5 +74,20 @@ public class FireBaseUserDao {
                 .child("bannedUser")
                 .child(bannedUserId.toString())
                 .removeValueAsync();
+    }
+
+    public void chattingFcmTest(){
+        tempDatabaseReference.child("groupId1").child("groupMessages")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        log.info(snapshot.getKey());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+
+                    }
+                });
     }
 }

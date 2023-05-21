@@ -6,7 +6,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import lombok.AccessLevel;
@@ -30,7 +29,7 @@ public class User{
     private Long id;
 
     @OneToMany(mappedBy = "user")
-    private List<PartyAndUser> partyAndUsers = new ArrayList<PartyAndUser>();
+    private List<PartyParticipant> partyParticipants = new ArrayList<PartyParticipant>();
 
     @Column(nullable = false, length = 20, unique = true)
     private String name;
@@ -46,16 +45,16 @@ public class User{
 
     @Column(name="created_at")
     @CreationTimestamp
-    private LocalDateTime atCreateTime;
+    private LocalDateTime createdAt;
 
     @Builder
-    public User(Long id, String name, String email, Integer profileImgId, String refreshToken, LocalDateTime atCreateTime) {
+    public User(Long id, String name, String email, Integer profileImgId, String refreshToken, LocalDateTime createdAt) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.profileImgId = profileImgId;
         this.refreshToken = refreshToken;
-        this.atCreateTime = atCreateTime;
+        this.createdAt = createdAt;
     }
 
 

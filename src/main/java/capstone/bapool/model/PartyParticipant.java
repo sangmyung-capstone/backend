@@ -19,7 +19,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name= "party_and_user")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PartyAndUser {
+public class PartyParticipant {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "party_and_user_id")
     private Long id;
@@ -36,16 +36,16 @@ public class PartyAndUser {
     private Party party;
 
 
-    private PartyAndUser(User user, Party party, RoleType roleType) {
+    private PartyParticipant(User user, Party party, RoleType roleType) {
         this.user = user;
         this.party = party;
-        user.getPartyAndUsers().add(this);
-        party.getPartyAndUsers().add(this);
+        user.getPartyParticipants().add(this);
+        party.getPartyParticipants().add(this);
         this.roleType = roleType;
     }
 
-    public static PartyAndUser makeMapping(User user, Party party,RoleType roleType) {
-        return new PartyAndUser(user, party, roleType);
+    public static PartyParticipant makeMapping(User user, Party party, RoleType roleType) {
+        return new PartyParticipant(user, party, roleType);
     }
 
 }

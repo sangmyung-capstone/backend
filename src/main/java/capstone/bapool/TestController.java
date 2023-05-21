@@ -28,4 +28,5 @@ public class TestController {
     public ResponseEntity<String> testinfo() throws Exception {
         return ResponseEntity.ok().body("test");
     }
+
 }

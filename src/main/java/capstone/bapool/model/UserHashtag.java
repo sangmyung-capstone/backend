@@ -12,29 +12,31 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
-@Getter
+@Table(name = "user_hashtag")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Hashtag {
+@Getter
+public class UserHashtag {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "hashtag_id")
+    @Column(name = "user_hashtag_id")
     private Long id;
 
-    @Column(name = "value")
-    private Integer value;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "party_id")
-    private Party party;
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    private Hashtag(Party party, Integer value) {
-        this.value = value;
-        this.party = party;
-        party.getHashtags().add(this);
+    @Column(name = "hashtag_id")
+    private int hashtagId;
+
+    private UserHashtag(User user, int hashtagId) {
+        this.user = user;
+        this.hashtagId = hashtagId;
     }
 
-    public static Hashtag of(Party party, Integer value) {
-        return new Hashtag(party, value);
+    public static UserHashtag create(User user, int hashtagId) {
+        return new UserHashtag(user, hashtagId);
     }
+
 }

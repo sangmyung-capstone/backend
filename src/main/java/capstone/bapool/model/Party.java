@@ -30,10 +30,7 @@ public class Party {
     private Restaurant restaurant;
 
     @OneToMany(mappedBy = "party")
-    private List<PartyAndUser> partyAndUsers = new ArrayList<PartyAndUser>();
-
-    @OneToMany(mappedBy = "party")
-    private List<Hashtag> hashtags = new ArrayList<>();
+    private List<PartyParticipant> partyParticipants = new ArrayList<PartyParticipant>();
 
     @Enumerated(value = EnumType.STRING)
     private PartyStatus partyStatus;

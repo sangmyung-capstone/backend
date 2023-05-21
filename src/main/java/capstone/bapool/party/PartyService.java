@@ -1,12 +1,12 @@
 package capstone.bapool.party;
 
 import capstone.bapool.model.Party;
+import capstone.bapool.model.PartyHashtag;
 import capstone.bapool.model.Restaurant;
 import capstone.bapool.party.dto.PartiesInRestaurantRes;
 import capstone.bapool.party.dto.PartyInfo;
 import capstone.bapool.config.error.BaseException;
-import capstone.bapool.model.Hashtag;
-import capstone.bapool.model.PartyAndUser;
+import capstone.bapool.model.PartyParticipant;
 import capstone.bapool.model.User;
 import capstone.bapool.model.enumerate.PartyStatus;
 import capstone.bapool.model.enumerate.RoleType;
@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_RESTAURANT_FAILURE;
 import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_USER_FAILURE;
@@ -57,11 +56,11 @@ public class PartyService {
         Party savedParty = partyRepository.save(party);
 
         for (Integer value : postPartyReq.getHashtag()) {
-            Hashtag hashtag = Hashtag.of(savedParty, value);
-            hashtagRepository.save(hashtag);
+            PartyHashtag partyHashtag = PartyHashtag.create(savedParty, value);
+            hashtagRepository.save(partyHashtag);
         }
-        PartyAndUser partyAndUser = PartyAndUser.makeMapping(user, savedParty, RoleType.LEADER);
-        partyAndUserRepository.save(partyAndUser);
+        PartyParticipant partyParticipant = PartyParticipant.makeMapping(user, savedParty, RoleType.LEADER);
+        partyAndUserRepository.save(partyParticipant);
 
         return savedParty.getId();
     }
