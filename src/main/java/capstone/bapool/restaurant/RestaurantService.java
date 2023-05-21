@@ -1,7 +1,9 @@
 package capstone.bapool.restaurant;
 
-import capstone.bapool.entity.Restaurant;
-import capstone.bapool.party.PartyRepository;
+import capstone.bapool.config.error.BaseException;
+import capstone.bapool.config.error.StatusEnum;
+import capstone.bapool.model.Restaurant;
+import capstone.bapool.party.PartyJpaRepository;
 import capstone.bapool.restaurant.dto.RestaurantsOnMapRes;
 import capstone.bapool.restaurant.dto.RestaurantInfo;
 import capstone.bapool.utils.KakaoLocalApiService;
@@ -20,7 +22,7 @@ public class RestaurantService {
 
     private final KakaoLocalApiService kakaoLocalApiService;
     private final RestaurantRepository restaurantRepository;
-    private final PartyRepository partyRepository;
+    private final PartyJpaRepository partyJpaRepository;
 
     /**
      * 지도화면을 위한 식당리스트 조회
@@ -38,9 +40,10 @@ public class RestaurantService {
         for(KakaoRestaurant kakaoRestaurant : kakaoRestaurantList){
             // 식당 안의 파티개수
             int partyNum = 0;
-            Restaurant restaurant = restaurantRepository.findOne(kakaoRestaurant.getId());
+            Restaurant restaurant = restaurantRepository.findById(kakaoRestaurant.getId())
+                    .orElseThrow(() -> new BaseException(StatusEnum.NOT_FOUND_RESTAURANT_FAILURE));
             if(restaurant != null){ // 식당이 db에 저장되어 있으면
-                partyNum = partyRepository.countParty(restaurant).intValue();
+                partyNum = partyJpaRepository.countParty(restaurant).intValue();
             }
 
             RestaurantInfo restaurantInfo2 = RestaurantInfo.builder()

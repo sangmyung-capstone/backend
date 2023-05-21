@@ -1,9 +1,8 @@
 package capstone.bapool.model;
 
 import lombok.AccessLevel;
-import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,27 +15,28 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name= "party_and_user")
+@Table(name = "user_hashtag")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PartyAndUser {
+@Getter
+public class UserHashtag {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "party_and_user_id")
+    @Column(name = "user_hashtag_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "party_id")
-    private Party party;
+    @Column(name = "hashtag_id")
+    private int hashtagId;
 
-
-    public PartyAndUser(User user, Party party) {
+    private UserHashtag(User user, int hashtagId) {
         this.user = user;
-        this.party = party;
-        user.getPartyAndUsers().add(this);
-        party.getPartyAndUsers().add(this);
+        this.hashtagId = hashtagId;
+    }
+
+    public static UserHashtag create(User user, int hashtagId) {
+        return new UserHashtag(user, hashtagId);
     }
 
 }

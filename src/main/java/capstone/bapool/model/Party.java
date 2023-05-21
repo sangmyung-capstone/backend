@@ -1,5 +1,8 @@
-package capstone.bapool.entity;
+package capstone.bapool.model;
 
+
+import capstone.bapool.model.enumerate.PartyStatus;
+import lombok.Builder;
 import org.hibernate.annotations.ColumnDefault;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,7 +13,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -28,11 +30,10 @@ public class Party {
     private Restaurant restaurant;
 
     @OneToMany(mappedBy = "party")
-    private List<PartyAndUser> partyAndUsers = new ArrayList<PartyAndUser>();
+    private List<PartyParticipant> partyParticipants = new ArrayList<PartyParticipant>();
 
-    @Column(name = "is_close", columnDefinition = "tinyint(4)")
-    @ColumnDefault("false")
-    private boolean isClose;
+    @Enumerated(value = EnumType.STRING)
+    private PartyStatus partyStatus;
 
     private String name;
 
@@ -57,4 +58,16 @@ public class Party {
     @UpdateTimestamp
     @Column(name = "update_at")
     private LocalDateTime updatedAt;
+
+    @Builder
+    public Party(Restaurant restaurant, PartyStatus partyStatus, String name, int maxPeople, LocalDateTime startDate, LocalDateTime endDate, String menu, String detail) {
+        this.restaurant = restaurant;
+        this.partyStatus = partyStatus;
+        this.name = name;
+        this.maxPeople = maxPeople;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.menu = menu;
+        this.detail = detail;
+    }
 }

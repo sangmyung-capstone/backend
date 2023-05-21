@@ -30,7 +30,7 @@ public class UserService {
     private final JwtUtils jwtUtils;
     private final SocialUtils socialUtils;
 
-    private final FireBaseUserDao fireBaseUserDao;
+//    private final FireBaseUserDao fireBaseUserDao;
 
     @Transactional(readOnly = false)
     public ReissueRes signInKakao(SocialAccessToken socialAccessToken) throws BaseException, IOException {
@@ -87,7 +87,7 @@ public class UserService {
 
     private User saveUser(User user) {
         User savedUser = userDao.save(user);
-        fireBaseUserDao.save(new FireBaseUser(savedUser.getId(), savedUser.getName(), savedUser.getProfileImgId()));
+//        fireBaseUserDao.save(new FireBaseUser(savedUser.getId(), savedUser.getName(), savedUser.getProfileImgId()));
         return savedUser;
     }
 
