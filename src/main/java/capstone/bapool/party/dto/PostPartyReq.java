@@ -1,8 +1,10 @@
 package capstone.bapool.party.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -11,11 +13,8 @@ import java.util.Set;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class PostPartyReq {
-    @JsonProperty(value = "restaurant_id")
-    @NotNull
-    private Long restaurantId;
-
     @JsonProperty("party_name")
     @NotBlank
     private String partyName;
@@ -25,9 +24,12 @@ public class PostPartyReq {
     private Integer maxPeople;
 
     @JsonProperty("start_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asis/Seoul")
     @NotNull
     private LocalDateTime startDate;
 
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asis/Seoul")
     @JsonProperty("end_date")
     @NotNull
     private LocalDateTime endDate;
@@ -36,10 +38,10 @@ public class PostPartyReq {
     private String menu;
 
     @NotNull
-    private String imgUrl;
-
-    @NotNull
     Set<Integer> hashtag;
 
     private String detail;
+
+    @JsonProperty("restaurant_info")
+    PostPartyRestaurantReq postPartyRestaurantReq;
 }

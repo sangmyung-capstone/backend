@@ -11,8 +11,9 @@ import capstone.bapool.model.User;
 import capstone.bapool.model.enumerate.PartyStatus;
 import capstone.bapool.model.enumerate.RoleType;
 import capstone.bapool.party.dto.PostPartyReq;
+import capstone.bapool.party.dto.PostPartyRestaurantReq;
 import capstone.bapool.restaurant.RestaurantRepository;
-import capstone.bapool.user.UserDao;
+import capstone.bapool.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,8 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_RESTAURANT_FAILURE;
 import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_USER_FAILURE;
 
 @Slf4j
@@ -30,7 +31,7 @@ import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_USER_FAILURE;
 @RequiredArgsConstructor
 public class PartyService {
     private final RestaurantRepository restaurantRepository;
-    private final UserDao userRepository;
+    private final UserRepository userRepository;
     private final PartyJpaRepository partyJpaRepository;
     private final PartyRepository partyRepository;
     private final PartyAndUserRepository partyAndUserRepository;
@@ -38,8 +39,7 @@ public class PartyService {
 
     @Transactional(readOnly = false)
     public Long save(PostPartyReq postPartyReq, Long userId) {
-        Restaurant restaurant = restaurantRepository.findById(postPartyReq.getRestaurantId())
-                .orElseThrow(() -> new BaseException(NOT_FOUND_RESTAURANT_FAILURE));
+        Restaurant restaurant = saveOrGetRestaurant(postPartyReq);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
 
@@ -65,7 +65,26 @@ public class PartyService {
         return savedParty.getId();
     }
 
+    private Restaurant saveOrGetRestaurant(PostPartyReq postPartyReq) {
+        Optional<Restaurant> optionalRestaurant = restaurantRepository
+                .findById(postPartyReq.getPostPartyRestaurantReq().getRestaurantId());
+        if (!optionalRestaurant.isEmpty()) {
+            return optionalRestaurant.get();
+        }
 
+        PostPartyRestaurantReq restaurantInfo = postPartyReq.getPostPartyRestaurantReq();
+
+        Restaurant restaurant = Restaurant.builder()
+                .id(restaurantInfo.getRestaurantId())
+                .name(restaurantInfo.getName())
+                .address(restaurantInfo.getAddress())
+                .imgUrl(restaurantInfo.getImgUrl())
+                .siteUrl(restaurantInfo.getSiteUrl())
+                .category(restaurantInfo.getCategory())
+                .phone(restaurantInfo.getPhone())
+                .build();
+        return restaurantRepository.save(restaurant);
+    }
 
 
     // 식당안의 파티리스트 조회
