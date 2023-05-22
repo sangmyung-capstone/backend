@@ -1,10 +1,8 @@
 package capstone.bapool.restaurant;
 
-import capstone.bapool.config.error.BaseException;
-import capstone.bapool.config.error.StatusEnum;
 import capstone.bapool.model.Restaurant;
-import capstone.bapool.party.PartyJpaRepository;
-import capstone.bapool.restaurant.dto.RestaurantsOnMapRes;
+import capstone.bapool.party.PartyRepository;
+import capstone.bapool.restaurant.dto.GetRestaurantsOnMapRes;
 import capstone.bapool.restaurant.dto.RestaurantInfo;
 import capstone.bapool.utils.KakaoLocalApiService;
 import capstone.bapool.utils.dto.KakaoRestaurant;
@@ -22,14 +20,14 @@ public class RestaurantService {
 
     private final KakaoLocalApiService kakaoLocalApiService;
     private final RestaurantRepository restaurantRepository;
-    private final PartyJpaRepository partyJpaRepository;
+    private final PartyRepository partyRepository;
 
     /**
      * 지도화면을 위한 식당리스트 조회
      * @param rect 화면의 꼭짓점 값
      * @return
      */
-    public RestaurantsOnMapRes findRestaurantsOnMap(String rect){
+    public GetRestaurantsOnMapRes findRestaurantsOnMap(String rect){
 
         // 카카오 로컬 api 통신
         List<KakaoRestaurant> kakaoRestaurantList = kakaoLocalApiService.searchByCategory(rect);
@@ -40,10 +38,9 @@ public class RestaurantService {
         for(KakaoRestaurant kakaoRestaurant : kakaoRestaurantList){
             // 식당 안의 파티개수
             int partyNum = 0;
-            Restaurant restaurant = restaurantRepository.findById(kakaoRestaurant.getId())
-                    .orElseThrow(() -> new BaseException(StatusEnum.NOT_FOUND_RESTAURANT_FAILURE));
+            Restaurant restaurant = restaurantRepository.findById(kakaoRestaurant.getId()).orElse(null);
             if(restaurant != null){ // 식당이 db에 저장되어 있으면
-                partyNum = partyJpaRepository.countParty(restaurant).intValue();
+                partyNum = partyRepository.countByRestaurant(restaurant).intValue();
             }
 
             RestaurantInfo restaurantInfo2 = RestaurantInfo.builder()
@@ -59,6 +56,6 @@ public class RestaurantService {
             restaurantInfoList.add(restaurantInfo2);
         }
 
-        return new RestaurantsOnMapRes(restaurantInfoList);
+        return new GetRestaurantsOnMapRes(restaurantInfoList);
     }
 }

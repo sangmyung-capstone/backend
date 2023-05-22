@@ -6,16 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class RestaurantsOnMapRes {
+public class GetRestaurantsOnMapRes {
 
     List<RestaurantInfo> restaurantInfos;
 
     /* 생성자 */
-    public RestaurantsOnMapRes(){
+    public GetRestaurantsOnMapRes(){
         this.restaurantInfos = new ArrayList<>();
     }
 
-    public RestaurantsOnMapRes(List<RestaurantInfo> restaurantInfos) {
+    public GetRestaurantsOnMapRes(List<RestaurantInfo> restaurantInfos) {
         this.restaurantInfos = restaurantInfos;
     }
     /* 생성자 끝 */
