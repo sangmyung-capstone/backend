@@ -25,6 +25,7 @@ public enum StatusEnum {
      */
     NOT_FOUND_USER_FAILURE( 404 , "USER NOT FOUND"),
     NOT_FOUND_RESTAURANT_FAILURE(404, "RESTAURANT NOT FOUND"),
+    NOT_FOUND_PARTY_FAILURE(404, "PARTY NOT FOUND"),
 
     /**
      * 통상 오류

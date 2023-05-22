@@ -3,8 +3,11 @@ package capstone.bapool.party;
 
 import capstone.bapool.config.response.ResponseDto;
 import capstone.bapool.party.dto.PartiesInRestaurantRes;
+import capstone.bapool.party.dto.PatchPartyReq;
+import io.swagger.models.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,12 +41,20 @@ public class PartyController {
     }
 
     @PostMapping(value = "/{user-id}")
-    public ResponseEntity<PostPartyRes> create(
+    public ResponseEntity<ResponseDto> create(
             @PathVariable("user-id") Long userId,
             @Valid @RequestBody PostPartyReq postPartyReq
-    )
-    {
+    ) {
         Long partyId = partyService.save(postPartyReq, userId);
-        return ResponseEntity.ok(new PostPartyRes(partyId));
+        return ResponseEntity.ok(ResponseDto.res(new PostPartyRes(partyId)));
+    }
+
+    @PatchMapping(value = "/{user-id}")
+    public ResponseEntity<ResponseDto> update(
+            @PathVariable("user-id") Long userId,
+            @Valid @RequestBody PatchPartyReq patchPartyReq
+    ) {
+        partyService.update(patchPartyReq);
+        return ResponseEntity.ok(ResponseDto.res(null));
     }
 }

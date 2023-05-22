@@ -10,6 +10,7 @@ import capstone.bapool.model.PartyParticipant;
 import capstone.bapool.model.User;
 import capstone.bapool.model.enumerate.PartyStatus;
 import capstone.bapool.model.enumerate.RoleType;
+import capstone.bapool.party.dto.PatchPartyReq;
 import capstone.bapool.party.dto.PostPartyReq;
 import capstone.bapool.party.dto.PostPartyRestaurantReq;
 import capstone.bapool.restaurant.RestaurantRepository;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_PARTY_FAILURE;
 import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_USER_FAILURE;
 
 @Slf4j
@@ -129,5 +131,15 @@ public class PartyService {
         }
 
         return partiesInRestaurantRes;
+    }
+
+    @Transactional(readOnly = false)
+    public void update(PatchPartyReq patchPartyReq) {
+        Party party = partyRepository.findById(patchPartyReq.getPartyId())
+                .orElseThrow(() -> new BaseException(NOT_FOUND_PARTY_FAILURE));
+
+        party.update(patchPartyReq.getPartyName(), patchPartyReq.getMaxPeople(),
+                patchPartyReq.getStartDate(), patchPartyReq.getEndDate(),
+                patchPartyReq.getMenu(), patchPartyReq.getDetail());
     }
 }
