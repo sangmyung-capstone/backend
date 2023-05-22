@@ -6,6 +6,7 @@ import capstone.bapool.party.dto.PartiesInRestaurantRes;
 import capstone.bapool.party.dto.PatchPartyReq;
 import io.swagger.models.Response;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,6 +56,15 @@ public class PartyController {
             @Valid @RequestBody PatchPartyReq patchPartyReq
     ) {
         partyService.update(patchPartyReq);
+        return ResponseEntity.ok(ResponseDto.res(null));
+    }
+
+    @DeleteMapping(value = "/{user-id}/{party-id}")
+    public ResponseEntity<ResponseDto> delete(
+            @PathVariable("user-id") Long userId,
+            @PathVariable("party-id") Long partyId
+    ) {
+        partyService.delete(userId, partyId);
         return ResponseEntity.ok(ResponseDto.res(null));
     }
 }

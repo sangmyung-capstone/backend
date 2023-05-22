@@ -84,4 +84,11 @@ public class Party {
         this.menu = menu;
         this.detail = detail;
     }
+
+    public boolean isLastMember() {
+        if (partyParticipants.size() == 1) {
+            return true;
+        }
+        return false;
+    }
 }

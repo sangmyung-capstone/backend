@@ -17,7 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name= "party_and_user")
+@Table(name= "party_participant")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PartyParticipant {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,6 +46,17 @@ public class PartyParticipant {
 
     public static PartyParticipant makeMapping(User user, Party party, RoleType roleType) {
         return new PartyParticipant(user, party, roleType);
+    }
+
+    public boolean isLeader() {
+        if (roleType == RoleType.LEADER) {
+            return true;
+        }
+        return false;
+    }
+
+    public void becomeLeader() {
+        this.roleType = RoleType.LEADER;
     }
 
 }

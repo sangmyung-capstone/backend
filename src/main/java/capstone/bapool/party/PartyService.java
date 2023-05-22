@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_PARTY_FAILURE;
+import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_PARTY_PARTICIPANT_FAILURE;
+import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_RESTAURANT_FAILURE;
 import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_USER_FAILURE;
 
 @Slf4j
@@ -141,5 +143,33 @@ public class PartyService {
         party.update(patchPartyReq.getPartyName(), patchPartyReq.getMaxPeople(),
                 patchPartyReq.getStartDate(), patchPartyReq.getEndDate(),
                 patchPartyReq.getMenu(), patchPartyReq.getDetail());
+    }
+
+    @Transactional(readOnly = false)
+    public void delete(Long userId, Long partyId) {
+        Party party = partyRepository.findById(partyId)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_PARTY_FAILURE));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
+        if (party.isLastMember()) {
+            validateExists(party, user);
+            partyRepository.delete(party);
+            return;
+        }
+        
+        PartyParticipant partyParticipant = partyAndUserRepository.findPartyParticipantByUserAndParty(user, party)
+                .orElseThrow((() -> new BaseException(NOT_FOUND_PARTY_PARTICIPANT_FAILURE)));
+        if (partyParticipant.isLeader()) {
+            PartyParticipant memberParticipant = partyAndUserRepository
+                    .findByPartyAndRoleType(party, RoleType.MEMBER);
+            memberParticipant.becomeLeader();
+        }
+        partyAndUserRepository.delete(partyParticipant);
+    }
+
+    private void validateExists(Party party, User user) {
+        if (!partyAndUserRepository.existsByUserAndParty(user, party)) {
+            throw new BaseException(NOT_FOUND_PARTY_PARTICIPANT_FAILURE);
+        }
     }
 }
