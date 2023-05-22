@@ -29,9 +29,9 @@ import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_USER_FAILURE;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class PartyService {
+
     private final RestaurantRepository restaurantRepository;
     private final UserDao userRepository;
-    private final PartyJpaRepository partyJpaRepository;
     private final PartyRepository partyRepository;
     private final PartyAndUserRepository partyAndUserRepository;
     private final HashtagRepository hashtagRepository;
@@ -65,9 +65,6 @@ public class PartyService {
         return savedParty.getId();
     }
 
-
-
-
     // 식당안의 파티리스트 조회
     public PartiesInRestaurantRes findPartiesInRestaurant(Long userId, Long restaurantId){
 
@@ -90,7 +87,7 @@ public class PartyService {
         rating.add(4.2);
 
         // 해당 식당안의 파티리스트 조회
-        List<Party> parties = partyJpaRepository.selectPartisInRestaurant(restaurant);
+        List<Party> parties = partyRepository.findByRestaurant(restaurant);
         for(Party party : parties){
             PartyInfo partyInfo = PartyInfo.builder()
                     .partyId(party.getId())
