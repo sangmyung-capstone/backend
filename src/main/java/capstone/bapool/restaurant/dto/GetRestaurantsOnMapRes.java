@@ -1,5 +1,6 @@
 package capstone.bapool.restaurant.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.List;
 @Getter
 public class GetRestaurantsOnMapRes {
 
+    @JsonProperty("restaurants")
     List<RestaurantInfo> restaurantInfos;
 
     /* 생성자 */
