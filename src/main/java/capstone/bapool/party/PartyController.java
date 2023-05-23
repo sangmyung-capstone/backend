@@ -4,7 +4,6 @@ package capstone.bapool.party;
 import capstone.bapool.config.response.ResponseDto;
 import capstone.bapool.party.dto.PartiesInRestaurantRes;
 import capstone.bapool.party.dto.PatchPartyReq;
-import io.swagger.models.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,7 +37,7 @@ public class PartyController {
 
         System.out.println("partiesInRestaurantRes = " + partiesInRestaurantRes.getPartyInfos().size());
 
-        return ResponseDto.res(partiesInRestaurantRes);
+        return ResponseDto.create(partiesInRestaurantRes);
     }
 
     @PostMapping(value = "/{user-id}")
@@ -47,7 +46,7 @@ public class PartyController {
             @Valid @RequestBody PostPartyReq postPartyReq
     ) {
         Long partyId = partyService.save(postPartyReq, userId);
-        return ResponseEntity.ok(ResponseDto.res(new PostPartyRes(partyId)));
+        return ResponseEntity.ok(ResponseDto.create(new PostPartyRes(partyId)));
     }
 
     @PatchMapping(value = "/{user-id}")
@@ -56,7 +55,7 @@ public class PartyController {
             @Valid @RequestBody PatchPartyReq patchPartyReq
     ) {
         partyService.update(patchPartyReq);
-        return ResponseEntity.ok(ResponseDto.res(null));
+        return ResponseEntity.ok(ResponseDto.create(null));
     }
 
     @DeleteMapping(value = "/{user-id}/{party-id}")
@@ -65,7 +64,7 @@ public class PartyController {
             @PathVariable("party-id") Long partyId
     ) {
         partyService.delete(userId, partyId);
-        return ResponseEntity.ok(ResponseDto.res(null));
+        return ResponseEntity.ok(ResponseDto.create(null));
     }
 
     @PatchMapping(value = "/close/{user-id}/{party-id}")
@@ -74,6 +73,6 @@ public class PartyController {
             @PathVariable("party-id") Long partyId
     ) {
         partyService.close(partyId);
-        return ResponseEntity.ok(ResponseDto.res(null));
+        return ResponseEntity.ok(ResponseDto.create(null));
     }
 }

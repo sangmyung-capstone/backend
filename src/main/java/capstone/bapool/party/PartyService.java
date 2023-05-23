@@ -26,7 +26,6 @@ import java.util.Optional;
 
 import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_PARTY_FAILURE;
 import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_PARTY_PARTICIPANT_FAILURE;
-import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_RESTAURANT_FAILURE;
 import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_USER_FAILURE;
 
 @Slf4j
@@ -38,8 +37,8 @@ public class PartyService {
     private final UserRepository userRepository;
     private final PartyJpaRepository partyJpaRepository;
     private final PartyRepository partyRepository;
-    private final PartyAndUserRepository partyAndUserRepository;
-    private final HashtagRepository hashtagRepository;
+    private final PartyParticipantRepository partyParticipantRepository;
+    private final PartyHashtagRepository partyHashtagRepository;
 
     @Transactional(readOnly = false)
     public Long save(PostPartyReq postPartyReq, Long userId) {
@@ -61,10 +60,10 @@ public class PartyService {
 
         for (Integer value : postPartyReq.getHashtag()) {
             PartyHashtag partyHashtag = PartyHashtag.create(savedParty, value);
-            hashtagRepository.save(partyHashtag);
+            partyHashtagRepository.save(partyHashtag);
         }
         PartyParticipant partyParticipant = PartyParticipant.makeMapping(user, savedParty, RoleType.LEADER);
-        partyAndUserRepository.save(partyParticipant);
+        partyParticipantRepository.save(partyParticipant);
 
         return savedParty.getId();
     }
@@ -157,19 +156,19 @@ public class PartyService {
             return;
         }
 
-        PartyParticipant partyParticipant = partyAndUserRepository.findPartyParticipantByUserAndParty(user, party)
+        PartyParticipant partyParticipant = partyParticipantRepository.findPartyParticipantByUserAndParty(user, party)
                 .orElseThrow((() -> new BaseException(NOT_FOUND_PARTY_PARTICIPANT_FAILURE)));
         if (partyParticipant.isLeader()) {
-            PartyParticipant memberParticipant = partyAndUserRepository
+            PartyParticipant memberParticipant = partyParticipantRepository
                     .findByPartyAndRoleType(party, RoleType.MEMBER);
             memberParticipant.becomeLeader();
             // 파티장 바꾸는 파이어베이스 코드
         }
-        partyAndUserRepository.delete(partyParticipant);
+        partyParticipantRepository.delete(partyParticipant);
     }
 
     private void validateExists(Party party, User user) {
-        if (!partyAndUserRepository.existsByUserAndParty(user, party)) {
+        if (!partyParticipantRepository.existsByUserAndParty(user, party)) {
             throw new BaseException(NOT_FOUND_PARTY_PARTICIPANT_FAILURE);
         }
     }

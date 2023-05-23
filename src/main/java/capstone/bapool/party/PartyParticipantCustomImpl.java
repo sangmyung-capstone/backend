@@ -7,7 +7,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import javax.persistence.EntityManager;
 
-import static capstone.bapool.model.QPartyAndUser.partyAndUser;
+import static capstone.bapool.model.QPartyParticipant.partyParticipant;
+
 
 public class PartyParticipantCustomImpl implements PartyParticipantCustomRepository{
     private final JPAQueryFactory queryFactory;
@@ -19,10 +20,10 @@ public class PartyParticipantCustomImpl implements PartyParticipantCustomReposit
     @Override
     public PartyParticipant findByPartyAndRoleType(Party party, RoleType roletype) {
         return queryFactory
-                .select(partyAndUser)
-                .from(partyAndUser)
-                .where(partyAndUser.party.eq(party)
-                        .and(partyAndUser.roleType.eq(roletype)))
+                .select(partyParticipant)
+                .from(partyParticipant)
+                .where(partyParticipant.party.eq(party)
+                        .and(partyParticipant.roleType.eq(roletype)))
                 .fetchFirst();
     }
 }

@@ -1,6 +1,8 @@
 package capstone.bapool.user;
 
 import capstone.bapool.config.error.BaseException;
+import capstone.bapool.firebase.FireBaseUserRepository;
+import capstone.bapool.firebase.dto.FireBaseUser;
 import capstone.bapool.model.User;
 import capstone.bapool.user.dto.ReissueReq;
 import capstone.bapool.user.dto.ReissueRes;
@@ -28,7 +30,7 @@ public class UserService {
     private final JwtUtils jwtUtils;
     private final SocialUtils socialUtils;
 
-//    private final FireBaseUserDao fireBaseUserDao;
+//    private final FireBaseUserRepository fireBaseUserDao;
 
     @Transactional(readOnly = false)
     public ReissueRes signInKakao(SocialAccessToken socialAccessToken) throws BaseException, IOException {
