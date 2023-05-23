@@ -6,11 +6,12 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.FileInputStream;
 
-@Configuration
+@Component
 public class FireBaseConfig {
     @Value("${firebase-realtime-database.database-url}")
     private String url;

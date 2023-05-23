@@ -11,21 +11,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.google.firebase.database.DatabaseError.UNKNOWN_ERROR;
-
 @Slf4j
 @Repository
-public class FireBaseUserDao {
+public class FireBaseUserRepository {
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private DatabaseReference tempDatabaseReference;
 
-    public FireBaseUserDao() {
+    public FireBaseUserRepository() {
         this.firebaseDatabase = FirebaseDatabase.getInstance();
         this.databaseReference = firebaseDatabase.getReference("/test/Users");
         this.tempDatabaseReference = firebaseDatabase.getReference("Groups");

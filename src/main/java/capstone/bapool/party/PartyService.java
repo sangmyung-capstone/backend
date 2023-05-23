@@ -156,13 +156,14 @@ public class PartyService {
             partyRepository.delete(party);
             return;
         }
-        
+
         PartyParticipant partyParticipant = partyAndUserRepository.findPartyParticipantByUserAndParty(user, party)
                 .orElseThrow((() -> new BaseException(NOT_FOUND_PARTY_PARTICIPANT_FAILURE)));
         if (partyParticipant.isLeader()) {
             PartyParticipant memberParticipant = partyAndUserRepository
                     .findByPartyAndRoleType(party, RoleType.MEMBER);
             memberParticipant.becomeLeader();
+            // 파티장 바꾸는 파이어베이스 코드
         }
         partyAndUserRepository.delete(partyParticipant);
     }
@@ -171,5 +172,12 @@ public class PartyService {
         if (!partyAndUserRepository.existsByUserAndParty(user, party)) {
             throw new BaseException(NOT_FOUND_PARTY_PARTICIPANT_FAILURE);
         }
+    }
+
+    @Transactional(readOnly = false)
+    public void close(Long partyId) {
+        Party party = partyRepository.findById(partyId)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_PARTY_FAILURE));
+        party.close();
     }
 }

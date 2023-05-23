@@ -67,4 +67,13 @@ public class PartyController {
         partyService.delete(userId, partyId);
         return ResponseEntity.ok(ResponseDto.res(null));
     }
+
+    @PatchMapping(value = "/close/{user-id}/{party-id}")
+    public ResponseEntity<ResponseDto> close(
+            @PathVariable("user-id") Long userId,
+            @PathVariable("party-id") Long partyId
+    ) {
+        partyService.close(partyId);
+        return ResponseEntity.ok(ResponseDto.res(null));
+    }
 }

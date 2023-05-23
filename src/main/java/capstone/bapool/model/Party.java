@@ -91,4 +91,8 @@ public class Party {
         }
         return false;
     }
+
+    public void close() {
+        partyStatus = PartyStatus.DEADLINE;
+    }
 }
