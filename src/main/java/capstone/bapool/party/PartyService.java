@@ -96,7 +96,7 @@ public class PartyService {
                     .menu(party.getMenu())
                     .detail(party.getDetail())
                     .hasBlockUser(false) // 다시 입력해줘야함!!
-                    .participants(0) // 다시 입력해줘야함!!
+                    .participants(1) // 다시 입력해줘야함!!
                     .maxPeople(party.getMaxPeople())
                     .startDate(party.getStartDate())
                     .endDate(party.getEndDate())
