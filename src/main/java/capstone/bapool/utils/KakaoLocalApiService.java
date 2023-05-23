@@ -64,7 +64,7 @@ public class KakaoLocalApiService {
                             .address(restaurant.get("road_address_name").getAsString())
                             .category(restaurant.get("category_name").getAsString())
                             .phone(restaurant.get("phone").getAsString())
-                            .siteUrl(restaurant.get("place_name").getAsString())
+                            .siteUrl(restaurant.get("place_url").getAsString())
                             .longitude(restaurant.get("x").getAsDouble())
                             .latitude(restaurant.get("y").getAsDouble())
                             .build();
@@ -140,7 +140,7 @@ public class KakaoLocalApiService {
                                 .address(restaurant.get("road_address_name").getAsString())
                                 .category(restaurant.get("category_name").getAsString())
                                 .phone(restaurant.get("phone").getAsString())
-                                .siteUrl(restaurant.get("place_name").getAsString())
+                                .siteUrl(restaurant.get("place_url").getAsString())
                                 .longitude(restaurant.get("x").getAsDouble())
                                 .latitude(restaurant.get("y").getAsDouble())
                                 .build();
