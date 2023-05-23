@@ -43,4 +43,28 @@ public class FireBaseGroupRepository {
                 .child("groupUsers")
                 .updateChildrenAsync(Map.of(userId.toString(), false));
     }
+
+    public void delete(Long partyId) {
+        databaseReference.child(partyId.toString())
+                .removeValueAsync();
+    }
+
+    public void secession(Long partyId, Long userId, int curNumberOfPeople) {
+        databaseReference.child(partyId.toString())
+                .child("groupInfo")
+                .child("curNumberOfPeople")
+                .setValueAsync(curNumberOfPeople - 1);
+
+        databaseReference.child(partyId.toString())
+                .child("groupUsers")
+                .child(userId.toString())
+                .removeValueAsync();
+    }
+
+    public void becomeLeader(Long partyId, Long userId) {
+        databaseReference.child(partyId.toString())
+                .child("groupUsers")
+                .child(userId.toString())
+                .setValueAsync(true);
+    }
 }
