@@ -4,18 +4,23 @@ import capstone.bapool.firebase.dto.FireBaseParty;
 import capstone.bapool.firebase.dto.FireBasePartyInfo;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
 @Repository
+@NoArgsConstructor
 public class FireBaseGroupRepository {
 
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
 
-    public FireBaseGroupRepository() {
+
+    @PostConstruct
+    public void init() {
         this.firebaseDatabase = FirebaseDatabase.getInstance();
         this.databaseReference = firebaseDatabase.getReference("/test/Groups");
     }
