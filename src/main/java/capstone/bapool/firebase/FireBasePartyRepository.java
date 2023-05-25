@@ -25,7 +25,7 @@ public class FireBasePartyRepository {
         this.databaseReference = firebaseDatabase.getReference("/test/Groups");
     }
 
-    public void saveGroupInfo(FireBasePartyInfo fireBasePartyInfo, Long userId, Long groupId) {
+    public void save(FireBasePartyInfo fireBasePartyInfo, Long userId, Long groupId) {
         FireBaseParty fireBaseParty = new FireBaseParty(fireBasePartyInfo, new HashMap<String, Boolean>() {{
             put(userId.toString(), true);
         }});

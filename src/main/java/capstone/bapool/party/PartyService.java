@@ -1,6 +1,7 @@
 package capstone.bapool.party;
 
-import capstone.bapool.config.error.StatusEnum;
+import capstone.bapool.firebase.FireBasePartyRepository;
+import capstone.bapool.firebase.dto.FireBasePartyInfo;
 import capstone.bapool.model.Party;
 import capstone.bapool.model.PartyHashtag;
 import capstone.bapool.model.Restaurant;
@@ -40,6 +41,7 @@ public class PartyService {
     private final PartyRepository partyRepository;
     private final PartyParticipantRepository partyParticipantRepository;
     private final PartyHashtagRepository partyHashtagRepository;
+    private final FireBasePartyRepository fireBasePartyRepository;
 
     @Transactional(readOnly = false)
     public Long save(PostPartyReq postPartyReq, Long userId) {
@@ -66,6 +68,7 @@ public class PartyService {
         PartyParticipant partyParticipant = PartyParticipant.makeMapping(user, savedParty, RoleType.LEADER);
         partyParticipantRepository.save(partyParticipant);
 
+        fireBasePartyRepository.save(new FireBasePartyInfo(postPartyReq), user.getId(), party.getId());
         return savedParty.getId();
     }
 

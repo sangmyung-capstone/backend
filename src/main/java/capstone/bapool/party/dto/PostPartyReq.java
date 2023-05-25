@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -38,7 +39,7 @@ public class PostPartyReq {
     private String menu;
 
     @NotNull
-    Set<Integer> hashtag;
+    List<Integer> hashtag;
 
     private String detail;
 

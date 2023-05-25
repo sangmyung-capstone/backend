@@ -21,7 +21,7 @@ public class fireBaseGroupController {
 
     @PostMapping("")
     public ResponseEntity<String> save(@RequestBody PartyDto partyDto) throws BaseException {
-        firebasePartyRepository.saveGroupInfo(partyDto.getFireBaseGroupInfo(), partyDto.getUserId(), partyDto.getGroupId());
+        firebasePartyRepository.save(partyDto.getFireBaseGroupInfo(), partyDto.getUserId(), partyDto.getGroupId());
         return ResponseEntity.ok().body("성공");
     }
 
