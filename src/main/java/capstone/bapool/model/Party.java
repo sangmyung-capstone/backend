@@ -100,4 +100,8 @@ public class Party {
     public void close() {
         partyStatus = PartyStatus.DEADLINE;
     }
+
+    public int getCurPartyMember() {
+        return partyParticipants.size();
+    }
 }

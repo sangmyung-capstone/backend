@@ -159,6 +159,7 @@ public class PartyService {
         if (party.isLastMember()) {
             validateExists(party, user);
             partyRepository.delete(party);
+            fireBasePartyRepository.delete(partyId);
             return;
         }
 
@@ -168,9 +169,11 @@ public class PartyService {
             PartyParticipant memberParticipant = partyParticipantRepository
                     .findByPartyAndRoleType(party, RoleType.MEMBER);
             memberParticipant.becomeLeader();
-            // 파티장 바꾸는 파이어베이스 코드
+            fireBasePartyRepository.becomeLeader(partyId, memberParticipant.getUser().getId());
         }
+        int curPartyMember = party.getCurPartyMember();
         partyParticipantRepository.delete(partyParticipant);
+        fireBasePartyRepository.secession(partyId, userId, curPartyMember);
     }
 
     private void validateExists(Party party, User user) {
@@ -192,8 +195,9 @@ public class PartyService {
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
         Party party = partyRepository.findById(partyId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_PARTY_FAILURE));
-
+        int curNumberOfPeople = party.getCurPartyMember();
         PartyParticipant partyParticipant = PartyParticipant.makeMapping(user, party, RoleType.MEMBER);
         partyParticipantRepository.save(partyParticipant);
+        fireBasePartyRepository.participate(partyId, userId, curNumberOfPeople);
     }
 }

@@ -4,6 +4,7 @@ import capstone.bapool.config.error.BaseException;
 import capstone.bapool.config.error.StatusEnum;
 import capstone.bapool.model.enumerate.RoleType;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
@@ -21,6 +22,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name= "party_participant")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class PartyParticipant {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "party_and_user_id")
