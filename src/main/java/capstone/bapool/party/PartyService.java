@@ -188,4 +188,15 @@ public class PartyService {
                 .orElseThrow(() -> new BaseException(NOT_FOUND_PARTY_FAILURE));
         party.close();
     }
+
+    @Transactional(readOnly = false)
+    public void participate(Long userId, Long partyId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
+        Party party = partyRepository.findById(partyId)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_PARTY_FAILURE));
+
+        PartyParticipant partyParticipant = PartyParticipant.makeMapping(user, party, RoleType.MEMBER);
+        partyParticipantRepository.save(partyParticipant);
+    }
 }

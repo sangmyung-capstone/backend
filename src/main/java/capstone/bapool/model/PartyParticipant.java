@@ -1,5 +1,7 @@
 package capstone.bapool.model;
 
+import capstone.bapool.config.error.BaseException;
+import capstone.bapool.config.error.StatusEnum;
 import capstone.bapool.model.enumerate.RoleType;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -45,6 +47,9 @@ public class PartyParticipant {
     }
 
     public static PartyParticipant makeMapping(User user, Party party, RoleType roleType) {
+        if (party.getMaxPeople() == party.getPartyParticipants().size()) {
+            throw new BaseException(StatusEnum.PARTY_IS_FULL);
+        }
         return new PartyParticipant(user, party, roleType);
     }
 

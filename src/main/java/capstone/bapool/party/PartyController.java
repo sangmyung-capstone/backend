@@ -4,6 +4,7 @@ package capstone.bapool.party;
 import capstone.bapool.config.response.ResponseDto;
 import capstone.bapool.party.dto.PartiesInRestaurantRes;
 import capstone.bapool.party.dto.PatchPartyReq;
+import capstone.bapool.party.dto.PostPartyParticipantReq;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -73,6 +74,14 @@ public class PartyController {
             @PathVariable("party-id") Long partyId
     ) {
         partyService.close(partyId);
+        return ResponseEntity.ok(ResponseDto.create(null));
+    }
+
+    @PostMapping("/participant/{user-id}")
+    public ResponseEntity<Object> participate(
+            @PathVariable("user-id") Long userId,
+            @Valid @RequestBody PostPartyParticipantReq postPartyParticipantReq) {
+        partyService.participate(userId, postPartyParticipantReq.getPartyId());
         return ResponseEntity.ok(ResponseDto.create(null));
     }
 }
