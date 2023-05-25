@@ -1,6 +1,8 @@
 package capstone.bapool.model;
 
 
+import capstone.bapool.config.error.BaseException;
+import capstone.bapool.config.error.StatusEnum;
 import capstone.bapool.model.enumerate.PartyStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -77,6 +79,9 @@ public class Party {
 
     public void update(String name, Integer maxPeople, LocalDateTime startDate,
                        LocalDateTime endDate, String menu, String detail) {
+        if (partyStatus != PartyStatus.RECRUITING) {
+            throw new BaseException(StatusEnum.PARTY_STATUS_IS_NOT_RECRUITING);
+        }
         this.name = name;
         this.maxPeople = maxPeople;
         this.startDate = startDate;
