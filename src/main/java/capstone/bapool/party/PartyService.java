@@ -146,6 +146,7 @@ public class PartyService {
         party.update(patchPartyReq.getPartyName(), patchPartyReq.getMaxPeople(),
                 patchPartyReq.getStartDate(), patchPartyReq.getEndDate(),
                 patchPartyReq.getMenu(), patchPartyReq.getDetail());
+        fireBasePartyRepository.update(new FireBasePartyInfo(patchPartyReq) , patchPartyReq.getPartyId());
     }
 
 

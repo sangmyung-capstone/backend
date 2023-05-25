@@ -1,6 +1,7 @@
 package capstone.bapool.firebase.dto;
 
 
+import capstone.bapool.party.dto.PatchPartyReq;
 import capstone.bapool.party.dto.PostPartyReq;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,5 +30,14 @@ public class FireBasePartyInfo {
         this.startDate = partyReq.getStartDate().toString();
         this.endDate = partyReq.getEndDate().toString();
         this.hashTag = partyReq.getHashtag();
+    }
+
+    public FireBasePartyInfo(PatchPartyReq patchPartyReq) {
+        this.groupName = patchPartyReq.getPartyName();
+        this.groupDetail = patchPartyReq.getDetail();
+        this.curNumberOfPeople = 1;
+        this.maxNumberOfPeople = patchPartyReq.getMaxPeople();
+        this.startDate = patchPartyReq.getStartDate().toString();
+        this.endDate = patchPartyReq.getEndDate().toString();
     }
 }

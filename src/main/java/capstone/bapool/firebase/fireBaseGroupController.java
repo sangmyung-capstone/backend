@@ -27,7 +27,7 @@ public class fireBaseGroupController {
 
     @PatchMapping("/{groupId}")
     public ResponseEntity<String> update(@RequestBody FireBasePartyInfo fireBasePartyInfo, @PathVariable Long groupId) {
-        firebasePartyRepository.updateGroupInfo(fireBasePartyInfo, groupId);
+        firebasePartyRepository.update(fireBasePartyInfo, groupId);
         return ResponseEntity.ok().body("성공");
     }
 

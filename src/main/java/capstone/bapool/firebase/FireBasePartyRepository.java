@@ -33,7 +33,7 @@ public class FireBasePartyRepository {
                 .setValueAsync(fireBaseParty);
     }
 
-    public void updateGroupInfo(FireBasePartyInfo fireBasePartyInfo, Long groupId) {
+    public void update(FireBasePartyInfo fireBasePartyInfo, Long groupId) {
         databaseReference.child(groupId.toString())
                 .child("groupInfo")
                 .setValueAsync(fireBasePartyInfo);
