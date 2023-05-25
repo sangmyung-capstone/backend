@@ -20,6 +20,12 @@ public enum StatusEnum {
     EXPIRATION_TOKEN(401, "EXPIRATION TOKEN"),
 
     /**
+     * 잘못 권리 에러
+     * 403 오류
+     */
+    PARTY_STATUS_IS_NOT_RECRUITING(403,"파티가 모집중인 상태가 아닙니다."),
+
+    /**
      * NOT FOUND 오류
      * 404 오류
      */

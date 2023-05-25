@@ -1,5 +1,6 @@
 package capstone.bapool.party;
 
+import capstone.bapool.config.error.StatusEnum;
 import capstone.bapool.model.Party;
 import capstone.bapool.model.PartyHashtag;
 import capstone.bapool.model.Restaurant;
@@ -138,10 +139,18 @@ public class PartyService {
     public void update(PatchPartyReq patchPartyReq) {
         Party party = partyRepository.findById(patchPartyReq.getPartyId())
                 .orElseThrow(() -> new BaseException(NOT_FOUND_PARTY_FAILURE));
+        validateRecruiting(party);
+
 
         party.update(patchPartyReq.getPartyName(), patchPartyReq.getMaxPeople(),
                 patchPartyReq.getStartDate(), patchPartyReq.getEndDate(),
                 patchPartyReq.getMenu(), patchPartyReq.getDetail());
+    }
+
+    private void validateRecruiting(Party party) {
+        if (party.getPartyStatus() != PartyStatus.RECRUITING) {
+            throw new BaseException(StatusEnum.PARTY_STATUS_IS_NOT_RECRUITING);
+        }
     }
 
     @Transactional(readOnly = false)

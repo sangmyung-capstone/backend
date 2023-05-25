@@ -17,36 +17,36 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/firebase/groups")
 @RequiredArgsConstructor
 public class fireBaseGroupController {
-    private final FireBaseGroupRepository firebaseGroupRepository;
+    private final FireBasePartyRepository firebasePartyRepository;
 
     @PostMapping("")
     public ResponseEntity<String> save(@RequestBody PartyDto partyDto) throws BaseException {
-        firebaseGroupRepository.saveGroupInfo(partyDto.getFireBaseGroupInfo(), partyDto.getUserId(), partyDto.getGroupId());
+        firebasePartyRepository.saveGroupInfo(partyDto.getFireBaseGroupInfo(), partyDto.getUserId(), partyDto.getGroupId());
         return ResponseEntity.ok().body("성공");
     }
 
     @PatchMapping("/{groupId}")
     public ResponseEntity<String> update(@RequestBody FireBasePartyInfo fireBasePartyInfo, @PathVariable Long groupId) {
-        firebaseGroupRepository.updateGroupInfo(fireBasePartyInfo, groupId);
+        firebasePartyRepository.updateGroupInfo(fireBasePartyInfo, groupId);
         return ResponseEntity.ok().body("성공");
     }
 
     @PatchMapping("/{partyId}/{userId}/{curNumberOfPeople}")
     public ResponseEntity<String> participate(@PathVariable Long partyId, @PathVariable Long userId, @PathVariable Integer curNumberOfPeople) {
-        firebaseGroupRepository.participate(partyId, userId, curNumberOfPeople);
+        firebasePartyRepository.participate(partyId, userId, curNumberOfPeople);
         return ResponseEntity.ok().body("성공");
     }
 
     @DeleteMapping("/{partyId}")
     public ResponseEntity<String> delete(@PathVariable Long partyId) {
-        firebaseGroupRepository.delete(partyId);
+        firebasePartyRepository.delete(partyId);
         return ResponseEntity.ok().body("성공");
     }
 
     @DeleteMapping("/{partyId}/{userId1}/{userId2}")
     public ResponseEntity<String> secessionLeader(@PathVariable Long partyId, @PathVariable Long userId1, @PathVariable Long userId2) {
-        firebaseGroupRepository.secession(partyId, userId1, 3);
-        firebaseGroupRepository.becomeLeader(partyId, userId2);
+        firebasePartyRepository.secession(partyId, userId1, 3);
+        firebasePartyRepository.becomeLeader(partyId, userId2);
         return ResponseEntity.ok().body("성공");
     }
 

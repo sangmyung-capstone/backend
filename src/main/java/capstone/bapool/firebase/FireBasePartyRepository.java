@@ -14,13 +14,13 @@ import java.util.Map;
 
 @Slf4j
 @Repository
-public class FireBaseGroupRepository {
+public class FireBasePartyRepository {
 
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
 
     @Autowired
-    public FireBaseGroupRepository(FirebaseApp firebaseApp) {
+    public FireBasePartyRepository(FirebaseApp firebaseApp) {
         this.firebaseDatabase = FirebaseDatabase.getInstance(firebaseApp);
         this.databaseReference = firebaseDatabase.getReference("/test/Groups");
     }
