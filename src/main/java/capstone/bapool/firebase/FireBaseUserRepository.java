@@ -4,29 +4,31 @@ import capstone.bapool.config.error.BaseException;
 import capstone.bapool.config.error.StatusEnum;
 import capstone.bapool.firebase.dto.FireBaseUser;
 import capstone.bapool.firebase.dto.UserDto;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.google.firebase.database.DatabaseError.UNKNOWN_ERROR;
-
 @Slf4j
 @Repository
-public class FireBaseUserDao {
+public class FireBaseUserRepository {
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private DatabaseReference tempDatabaseReference;
 
-    public FireBaseUserDao() {
-        this.firebaseDatabase = FirebaseDatabase.getInstance();
+    @Autowired
+    public FireBaseUserRepository(FirebaseApp firebaseApp) {
+        this.firebaseDatabase = FirebaseDatabase.getInstance(firebaseApp);
         this.databaseReference = firebaseDatabase.getReference("/test/Users");
         this.tempDatabaseReference = firebaseDatabase.getReference("Groups");
     }

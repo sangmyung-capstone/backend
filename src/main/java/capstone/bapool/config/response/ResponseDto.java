@@ -18,11 +18,11 @@ public class ResponseDto<T> {
     }
 
 
-    public static <T> ResponseDto<T> res(T body) {
-        return res(StatusEnum.SUCCESS.getCode(), StatusEnum.SUCCESS.getMessage(), body);
+    public static <T> ResponseDto<T> create(T body) {
+        return create(StatusEnum.SUCCESS.getCode(), StatusEnum.SUCCESS.getMessage(), body);
     }
 
-    public static<T> ResponseDto<T> res(int code, String message, T result) {
+    public static<T> ResponseDto<T> create(int code, String message, T result) {
         return ResponseDto.<T>builder()
                 .code(code)
                 .message(message)
