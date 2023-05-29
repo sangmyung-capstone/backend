@@ -25,7 +25,7 @@ public class RestaurantController {
 
         ResponseDto responseDto = new ResponseDto<GetRestaurantsOnMapRes>(200,"요청성공",restaurantService.findRestaurantsOnMap(rect));
 
-        return ResponseEntity.ok().body(ResponseDto.create(restaurantService.findRestaurantsOnMap(rect)));
+        return ResponseEntity.ok().body(ResponseDto.res(restaurantService.findRestaurantsOnMap(rect)));
     }
 
     // 식당 마커정보 화면

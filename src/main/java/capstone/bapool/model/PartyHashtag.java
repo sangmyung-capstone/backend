@@ -19,7 +19,7 @@ import javax.persistence.Table;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "party_hashtag")
 public class PartyHashtag {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     @Column(name = "party_hashtag_id")
     private Long id;
 

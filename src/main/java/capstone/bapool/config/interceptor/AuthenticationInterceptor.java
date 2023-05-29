@@ -1,6 +1,6 @@
 package capstone.bapool.config.interceptor;
 
-import capstone.bapool.user.UserRepository;
+import capstone.bapool.user.UserDao;
 import capstone.bapool.utils.JwtUtils;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
@@ -23,12 +23,12 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
     private final JwtUtils jwtUtils;
 
-    private final UserRepository userRepository;
+    private final UserDao userDao;
 
     @Autowired
-    public AuthenticationInterceptor(JwtUtils jwtUtils, UserRepository userRepository) {
+    public AuthenticationInterceptor(JwtUtils jwtUtils, UserDao userDao) {
         this.jwtUtils = jwtUtils;
-        this.userRepository = userRepository;
+        this.userDao = userDao;
     }
 
     @Override

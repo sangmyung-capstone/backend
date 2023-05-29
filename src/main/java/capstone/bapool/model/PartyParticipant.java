@@ -1,10 +1,7 @@
 package capstone.bapool.model;
 
-import capstone.bapool.config.error.BaseException;
-import capstone.bapool.config.error.StatusEnum;
 import capstone.bapool.model.enumerate.RoleType;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
@@ -20,9 +17,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name= "party_participant")
+@Table(name= "party_and_user")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
 public class PartyParticipant {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "party_and_user_id")
@@ -49,21 +45,7 @@ public class PartyParticipant {
     }
 
     public static PartyParticipant makeMapping(User user, Party party, RoleType roleType) {
-        if (party.getMaxPeople() == party.getPartyParticipants().size()) {
-            throw new BaseException(StatusEnum.PARTY_IS_FULL);
-        }
         return new PartyParticipant(user, party, roleType);
-    }
-
-    public boolean isLeader() {
-        if (roleType == RoleType.LEADER) {
-            return true;
-        }
-        return false;
-    }
-
-    public void becomeLeader() {
-        this.roleType = RoleType.LEADER;
     }
 
 }
