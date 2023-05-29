@@ -9,13 +9,15 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostPartyReq {
+public class PatchPartyReq {
+    @NotNull
+    @JsonProperty("party_id")
+    private Long partyId;
+
     @JsonProperty("party_name")
     @NotBlank
     private String partyName;
@@ -38,11 +40,5 @@ public class PostPartyReq {
     @NotBlank
     private String menu;
 
-    @NotNull
-    List<Integer> hashtag;
-
     private String detail;
-
-    @JsonProperty("restaurant_info")
-    PostPartyRestaurantReq postPartyRestaurantReq;
 }

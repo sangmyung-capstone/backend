@@ -1,7 +1,11 @@
 package capstone.bapool.model;
 
 
+import capstone.bapool.config.error.BaseException;
+import capstone.bapool.config.error.StatusEnum;
 import capstone.bapool.model.enumerate.PartyStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import org.hibernate.annotations.ColumnDefault;
 import lombok.AccessLevel;
@@ -11,6 +15,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,5 +75,33 @@ public class Party {
         this.endDate = endDate;
         this.menu = menu;
         this.detail = detail;
+    }
+
+    public void update(String name, Integer maxPeople, LocalDateTime startDate,
+                       LocalDateTime endDate, String menu, String detail) {
+        if (partyStatus != PartyStatus.RECRUITING) {
+            throw new BaseException(StatusEnum.PARTY_STATUS_IS_NOT_RECRUITING);
+        }
+        this.name = name;
+        this.maxPeople = maxPeople;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.menu = menu;
+        this.detail = detail;
+    }
+
+    public boolean isLastMember() {
+        if (partyParticipants.size() == 1) {
+            return true;
+        }
+        return false;
+    }
+
+    public void close() {
+        partyStatus = PartyStatus.DEADLINE;
+    }
+
+    public int getCurPartyMember() {
+        return partyParticipants.size();
     }
 }
