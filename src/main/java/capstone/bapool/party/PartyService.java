@@ -130,7 +130,7 @@ public class PartyService {
                     .startDate(party.getStartDate())
                     .endDate(party.getEndDate())
                     .rating(rating) // 다시 입력해줘야함!!
-                    .hastag(hashtag) // 다시 입력해줘야함!!
+                    .hashtag(hashtag) // 다시 입력해줘야함!!
                     .build();
             partiesInRestaurantRes.addPartyInfos(partyInfo);
         }

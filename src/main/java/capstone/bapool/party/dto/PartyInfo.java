@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 //파티정보
@@ -36,7 +35,7 @@ public class PartyInfo {
 
     private String menu;
 
-    private List<Integer> hastag;
+    private List<Integer> hashtag;
 
     private String detail;
 
@@ -46,7 +45,7 @@ public class PartyInfo {
     private List<Double> rating;
 
     @Builder
-    public PartyInfo(Long partyId, String partyName, boolean isParticipate, int participants, int maxPeople, LocalDateTime startDate, LocalDateTime endDate, String menu, List<Integer> hastag, String detail, boolean hasBlockUser, List<Double> rating) {
+    public PartyInfo(Long partyId, String partyName, boolean isParticipate, int participants, int maxPeople, LocalDateTime startDate, LocalDateTime endDate, String menu, List<Integer> hashtag, String detail, boolean hasBlockUser, List<Double> rating) {
         this.partyId = partyId;
         this.partyName = partyName;
         this.isParticipate = isParticipate;
@@ -55,7 +54,7 @@ public class PartyInfo {
         this.startDate = startDate;
         this.endDate = endDate;
         this.menu = menu;
-        this.hastag = hastag;
+        this.hashtag = hashtag;
         this.detail = detail;
         this.hasBlockUser = hasBlockUser;
         this.rating = rating;
