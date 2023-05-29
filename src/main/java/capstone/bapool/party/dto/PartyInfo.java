@@ -10,7 +10,7 @@ import java.util.List;
 
 //파티정보
 @Getter
-@JsonPropertyOrder({"partyId", "partyName", "isParticipate", "menu", "detail", "hasBlockUser", "participants", "maxPeople", "startDate", "endDate", "rating", "hashtag"})
+@JsonPropertyOrder({"partyId", "partyName", "isParticipate", "menu", "detail", "hasBlockUser", "participants", "maxPeople", "startDate", "endDate", "userRating", "partyHashtag"})
 public class PartyInfo {
 
     @JsonProperty(value = "party_id")
@@ -35,17 +35,19 @@ public class PartyInfo {
 
     private String menu;
 
-    private List<Integer> hashtag;
+    @JsonProperty("party_hashtag")
+    private List<Integer> partyHashtag;
 
     private String detail;
 
     @JsonProperty(value = "has_block_user")
     private boolean hasBlockUser;
 
-    private List<Double> rating;
+    @JsonProperty("user_rating")
+    private List<Double> userRating;
 
     @Builder
-    public PartyInfo(Long partyId, String partyName, boolean isParticipate, int participants, int maxPeople, LocalDateTime startDate, LocalDateTime endDate, String menu, List<Integer> hashtag, String detail, boolean hasBlockUser, List<Double> rating) {
+    public PartyInfo(Long partyId, String partyName, boolean isParticipate, int participants, int maxPeople, LocalDateTime startDate, LocalDateTime endDate, String menu, List<Integer> partyHashtag, String detail, boolean hasBlockUser, List<Double> userRating) {
         this.partyId = partyId;
         this.partyName = partyName;
         this.isParticipate = isParticipate;
@@ -54,9 +56,9 @@ public class PartyInfo {
         this.startDate = startDate;
         this.endDate = endDate;
         this.menu = menu;
-        this.hashtag = hashtag;
+        this.partyHashtag = partyHashtag;
         this.detail = detail;
         this.hasBlockUser = hasBlockUser;
-        this.rating = rating;
+        this.userRating = userRating;
     }
 }
