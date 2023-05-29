@@ -29,18 +29,4 @@ public class FireBaseConfig {
 
         return FirebaseApp.initializeApp(options);
     }
-
-
-//    @PostConstruct
-//    public void init() throws Exception{
-//        FileInputStream serviceAccount =
-//                new FileInputStream("src/main/resources/google-services.json");
-//
-//        FirebaseOptions options = FirebaseOptions.builder()
-//                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-//                .setDatabaseUrl(url)
-//                .build();
-//
-//        FirebaseApp.initializeApp(options);
-//    }
 }

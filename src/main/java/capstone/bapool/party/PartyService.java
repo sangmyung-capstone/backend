@@ -41,6 +41,7 @@ public class PartyService {
     private final PartyParticipantRepository partyParticipantRepository;
     private final PartyHashtagRepository partyHashtagRepository;
     private final FireBasePartyRepository fireBasePartyRepository;
+    private final UserRepository userRepository;
 
     @Transactional(readOnly = false)
     public Long save(PostPartyReq postPartyReq, Long userId) {

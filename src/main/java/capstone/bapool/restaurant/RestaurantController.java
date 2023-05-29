@@ -35,6 +35,6 @@ public class RestaurantController {
 
         GetRestaurantMarkerInfoRes getRestaurantMarkerInfoRes = restaurantService.findRestaurantMakerInfo(userId, restaurantId, restaurantX, restaurantY);
 
-        return ResponseDto.res(getRestaurantMarkerInfoRes);
+        return ResponseDto.create(getRestaurantMarkerInfoRes);
     }
 }
