@@ -33,8 +33,10 @@ public class PartyService {
     private final RestaurantRepository restaurantRepository;
     private final UserDao userRepository;
     private final PartyRepository partyRepository;
-    private final PartyAndUserRepository partyAndUserRepository;
-    private final HashtagRepository hashtagRepository;
+    private final PartyParticipantRepository partyParticipantRepository;
+    private final PartyHashtagRepository partyHashtagRepository;
+    private final FireBasePartyRepository fireBasePartyRepository;
+    private final UserRepository userRepository;
 
     @Transactional(readOnly = false)
     public Long save(PostPartyReq postPartyReq, Long userId) {
