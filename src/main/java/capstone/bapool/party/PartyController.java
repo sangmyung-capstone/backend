@@ -32,13 +32,15 @@ public class PartyController {
 
     // 식당안의 파티리스트 조회
     @GetMapping("/{user-id}/{restaurant-id}")
-    public ResponseDto<PartiesInRestaurantRes> partyInRestaurantList(@PathVariable("user-id")Long userId, @PathVariable("restaurant-id")Long restaurantId) {
+    public ResponseEntity<ResponseDto> partyInRestaurantList(@PathVariable("user-id")Long userId, @PathVariable("restaurant-id")Long restaurantId) {
 
         PartiesInRestaurantRes partiesInRestaurantRes = partyService.findPartiesInRestaurant(userId, restaurantId);
 
         System.out.println("partiesInRestaurantRes = " + partiesInRestaurantRes.getPartyInfos().size());
 
-        return ResponseDto.create(partiesInRestaurantRes);
+        ResponseDto<PartiesInRestaurantRes> response = ResponseDto.create(partiesInRestaurantRes);
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping(value = "/{user-id}")

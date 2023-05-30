@@ -35,9 +35,6 @@ public class Party {
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
-    @OneToMany(mappedBy = "party")
-    private List<PartyParticipant> partyParticipants = new ArrayList<PartyParticipant>();
-
     @Enumerated(value = EnumType.STRING)
     private PartyStatus partyStatus;
 
@@ -58,12 +55,21 @@ public class Party {
     private String detail;
 
     @CreationTimestamp
-    @Column(name = "create_at")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(name = "update_at")
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "party")
+    private List<PartyParticipant> partyParticipants = new ArrayList<PartyParticipant>();
+
+    @OneToMany(mappedBy = "party")
+    private List<PartyHashtag> partyHashtags = new ArrayList<>();
+
+    // 게터 사용 제한
+    private List<PartyHashtag> getPartyHashtags() {
+        return partyHashtags;
+    }
 
     @Builder
     public Party(Restaurant restaurant, PartyStatus partyStatus, String name, int maxPeople, LocalDateTime startDate, LocalDateTime endDate, String menu, String detail) {
@@ -103,5 +109,39 @@ public class Party {
 
     public int getCurPartyMember() {
         return partyParticipants.size();
+    }
+
+    // 파티에 참여한 유저인지 확인
+    public boolean isMeParticipate(User user){
+        for(PartyParticipant partyParticipant : partyParticipants){
+            if(partyParticipant.getUser() == user){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // 차단한 유저가 있는지 확인
+    public boolean hasBlockUser(User user){
+        for(PartyParticipant partyParticipant : partyParticipants){
+            for(BlockUser blockUser : user.getBlockUsers()){
+                if(partyParticipant.getUser() == blockUser.getBlockedUser()){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    // 파티 해시태그 조회
+    public List<Integer> getPartyHashtag(){
+        List<Integer> partyHashtag = new ArrayList<>();
+        for(PartyHashtag hashtag : partyHashtags){
+            partyHashtag.add(hashtag.getHashtagId());
+        }
+
+        return partyHashtag;
     }
 }

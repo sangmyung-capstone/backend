@@ -28,9 +28,6 @@ public class User{
     @Column(name = "user_id")
     private Long id;
 
-    @OneToMany(mappedBy = "user")
-    private List<PartyParticipant> partyParticipants = new ArrayList<PartyParticipant>();
-
     @Column(nullable = false, length = 20, unique = true)
     private String name;
 
@@ -46,6 +43,15 @@ public class User{
     @Column(name="created_at")
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "user")
+    private List<PartyParticipant> partyParticipants = new ArrayList<PartyParticipant>();
+
+    // 차단한 유저
+    @OneToMany(mappedBy = "blockUser")
+    private List<BlockUser> blockUsers = new ArrayList<>();
+
+    
 
     @Builder
     public User(Long id, String name, String email, Integer profileImgId, String refreshToken, LocalDateTime createdAt) {

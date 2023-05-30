@@ -99,7 +99,7 @@ public class PartyService {
 
         PartiesInRestaurantRes partiesInRestaurantRes = new PartiesInRestaurantRes();
 
-        // db에서 식당 조회
+        // 식당 조회
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElse(null);
         if(restaurant == null){
@@ -107,30 +107,34 @@ public class PartyService {
             System.out.println("식당 없음!!");
             return partiesInRestaurantRes;
         }
+
+        // 식당 이름 입력.
         partiesInRestaurantRes.setRestaurantName(restaurant.getName());
 
         // 임시값
-        List<Integer> hashtag = new ArrayList<>();
-        hashtag.add(1);
-        List<Double> rating = new ArrayList<>();
-        rating.add(4.2);
+        List<Double> userRating = new ArrayList<>();
+        userRating.add(4.2);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
 
         // 해당 식당안의 파티리스트 조회
         List<Party> parties = partyRepository.findByRestaurant(restaurant);
-        for(Party party : parties){
+        for(Party party : parties){ // 파티 정보 입력.
+
             PartyInfo partyInfo = PartyInfo.builder()
                     .partyId(party.getId())
                     .partyName(party.getName())
-                    .isParticipate(false) // 다시 입력해줘야함!!
+                    .isParticipate(party.isMeParticipate(user))
                     .menu(party.getMenu())
                     .detail(party.getDetail())
-                    .hasBlockUser(false) // 다시 입력해줘야함!!
-                    .participants(1) // 다시 입력해줘야함!!
+                    .hasBlockUser(party.hasBlockUser(user))
+                    .participants(party.getCurPartyMember())
                     .maxPeople(party.getMaxPeople())
                     .startDate(party.getStartDate())
                     .endDate(party.getEndDate())
-                    .rating(rating) // 다시 입력해줘야함!!
-                    .hastag(hashtag) // 다시 입력해줘야함!!
+                    .userRating(userRating) // 다시 입력해줘야함!!
+                    .partyHashtag(party.getPartyHashtag())
                     .build();
             partiesInRestaurantRes.addPartyInfos(partyInfo);
         }
