@@ -1,11 +1,13 @@
 package capstone.bapool.model;
 
 
+import lombok.Getter;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
 public class UserRating {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

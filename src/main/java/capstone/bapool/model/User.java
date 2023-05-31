@@ -51,7 +51,9 @@ public class User{
     @OneToMany(mappedBy = "blockUser")
     private List<BlockUser> blockUsers = new ArrayList<>();
 
-    
+    // 유저 평점
+    @OneToMany(mappedBy = "evaluatedUser")
+    private List<UserRating> userRatings = new ArrayList<>();
 
     @Builder
     public User(Long id, String name, String email, Integer profileImgId, String refreshToken, LocalDateTime createdAt) {
@@ -67,5 +69,19 @@ public class User{
     // 변경 감지
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    // 유저 평점 구하기
+    public double getRating(){
+        if(userRatings.size() == 0){ // 아무런 평점이 없다면 기본으로 4.5 설정.
+            return 4.5;
+        }
+
+        double sum = 0;
+        for(UserRating userRating : userRatings){
+            sum += userRating.getRating();
+        }
+
+        return sum / userRatings.size();
     }
 }

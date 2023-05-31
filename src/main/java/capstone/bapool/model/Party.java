@@ -144,4 +144,15 @@ public class Party {
 
         return partyHashtag;
     }
+
+    // 파티에 참여한 유저 평점 조회
+    public List<Double> getPartyParticipantRating(){
+        List<Double> rating = new ArrayList<>();
+        for(PartyParticipant partyParticipant : partyParticipants){
+            User user = partyParticipant.getUser();
+            rating.add(user.getRating());
+        }
+
+        return rating;
+    }
 }
