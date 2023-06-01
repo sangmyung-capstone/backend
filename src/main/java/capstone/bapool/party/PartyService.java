@@ -133,7 +133,7 @@ public class PartyService {
                     .maxPeople(party.getMaxPeople())
                     .startDate(party.getStartDate())
                     .endDate(party.getEndDate())
-                    .userRating(userRating) // 다시 입력해줘야함!!
+                    .userRating(party.getPartyParticipantRating()) // 다시 입력해줘야함!!
                     .partyHashtag(party.getPartyHashtag())
                     .build();
             partiesInRestaurantRes.addPartyInfos(partyInfo);
