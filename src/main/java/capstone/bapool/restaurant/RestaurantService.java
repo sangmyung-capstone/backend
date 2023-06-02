@@ -8,6 +8,7 @@ import capstone.bapool.restaurant.dto.GetRestaurantsOnMapRes;
 import capstone.bapool.restaurant.dto.Menu;
 import capstone.bapool.restaurant.dto.RestaurantInfo;
 import capstone.bapool.utils.KakaoLocalApiService;
+import capstone.bapool.utils.SeleniumService;
 import capstone.bapool.utils.dto.KakaoRestaurant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class RestaurantService {
     private final KakaoLocalApiService kakaoLocalApiService;
     private final RestaurantRepository restaurantRepository;
     private final PartyRepository partyRepository;
+    private final SeleniumService seleniumService;
 
     /**
      * 지도화면을 위한 식당리스트 조회
@@ -78,11 +80,6 @@ public class RestaurantService {
             partyNum = partyRepository.countByRestaurant(restaurant).intValue();
         }
 
-        // 임시값
-        Menu menu = new Menu("피자", "17,000");
-        List<Menu> menus = new ArrayList<>();
-        menus.add(menu);
-
         GetRestaurantMarkerInfoRes getRestaurantMarkerInfoRes = GetRestaurantMarkerInfoRes.builder()
                 .restaurantId(kakaoRestaurant.getId())
                 .restaurantName(kakaoRestaurant.getName())
@@ -93,9 +90,8 @@ public class RestaurantService {
                 .category(kakaoRestaurant.getCategory())
                 .link(kakaoRestaurant.getSiteUrl())
                 .phone(kakaoRestaurant.getPhone())
-                // 수정 필요!!
-                .imgUrl("https://i.namu.wiki/i/umI-heVYVS9miQNqXM13FRUOHHL4l1nzsZgN9XRLFG7nI_7Dyf-Myr6HmiWf9Qd7SAZQz3WYSQHPXXtGAwLTag.webp")
-                .menu(menus) // 수정 필요!!
+                .imgUrl(seleniumService.findImgUrl(kakaoRestaurant.getSiteUrl()))
+                .menu(seleniumService.findMenu(kakaoRestaurant.getSiteUrl()))
                 .build();
 
         return getRestaurantMarkerInfoRes;
