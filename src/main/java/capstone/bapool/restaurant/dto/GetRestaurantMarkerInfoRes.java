@@ -17,13 +17,13 @@ public class GetRestaurantMarkerInfoRes {
     @JsonProperty("restaurant_name")
     private String restaurantName;
 
-    @JsonProperty("restuarant_longitude")
+    @JsonProperty("restaurant_longitude")
     private double restaurantX;
 
     @JsonProperty("restaurant_latitude")
     private double restaurantY;
 
-    @JsonProperty("restuarant_address")
+    @JsonProperty("restaurant_address")
     private String restaurantAddress;
 
     @JsonProperty("num_of_party")
