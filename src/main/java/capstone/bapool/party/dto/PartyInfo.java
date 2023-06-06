@@ -20,7 +20,7 @@ public class PartyInfo {
     private String partyName;
 
     @JsonProperty("is_participate")
-    private boolean isParticipate; //내가 이 파티에 참여했는지 여부
+    private Boolean isParticipate; //내가 이 파티에 참여했는지 여부
 
     private int participants;
 
