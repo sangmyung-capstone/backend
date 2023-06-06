@@ -18,7 +18,7 @@ public class RestaurantController {
 
     // 홈화면
     @GetMapping("/{user-id}")
-    public ResponseEntity<Object> restaurantOnMapList(@PathVariable(name = "user-id")Long userId, @RequestParam String rect){
+    public ResponseEntity<ResponseDto> restaurantOnMapList(@PathVariable(name = "user-id")Long userId, @RequestParam String rect){
 
 //        System.out.println("userId = " + userId);
 //        System.out.println("rect = " + rect);
@@ -30,11 +30,13 @@ public class RestaurantController {
 
     // 식당 마커정보 화면
     @GetMapping("/{user-id}/{restaurant-id}")
-    public ResponseDto<GetRestaurantMarkerInfoRes> restaurantMarkerInfoDetails(@PathVariable("user-id")Long userId, @PathVariable("restaurant-id")Long restaurantId,
+    public ResponseEntity<ResponseDto> restaurantMarkerInfoDetails(@PathVariable("user-id")Long userId, @PathVariable("restaurant-id")Long restaurantId,
                                             @RequestParam("longitude") double restaurantX, @RequestParam("latitude") double restaurantY){
 
         GetRestaurantMarkerInfoRes getRestaurantMarkerInfoRes = restaurantService.findRestaurantMakerInfo(userId, restaurantId, restaurantX, restaurantY);
 
-        return ResponseDto.create(getRestaurantMarkerInfoRes);
+        ResponseDto response = ResponseDto.create(getRestaurantMarkerInfoRes);
+
+        return ResponseEntity.ok().body(response);
     }
 }
