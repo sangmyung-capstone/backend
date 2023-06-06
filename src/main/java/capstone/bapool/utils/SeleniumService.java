@@ -1,6 +1,7 @@
 package capstone.bapool.utils;
 
 import capstone.bapool.restaurant.dto.Menu;
+import capstone.bapool.utils.dto.ImgUrlAndMenu;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -97,6 +100,7 @@ public class SeleniumService {
         }
     }
 
+    // 메뉴 크롤링
     public List<Menu> findMenu(String url){
         driver.get(url) ;
         System.out.println("driver.getTitle() = " + driver.getTitle());
@@ -126,6 +130,77 @@ public class SeleniumService {
             }
 
             return menus;
+        }catch (Exception e){
+            System.out.println("no image");
+            return null;
+        }
+    }
+
+    // 메뉴, 이미지 한번에 크롤링하기
+    public ImgUrlAndMenu findImgUrlAndMenu(String url){
+        driver.get(url) ;
+        System.out.println("driver.getTitle() = " + driver.getTitle());
+
+        return new ImgUrlAndMenu(findImgUrl(), findMenu());
+    }
+
+    // 메뉴 크롤링
+    private List<Menu> findMenu(){
+
+        try{
+            webDriverWait.until( // 해당 요소가 나올때까지 기다림
+                    ExpectedConditions.presenceOfElementLocated(By.className("list_menu"))
+            );
+
+            List<Menu> menus = new ArrayList<>();
+
+            // 메뉴 크롤링하기
+            WebElement searchLabel = driver.findElement(By.className("list_menu"));
+            List<WebElement> crawlingMenus = searchLabel.findElements(By.className("photo_type")); // 이미지 있는 메뉴판
+            if(crawlingMenus.isEmpty()){ // 이미지 없는 메뉴판
+                System.out.println("여기 지남!");
+                crawlingMenus = searchLabel.findElements(By.className("nophoto_type"));
+            }
+//            if(crawlingMenus.isEmpty()){
+//                crawlingMenus = searchLabel.findElements(By.className("menuonly_type"));
+//            }
+            System.out.println("crawlingMenus.size() = " + crawlingMenus.size());
+
+            // 크롤링한 메뉴 dto클래스에 담기
+            for(WebElement menu : crawlingMenus){
+                String menuName = menu.findElement(By.className("loss_word")).getText();
+                String menuPrice = menu.findElement(By.className("price_menu")).getText();
+
+                if(menuName.isBlank()){
+                    break;
+                }
+                System.out.println("menuPrice = " + menuPrice);
+                System.out.println("menuName = " + menuName);
+
+                menus.add(new Menu(menuName, menuPrice));
+            }
+
+            return menus;
+        } catch (Exception e){
+            System.out.println("no menu");
+            return null;
+        }
+    }
+
+    // 이미지 크롤링
+    private String findImgUrl(){
+        try{
+            webDriverWait.until( // 해당 요소가 나올때까지 기다림
+                    ExpectedConditions.presenceOfElementLocated(By.className("bg_present"))
+            );
+
+            WebElement searchLabel = driver.findElement(By.className("bg_present"));
+//            System.out.println("searchLabel.getAttribute(\"style\") = " + searchLabel.getAttribute("style"));
+            String imgUrlBefore = searchLabel.getAttribute("style");
+            String imgUrlAfter = imgUrlBefore.substring(imgUrlBefore.indexOf('"')+1, imgUrlBefore.lastIndexOf('"'));
+            System.out.println("imgUrlAfter = " + imgUrlAfter);
+
+            return imgUrlAfter;
         }catch (Exception e){
             System.out.println("no image");
             return null;

@@ -36,6 +36,7 @@ public class GetRestaurantMarkerInfoRes {
 
     private String phone;
 
+    @JsonProperty("img_url")
     private String imgUrl;
 
     private List<Menu> menu;

@@ -9,6 +9,7 @@ import capstone.bapool.restaurant.dto.Menu;
 import capstone.bapool.restaurant.dto.RestaurantInfo;
 import capstone.bapool.utils.KakaoLocalApiService;
 import capstone.bapool.utils.SeleniumService;
+import capstone.bapool.utils.dto.ImgUrlAndMenu;
 import capstone.bapool.utils.dto.KakaoRestaurant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_RESTAURANT_FAILURE;
 
@@ -66,6 +68,7 @@ public class RestaurantService {
         return new GetRestaurantsOnMapRes(restaurantInfoList);
     }
 
+    // 식당 마커정보
     public GetRestaurantMarkerInfoRes findRestaurantMakerInfo(Long userId, Long restaurantId, double restaurantX, double restaurantY){
 
         KakaoRestaurant kakaoRestaurant = kakaoLocalApiService.findRestaurant(restaurantId, restaurantX, restaurantY);
@@ -80,6 +83,8 @@ public class RestaurantService {
             partyNum = partyRepository.countByRestaurant(restaurant).intValue();
         }
 
+        ImgUrlAndMenu imgUrlAndMenu = seleniumService.findImgUrlAndMenu(kakaoRestaurant.getSiteUrl());
+
         GetRestaurantMarkerInfoRes getRestaurantMarkerInfoRes = GetRestaurantMarkerInfoRes.builder()
                 .restaurantId(kakaoRestaurant.getId())
                 .restaurantName(kakaoRestaurant.getName())
@@ -90,8 +95,8 @@ public class RestaurantService {
                 .category(kakaoRestaurant.getCategory())
                 .link(kakaoRestaurant.getSiteUrl())
                 .phone(kakaoRestaurant.getPhone())
-                .imgUrl(seleniumService.findImgUrl(kakaoRestaurant.getSiteUrl()))
-                .menu(seleniumService.findMenu(kakaoRestaurant.getSiteUrl()))
+                .imgUrl(imgUrlAndMenu.getImgUrl())
+                .menu(imgUrlAndMenu.getMenus())
                 .build();
 
         return getRestaurantMarkerInfoRes;
