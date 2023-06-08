@@ -1,6 +1,7 @@
 package capstone.bapool.user;
 
 import capstone.bapool.config.error.BaseException;
+import capstone.bapool.config.response.ResponseDto;
 import capstone.bapool.firebase.FireBaseUserRepository;
 import capstone.bapool.firebase.dto.FireBaseUser;
 import capstone.bapool.model.User;
@@ -110,12 +111,25 @@ public class UserService {
         return reissueRes;
     }
 
-    public Optional<User> findById(Long userId){
-        Optional<User> user = userRepository.findById(userId);
+    @Transactional
+    public User findById(Long userId) throws BaseException {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));    //db에 사용자id가 없다면 처리
         return user;
     }
 
-    public void deleteById(Long userId){
-        userRepository.deleteById(userId);
+    @Transactional
+    public ResponseDto deleteById(Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
+        userRepository.deleteById(user.getId());
+        return ResponseDto.create(userId+" deleted successfully");
+//        if(!userRepository.findById(userId).isEmpty()){
+//            System.out.println("userId " + userId + " is deleted");
+//            userRepository.deleteById(userId);
+//        }else{
+//            System.out.println("userId " + userId + " is not exist");
+//            new BaseException(NOT_FOUND_USER_FAILURE);
+//        }
     }
 }

@@ -71,14 +71,16 @@ public class UserController {
 
     //마이페이지 로딩
     @GetMapping("/mypage/{user-id}")
-    public ResponseDto<Object> mypage(@Valid @PathVariable("user-id") Long userId){
-        Optional<User> user = userService.findById(userId);
-        return ResponseDto.create(user);
+    public ResponseEntity<ResponseDto> mypage(@Valid @PathVariable("user-id") Long userId){
+        User user = userService.findById(userId);
+        //dto를 만들고 entity반환
+        return ResponseEntity.ok().body(ResponseDto.create(user));
     }
 
     //회원 탈퇴
-    @DeleteMapping("user/{user-id}")
-    public void deleteUser(@Valid @PathVariable("user-id") Long userId){
-        userService.deleteById(userId);
+    @DeleteMapping("delete/{user-id}")
+    public ResponseEntity<ResponseDto> userRemove(@Valid @PathVariable("user-id") Long userId){
+        ResponseDto deleteresult = userService.deleteById(userId);
+        return ResponseEntity.ok().body(deleteresult);
     }
 }
