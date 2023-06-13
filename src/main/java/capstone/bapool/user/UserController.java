@@ -78,6 +78,7 @@ public class UserController {
     }
 
     //회원 탈퇴
+    //프론트랑 상의해서 service에서 반환을 null로 해도괜찮은지 물어보기
     @DeleteMapping("delete/{user-id}")
     public ResponseEntity<ResponseDto> userRemove(@Valid @PathVariable("user-id") Long userId){
         ResponseDto deleteresult = userService.deleteById(userId);

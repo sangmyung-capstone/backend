@@ -123,13 +123,8 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
         userRepository.deleteById(user.getId());
+        //firebase에서 채팅방도 나가야 될거같은데
+        fireBaseUserDao.delete(userId);//이거는 firebase에서 삭제만
         return ResponseDto.create(userId+" deleted successfully");
-//        if(!userRepository.findById(userId).isEmpty()){
-//            System.out.println("userId " + userId + " is deleted");
-//            userRepository.deleteById(userId);
-//        }else{
-//            System.out.println("userId " + userId + " is not exist");
-//            new BaseException(NOT_FOUND_USER_FAILURE);
-//        }
     }
 }
