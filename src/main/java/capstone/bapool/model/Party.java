@@ -24,7 +24,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Party {
+public class Party extends BaseTimeEntity{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "party_id")
@@ -53,12 +53,6 @@ public class Party {
     private String menu;
 
     private String detail;
-
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "party")
     private List<PartyParticipant> partyParticipants = new ArrayList<PartyParticipant>();

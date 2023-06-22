@@ -9,7 +9,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class Restaurant {
+public class Restaurant extends BaseTimeEntity{
 
     @Id
     @Column(name = "restaurant_id")

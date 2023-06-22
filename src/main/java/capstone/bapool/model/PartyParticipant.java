@@ -23,7 +23,7 @@ import javax.persistence.Table;
 @Table(name= "party_participant")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class PartyParticipant {
+public class PartyParticipant extends BaseTimeEntity{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "party_and_user_id")
     private Long id;

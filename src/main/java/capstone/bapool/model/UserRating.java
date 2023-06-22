@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-public class UserRating {
+public class UserRating extends BaseTimeEntity{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_rating_id")

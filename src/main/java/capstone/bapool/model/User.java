@@ -23,7 +23,7 @@ import java.util.List;
 @Table(name = "user")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class User{
+public class User extends BaseTimeEntity{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
@@ -40,10 +40,6 @@ public class User{
     @Column(name="refresh_token")
     private String refreshToken;
 
-    @Column(name="created_at")
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
     @OneToMany(mappedBy = "user")
     private List<PartyParticipant> partyParticipants = new ArrayList<PartyParticipant>();
 
@@ -56,13 +52,12 @@ public class User{
     private List<UserRating> userRatings = new ArrayList<>();
 
     @Builder
-    public User(Long id, String name, String email, Integer profileImgId, String refreshToken, LocalDateTime createdAt) {
+    public User(Long id, String name, String email, Integer profileImgId, String refreshToken) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.profileImgId = profileImgId;
         this.refreshToken = refreshToken;
-        this.createdAt = createdAt;
     }
 
 
