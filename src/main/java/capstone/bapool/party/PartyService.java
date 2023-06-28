@@ -92,7 +92,12 @@ public class PartyService {
         return restaurantRepository.save(restaurant);
     }
 
-    // 식당안의 파티리스트 조회
+    /**
+     * 식당안의 파티리스트 조회
+     * @param userId
+     * @param restaurantId 식당id
+     * @return
+     */
     public PartiesInRestaurantRes findPartiesInRestaurant(Long userId, Long restaurantId){
 
         PartiesInRestaurantRes partiesInRestaurantRes = new PartiesInRestaurantRes();
@@ -101,8 +106,7 @@ public class PartyService {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElse(null);
         if(restaurant == null){
-            System.out.println("restaurantId = " + restaurantId);
-            System.out.println("식당 없음!!");
+            log.info("식당안의 파티리스트 조회: 식당 {}이 db에 없음", restaurantId);
             return partiesInRestaurantRes;
         }
 
