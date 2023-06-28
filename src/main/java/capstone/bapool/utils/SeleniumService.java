@@ -7,29 +7,25 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service
 public class SeleniumService {
-
     private WebDriver driver;
     public static String WEB_DRIVER_ID = "webdriver.chrome.driver"; // Properties 설정
     public static String WEB_DRIVER_PATH; // WebDriver 경로
-    WebDriverWait webDriverWait;
 
     public SeleniumService(@Value("${selenium.path}") String path){
         WEB_DRIVER_PATH = path;
         setDriver();
+//        webDriverWait = new WebDriverWait(driver, Duration.ofMillis(500));
     }
 
     private void setDriver() {
@@ -48,122 +44,37 @@ public class SeleniumService {
         options.addArguments("--remote-allow-origins=*"); //cors문제
 
         // weDriver 생성.
-        driver = new ChromeDriver(options);
-//        driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
-        webDriverWait = new WebDriverWait(driver, Duration.ofMillis(500));
+        this.driver =  new ChromeDriver(options);
+//        this.driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(5));
+//        this.driver.manage().timeouts().scriptTimeout(Duration.ofSeconds(5));
+//        this.driver.manage().timeouts().implicitlyWait(Duration.ofMillis(300));
     }
 
-    public String testCrawling(String url) {
-        driver.get(url) ;
-
-        driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);  // 페이지 불러오는 여유시간.
-        System.out.println("driver.getTitle() = " + driver.getTitle());
-
-        //여기서 이미지 크롤링한다
-        try{
-            //        WebElement searchLabel = driver.findElement(By.id("kakaoBtnSearch"));
-            WebElement searchLabel = driver.findElement(By.className("bg_present"));
-            System.out.println("searchLabel.getAttribute(\"style\") = " + searchLabel.getAttribute("style"));
-            String imgUrlBefore = searchLabel.getAttribute("style");
-            String imgUrlAfter = imgUrlBefore.substring(imgUrlBefore.indexOf('"')+1, imgUrlBefore.lastIndexOf('"'));
-            System.out.println("imgUrlAfter = " + imgUrlAfter);
-//        System.out.println("searchLabel = " + searchLabel);
-//        System.out.println("searchLabel.getText() = " + searchLabel.getText());
-
-            return imgUrlAfter;
-        }catch (Exception e){
-            System.out.println("no image");
-            return null;
-        }
-    }
-
-    // 이미지url 크롤링
-    public String findImgUrl(String url){
-        driver.get(url) ;
-        System.out.println("driver.getTitle() = " + driver.getTitle());
-
-        //여기서 이미지 크롤링한다
-        try{
-            webDriverWait.until( // 해당 요소가 나올때까지 기다림
-                    ExpectedConditions.presenceOfElementLocated(By.className("bg_present"))
-            );
-            WebElement searchLabel = driver.findElement(By.className("bg_present"));
-//            System.out.println("searchLabel.getAttribute(\"style\") = " + searchLabel.getAttribute("style"));
-            String imgUrlBefore = searchLabel.getAttribute("style");
-            String imgUrlAfter = imgUrlBefore.substring(imgUrlBefore.indexOf('"')+1, imgUrlBefore.lastIndexOf('"'));
-            System.out.println("imgUrlAfter = " + imgUrlAfter);
-
-            return imgUrlAfter;
-        }catch (Exception e){
-            System.out.println("no image");
-            return null;
-        }
-    }
-
-    // 메뉴 크롤링
-    public List<Menu> findMenu(String url){
-        driver.get(url) ;
-        System.out.println("driver.getTitle() = " + driver.getTitle());
-
-        //여기서 이미지 크롤링한다
-        try{
-            webDriverWait.until( // 해당 요소가 나올때까지 기다림
-                    ExpectedConditions.presenceOfElementLocated(By.className("list_menu"))
-            );
-
-            List<Menu> menus = new ArrayList<>();
-
-            WebElement searchLabel = driver.findElement(By.className("list_menu"));
-            List<WebElement> menuList = searchLabel.findElements(By.className("photo_type"));
-            System.out.println("menuList.size() = " + menuList.size());
-            for(WebElement menu : menuList){
-                String menuName = menu.findElement(By.className("loss_word")).getText();
-                String menuPrice = menu.findElement(By.className("price_menu")).getText();
-
-                if(menuName.isBlank()){
-                    break;
-                }
-                System.out.println("menuPrice = " + menuPrice);
-                System.out.println("menuName = " + menuName);
-
-                menus.add(new Menu(menuName, menuPrice));
-            }
-
-            return menus;
-        }catch (Exception e){
-            System.out.println("no image");
-            return null;
-        }
-    }
 
     // 메뉴, 이미지 한번에 크롤링하기
     public ImgUrlAndMenu findImgUrlAndMenu(String url){
         driver.get(url) ;
+
         System.out.println("driver.getTitle() = " + driver.getTitle());
 
-        return new ImgUrlAndMenu(findImgUrl(), findMenu());
+        this.driver.manage().timeouts().implicitlyWait(Duration.ofMillis(500));
+        String imgUrl = findImgUrl();
+        this.driver.manage().timeouts().implicitlyWait(Duration.ofMillis(0));
+
+        return new ImgUrlAndMenu(imgUrl, findMenu());
     }
 
     // 메뉴 크롤링
     private List<Menu> findMenu(){
 
+        List<Menu> menus = new ArrayList<>();
         try{
-            webDriverWait.until( // 해당 요소가 나올때까지 기다림
-                    ExpectedConditions.presenceOfElementLocated(By.className("list_menu"))
-            );
-
-            List<Menu> menus = new ArrayList<>();
-
             // 메뉴 크롤링하기
             WebElement searchLabel = driver.findElement(By.className("list_menu"));
             List<WebElement> crawlingMenus = searchLabel.findElements(By.className("photo_type")); // 이미지 있는 메뉴판
             if(crawlingMenus.isEmpty()){ // 이미지 없는 메뉴판
-                System.out.println("여기 지남!");
                 crawlingMenus = searchLabel.findElements(By.className("nophoto_type"));
             }
-//            if(crawlingMenus.isEmpty()){
-//                crawlingMenus = searchLabel.findElements(By.className("menuonly_type"));
-//            }
             System.out.println("crawlingMenus.size() = " + crawlingMenus.size());
 
             // 크롤링한 메뉴 dto클래스에 담기
@@ -179,21 +90,16 @@ public class SeleniumService {
 
                 menus.add(new Menu(menuName, menuPrice));
             }
-
-            return menus;
         } catch (Exception e){
             System.out.println("no menu");
-            return null;
         }
+
+        return menus;
     }
 
     // 이미지 크롤링
     private String findImgUrl(){
         try{
-            webDriverWait.until( // 해당 요소가 나올때까지 기다림
-                    ExpectedConditions.presenceOfElementLocated(By.className("bg_present"))
-            );
-
             WebElement searchLabel = driver.findElement(By.className("bg_present"));
 //            System.out.println("searchLabel.getAttribute(\"style\") = " + searchLabel.getAttribute("style"));
             String imgUrlBefore = searchLabel.getAttribute("style");
