@@ -22,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -110,10 +109,6 @@ public class PartyService {
         // 식당 이름 입력.
         partiesInRestaurantRes.setRestaurantName(restaurant.getName());
 
-        // 임시값
-        List<Double> userRating = new ArrayList<>();
-        userRating.add(4.2);
-
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
 
@@ -131,7 +126,7 @@ public class PartyService {
                     .participants(party.getCurPartyMember())
                     .maxPeople(party.getMaxPeople())
                     .startDate(party.getStartDate())
-                    .userRating(party.getPartyParticipantRating()) // 다시 입력해줘야함!!
+                    .userRating(party.getPartyParticipantAvgRating()) // 다시 입력해줘야함!!
                     .partyHashtag(party.getPartyHashtag())
                     .build();
             partiesInRestaurantRes.addPartyInfos(partyInfo);

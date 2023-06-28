@@ -135,13 +135,13 @@ public class Party extends BaseTimeEntity{
     }
 
     // 파티에 참여한 유저 평점 조회
-    public List<Double> getPartyParticipantRating(){
-        List<Double> rating = new ArrayList<>();
+    public Double getPartyParticipantAvgRating(){
+        double sum = 0;
         for(PartyParticipant partyParticipant : partyParticipants){
             User user = partyParticipant.getUser();
-            rating.add(user.getRating());
+            sum += user.getRating();
         }
 
-        return rating;
+        return sum / partyParticipants.size();
     }
 }
