@@ -47,9 +47,6 @@ public class Party extends BaseTimeEntity{
     @Column(name = "start_date")
     private LocalDateTime startDate;
 
-    @Column(name = "end_date")
-    private LocalDateTime endDate;
-
     private String menu;
 
     private String detail;
@@ -66,26 +63,24 @@ public class Party extends BaseTimeEntity{
     }
 
     @Builder
-    public Party(Restaurant restaurant, PartyStatus partyStatus, String name, int maxPeople, LocalDateTime startDate, LocalDateTime endDate, String menu, String detail) {
+    public Party(Restaurant restaurant, PartyStatus partyStatus, String name, int maxPeople, LocalDateTime startDate, String menu, String detail) {
         this.restaurant = restaurant;
         this.partyStatus = partyStatus;
         this.name = name;
         this.maxPeople = maxPeople;
         this.startDate = startDate;
-        this.endDate = endDate;
         this.menu = menu;
         this.detail = detail;
     }
 
     public void update(String name, Integer maxPeople, LocalDateTime startDate,
-                       LocalDateTime endDate, String menu, String detail) {
+                       String menu, String detail) {
         if (partyStatus != PartyStatus.RECRUITING) {
             throw new BaseException(StatusEnum.PARTY_STATUS_IS_NOT_RECRUITING);
         }
         this.name = name;
         this.maxPeople = maxPeople;
         this.startDate = startDate;
-        this.endDate = endDate;
         this.menu = menu;
         this.detail = detail;
     }

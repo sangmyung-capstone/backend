@@ -54,7 +54,6 @@ public class PartyService {
                 .name(postPartyReq.getPartyName())
                 .restaurant(restaurant)
                 .startDate(postPartyReq.getStartDate())
-                .endDate(postPartyReq.getEndDate())
                 .menu(postPartyReq.getMenu())
                 .maxPeople(postPartyReq.getMaxPeople())
                 .partyStatus(PartyStatus.RECRUITING)
@@ -132,7 +131,6 @@ public class PartyService {
                     .participants(party.getCurPartyMember())
                     .maxPeople(party.getMaxPeople())
                     .startDate(party.getStartDate())
-                    .endDate(party.getEndDate())
                     .userRating(party.getPartyParticipantRating()) // 다시 입력해줘야함!!
                     .partyHashtag(party.getPartyHashtag())
                     .build();
@@ -148,7 +146,7 @@ public class PartyService {
                 .orElseThrow(() -> new BaseException(NOT_FOUND_PARTY_FAILURE));
 
         party.update(patchPartyReq.getPartyName(), patchPartyReq.getMaxPeople(),
-                patchPartyReq.getStartDate(), patchPartyReq.getEndDate(),
+                patchPartyReq.getStartDate(),
                 patchPartyReq.getMenu(), patchPartyReq.getDetail());
         fireBasePartyRepository.update(new FireBasePartyInfo(patchPartyReq) , patchPartyReq.getPartyId());
     }

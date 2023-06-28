@@ -25,7 +25,7 @@ import javax.persistence.Table;
 @Getter
 public class PartyParticipant extends BaseTimeEntity{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "party_and_user_id")
+    @Column(name = "party_participant_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
