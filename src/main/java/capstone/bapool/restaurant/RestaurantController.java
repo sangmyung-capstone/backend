@@ -1,6 +1,8 @@
 package capstone.bapool.restaurant;
 
 import capstone.bapool.config.response.ResponseDto;
+import capstone.bapool.restaurant.dto.GetRestaurantBottomListReq;
+import capstone.bapool.restaurant.dto.GetRestaurantBottomListRes;
 import capstone.bapool.restaurant.dto.GetRestaurantMarkerInfoRes;
 import capstone.bapool.restaurant.dto.GetRestaurantsOnMapRes;
 import lombok.extern.slf4j.Slf4j;
@@ -50,5 +52,17 @@ public class RestaurantController {
         log.info("식당 마커정보 조회 완료: {}-{}", getRestaurantMarkerInfoRes.getRestaurantName(), restaurantId);
 
         return ResponseEntity.ok().body(response);
+    }
+    
+    // 식당 바텀리스트
+    @GetMapping("/bottomlist/{user-id}")
+    public ResponseEntity<ResponseDto> restaurantBottomList(@RequestBody GetRestaurantBottomListReq getRestaurantBottomListReq){
+//        System.out.println("getRestaurantBottomListReq.getRestaurantURLs().size() = " + getRestaurantBottomListReq.getRestaurantURLs().size());
+
+        GetRestaurantBottomListRes getRestaurantBottomListRes = restaurantService.findRestaurantBottomList(getRestaurantBottomListReq);
+
+        ResponseDto response = ResponseDto.create(getRestaurantBottomListRes);
+
+        return ResponseEntity.ok(response);
     }
 }

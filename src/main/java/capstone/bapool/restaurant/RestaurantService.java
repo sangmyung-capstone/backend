@@ -3,9 +3,7 @@ package capstone.bapool.restaurant;
 import capstone.bapool.config.error.BaseException;
 import capstone.bapool.model.Restaurant;
 import capstone.bapool.party.PartyRepository;
-import capstone.bapool.restaurant.dto.GetRestaurantMarkerInfoRes;
-import capstone.bapool.restaurant.dto.GetRestaurantsOnMapRes;
-import capstone.bapool.restaurant.dto.RestaurantInfo;
+import capstone.bapool.restaurant.dto.*;
 import capstone.bapool.utils.KakaoLocalApiService;
 import capstone.bapool.utils.SeleniumService;
 import capstone.bapool.utils.dto.ImgUrlAndMenu;
@@ -89,7 +87,7 @@ public class RestaurantService {
         }
 
         // 식당의 이미지와 메뉴 크롤링하기
-        ImgUrlAndMenu imgUrlAndMenu = seleniumService.crawlingImgUrlAndMenu(kakaoRestaurant.getSiteUrl());
+        ImgUrlAndMenu imgUrlAndMenu = seleniumService.crawlingImgURLAndMenu(kakaoRestaurant.getSiteUrl());
 
         GetRestaurantMarkerInfoRes getRestaurantMarkerInfoRes = GetRestaurantMarkerInfoRes.builder()
                 .restaurantId(kakaoRestaurant.getId())
@@ -106,5 +104,17 @@ public class RestaurantService {
                 .build();
 
         return getRestaurantMarkerInfoRes;
+    }
+
+    // 식당 바텀리스트
+    public GetRestaurantBottomListRes findRestaurantBottomList(GetRestaurantBottomListReq request){
+
+        List<String> restaurantImgURLs = new ArrayList<>();
+
+        for(String restaurantURLs : request.getRestaurantURLs()){
+            restaurantImgURLs.add(seleniumService.crawlingImgURL(restaurantURLs));
+        }
+
+        return new GetRestaurantBottomListRes(restaurantImgURLs);
     }
 }
