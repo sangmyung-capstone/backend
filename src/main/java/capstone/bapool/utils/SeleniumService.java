@@ -2,6 +2,7 @@ package capstone.bapool.utils;
 
 import capstone.bapool.restaurant.dto.Menu;
 import capstone.bapool.utils.dto.ImgUrlAndMenu;
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
+@Slf4j
 public class SeleniumService {
     private WebDriver driver;
     public static String WEB_DRIVER_ID = "webdriver.chrome.driver"; // Properties 설정
@@ -39,7 +41,6 @@ public class SeleniumService {
         options.addArguments("--disable-dev-shm-usage");
         options.setCapability("ignoreProtectedModeSettings", true);
         options.addArguments("--disable-popup-blocking"); //팝업안띄움
-        options.addArguments("headless"); //브라우저 안띄움
         options.addArguments("--disable-gpu"); //gpu 비활성화
         options.addArguments("--remote-allow-origins=*"); //cors문제
 
@@ -51,11 +52,16 @@ public class SeleniumService {
     }
 
 
-    // 메뉴, 이미지 한번에 크롤링하기
-    public ImgUrlAndMenu findImgUrlAndMenu(String url){
+    /**
+     * 주어진 url로부터 이미지와 메뉴를 크롤링함.
+     * 만약, 메뉴 또는 이미지가 없거나 크롤링할 수 없는 상황이면 null을 반환함.
+     * @param url 식당의 url
+     * @return
+     */
+    public ImgUrlAndMenu crawlingImgUrlAndMenu(String url){
         driver.get(url) ;
 
-        System.out.println("driver.getTitle() = " + driver.getTitle());
+        log.debug("식당 마커정보: '{}'의 이미지, 메뉴 크롤링", driver.getTitle());
 
         this.driver.manage().timeouts().implicitlyWait(Duration.ofMillis(500));
         String imgUrl = findImgUrl();
@@ -64,7 +70,11 @@ public class SeleniumService {
         return new ImgUrlAndMenu(imgUrl, findMenu());
     }
 
-    // 메뉴 크롤링
+    /**
+     * 메뉴 크롤링.
+     * 만약 메뉴가 없거나, 크롤링할 수 없는 상태면 null 반환
+     * @return Menu 리스트
+     */
     private List<Menu> findMenu(){
 
         List<Menu> menus = new ArrayList<>();
@@ -75,7 +85,7 @@ public class SeleniumService {
             if(crawlingMenus.isEmpty()){ // 이미지 없는 메뉴판
                 crawlingMenus = searchLabel.findElements(By.className("nophoto_type"));
             }
-            System.out.println("crawlingMenus.size() = " + crawlingMenus.size());
+            log.info("식당 마커정보: 식당 '{}'의 메뉴 개수={}", driver.getTitle(), crawlingMenus.size());
 
             // 크롤링한 메뉴 dto클래스에 담기
             for(WebElement menu : crawlingMenus){
@@ -85,30 +95,35 @@ public class SeleniumService {
                 if(menuName.isBlank()){
                     break;
                 }
-                System.out.println("menuPrice = " + menuPrice);
-                System.out.println("menuName = " + menuName);
+
+                log.debug("식당 마커정보: 식당 '{}'의 메뉴={}, 가격={} 크롤링", driver.getTitle(), menuName, menuPrice);
 
                 menus.add(new Menu(menuName, menuPrice));
             }
         } catch (Exception e){
-            System.out.println("no menu");
+            log.info("식당 마커정보: 식당 '{}'의 메뉴가 없음", driver.getTitle());
         }
 
         return menus;
     }
 
-    // 이미지 크롤링
+    /**
+     * 이미지 크롤링.
+     * 만약 식당에 이미지가 없으면 빈 List 반환
+     * @return 이미지 url
+     */
     private String findImgUrl(){
         try{
             WebElement searchLabel = driver.findElement(By.className("bg_present"));
 //            System.out.println("searchLabel.getAttribute(\"style\") = " + searchLabel.getAttribute("style"));
             String imgUrlBefore = searchLabel.getAttribute("style");
             String imgUrlAfter = imgUrlBefore.substring(imgUrlBefore.indexOf('"')+1, imgUrlBefore.lastIndexOf('"'));
-            System.out.println("imgUrlAfter = " + imgUrlAfter);
+
+            log.info("식당 마커정보: '{}'의 이미지 크롤링={}", driver.getTitle(), imgUrlAfter);
 
             return imgUrlAfter;
         }catch (Exception e){
-            System.out.println("no image");
+            log.info("식당 마커정보: 식당 '{}'의 이미지가 없음", driver.getTitle());
             return null;
         }
     }

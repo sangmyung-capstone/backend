@@ -5,7 +5,6 @@ import capstone.bapool.model.Restaurant;
 import capstone.bapool.party.PartyRepository;
 import capstone.bapool.restaurant.dto.GetRestaurantMarkerInfoRes;
 import capstone.bapool.restaurant.dto.GetRestaurantsOnMapRes;
-import capstone.bapool.restaurant.dto.Menu;
 import capstone.bapool.restaurant.dto.RestaurantInfo;
 import capstone.bapool.utils.KakaoLocalApiService;
 import capstone.bapool.utils.SeleniumService;
@@ -17,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_RESTAURANT_FAILURE;
 
@@ -68,7 +66,14 @@ public class RestaurantService {
         return new GetRestaurantsOnMapRes(restaurantInfoList);
     }
 
-    // 식당 마커정보
+    /**
+     * 식당 마커정보
+     * @param userId 듀저 id
+     * @param restaurantId 식당 id
+     * @param restaurantX 식당-x
+     * @param restaurantY 식당-y
+     * @return
+     */
     public GetRestaurantMarkerInfoRes findRestaurantMakerInfo(Long userId, Long restaurantId, double restaurantX, double restaurantY){
 
         KakaoRestaurant kakaoRestaurant = kakaoLocalApiService.findRestaurant(restaurantId, restaurantX, restaurantY);
@@ -83,7 +88,8 @@ public class RestaurantService {
             partyNum = partyRepository.countByRestaurant(restaurant).intValue();
         }
 
-        ImgUrlAndMenu imgUrlAndMenu = seleniumService.findImgUrlAndMenu(kakaoRestaurant.getSiteUrl());
+        // 식당의 이미지와 메뉴 크롤링하기
+        ImgUrlAndMenu imgUrlAndMenu = seleniumService.crawlingImgUrlAndMenu(kakaoRestaurant.getSiteUrl());
 
         GetRestaurantMarkerInfoRes getRestaurantMarkerInfoRes = GetRestaurantMarkerInfoRes.builder()
                 .restaurantId(kakaoRestaurant.getId())
