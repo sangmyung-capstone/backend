@@ -124,11 +124,11 @@ public class SeleniumService {
             String imgUrlBefore = searchLabel.getAttribute("style");
             String imgUrlAfter = imgUrlBefore.substring(imgUrlBefore.indexOf('"')+1, imgUrlBefore.lastIndexOf('"'));
 
-            log.info("식당 마커정보: '{}'의 이미지 크롤링={}", driver.getTitle(), imgUrlAfter);
+            log.info("이미지 크롤링: '{}'의 이미지 크롤링={}", driver.getTitle(), imgUrlAfter);
 
             return imgUrlAfter;
         }catch (Exception e){
-            log.info("식당 마커정보: 식당 '{}'의 이미지가 없음", driver.getTitle());
+            log.info("이미지 크롤링: 식당 '{}'의 이미지가 없음", driver.getTitle());
             return null;
         }
     }
