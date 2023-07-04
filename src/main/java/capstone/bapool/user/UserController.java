@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -91,8 +90,8 @@ public class UserController {
 
     @PostMapping("/block/{user-id}")
     public ResponseEntity<ResponseDto> blockUser(
-            @Valid @PathVariable("user-id") Long userId, @Valid @RequestBody Long blockedUserId) {
-        User blockedUser = userService.block(userId, blockedUserId);
-        return ResponseEntity.ok().body(ResponseDto.create(blockedUser));
+            @Valid @PathVariable("user-id") Long userId, @Valid @RequestBody BlockedUserReq blockedUserReq) {
+        BlockUserRes blockUserRes = userService.block(userId, blockedUserReq.getBlockedUserId());
+        return ResponseEntity.ok().body(ResponseDto.create(blockUserRes));
     }
 }

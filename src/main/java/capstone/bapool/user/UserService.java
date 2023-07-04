@@ -132,14 +132,14 @@ public class UserService {
         //내id랑 userid랑 구별을 해야 block유무를 확인할수있는데 우짜지...
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
-        User otherUser = userRepository.findById(userId)
+        User otherUser = userRepository.findById(otherUserId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
         boolean is_block = blockUserRepository.findExist(user,otherUser)!=null;
         return new OtherUserRes(otherUser, is_block);
     }
 
     @Transactional
-    public User block(Long userId, Long blockedUserId){
+    public BlockUserRes block(Long userId, Long blockedUserId){
         User blockUser = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
         User blockedUser = userRepository.findById(blockedUserId)
@@ -148,14 +148,14 @@ public class UserService {
         if(blockUserRepository.findExist(blockUser,blockedUser)!=null){
             BlockUser blockUserEntity = blockUserRepository.findExist(blockUser,blockedUser);
             blockUserRepository.delete(blockUserEntity);
-            return blockedUser;
+            return new BlockUserRes(blockedUser.getId());
         }else {//else면 차단, if면 차단 해제
             BlockUser blockUserEntity = BlockUser.builder()
                     .blockUser(blockUser)
                     .blockedUser(blockedUser)
                     .build();
             blockUserRepository.save(blockUserEntity);
-            return blockUserEntity.getBlockedUser();
+            return new BlockUserRes(blockUserEntity.getBlockedUser().getId());
         }
     }
 }

@@ -14,6 +14,6 @@ import java.util.Optional;
 @Repository
 public interface BlockUserRepository extends JpaRepository<BlockUser, Long> {
 
-    @Query("select b from BlockUser b where b.block_user = :blockuser and b.blocked_user = :blockeduser")
+    @Query("select b from BlockUser b where b.blockUser = :blockuser and b.blockedUser = :blockeduser")
     BlockUser findExist(@Param("blockuser")User blockuser, @Param("blockeduser")User blockeduser);
 }
