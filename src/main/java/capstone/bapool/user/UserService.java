@@ -4,11 +4,9 @@ import capstone.bapool.config.error.BaseException;
 import capstone.bapool.config.response.ResponseDto;
 import capstone.bapool.firebase.FireBaseUserRepository;
 import capstone.bapool.firebase.dto.FireBaseUser;
+import capstone.bapool.model.BlockUser;
 import capstone.bapool.model.User;
-import capstone.bapool.user.dto.ReissueReq;
-import capstone.bapool.user.dto.ReissueRes;
-import capstone.bapool.user.dto.SignUpReq;
-import capstone.bapool.user.dto.SocialAccessToken;
+import capstone.bapool.user.dto.*;
 import capstone.bapool.utils.JwtUtils;
 import capstone.bapool.utils.SocialUtils;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Optional;
 
 import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_USER_FAILURE;
 
@@ -31,6 +28,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtUtils jwtUtils;
     private final SocialUtils socialUtils;
+    private final BlockUserRepository blockUserRepository;
 
     private final FireBaseUserRepository fireBaseUserDao;
 
@@ -126,5 +124,38 @@ public class UserService {
         //firebase에서 채팅방도 나가야 될거같은데
         fireBaseUserDao.delete(userId);//이거는 firebase에서 삭제만
         return ResponseDto.create(userId+" deleted successfully");
+    }
+
+    @Transactional
+    public OtherUserRes findOtherById(Long userId, Long otherUserId) throws BaseException {
+        //내id랑 userid랑 확인해야되나, 카톡은 내 결과도 그냥 뜨는데
+        //내id랑 userid랑 구별을 해야 block유무를 확인할수있는데 우짜지...
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
+        User otherUser = userRepository.findById(userId)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
+        boolean is_block = blockUserRepository.findExist(user,otherUser)!=null;
+        return new OtherUserRes(otherUser, is_block);
+    }
+
+    @Transactional
+    public User block(Long userId, Long blockedUserId){
+        User blockUser = userRepository.findById(userId)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
+        User blockedUser = userRepository.findById(blockedUserId)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
+
+        if(blockUserRepository.findExist(blockUser,blockedUser)!=null){
+            BlockUser blockUserEntity = blockUserRepository.findExist(blockUser,blockedUser);
+            blockUserRepository.delete(blockUserEntity);
+            return blockedUser;
+        }else {//else면 차단, if면 차단 해제
+            BlockUser blockUserEntity = BlockUser.builder()
+                    .blockUser(blockUser)
+                    .blockedUser(blockedUser)
+                    .build();
+            blockUserRepository.save(blockUserEntity);
+            return blockUserEntity.getBlockedUser();
+        }
     }
 }

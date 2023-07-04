@@ -3,10 +3,7 @@ package capstone.bapool.user;
 import capstone.bapool.config.error.BaseException;
 import capstone.bapool.config.response.ResponseDto;
 import capstone.bapool.model.User;
-import capstone.bapool.user.dto.ReissueReq;
-import capstone.bapool.user.dto.ReissueRes;
-import capstone.bapool.user.dto.SignUpReq;
-import capstone.bapool.user.dto.SocialAccessToken;
+import capstone.bapool.user.dto.*;
 import capstone.bapool.utils.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -83,5 +80,19 @@ public class UserController {
     public ResponseEntity<ResponseDto> userRemove(@Valid @PathVariable("user-id") Long userId){
         ResponseDto deleteresult = userService.deleteById(userId);
         return ResponseEntity.ok().body(deleteresult);
+    }
+
+    @GetMapping("/profile/{user-id}")
+    public ResponseEntity<ResponseDto> otherUser(
+            @Valid @PathVariable("user-id") Long userId, @Valid @RequestBody Long otherUserId){
+        OtherUserRes otherUserRes = userService.findOtherById(userId, otherUserId);
+        return ResponseEntity.ok().body(ResponseDto.create(otherUserRes));
+    }
+
+    @PostMapping("/block/{user-id}")
+    public ResponseEntity<ResponseDto> blockUser(
+            @Valid @PathVariable("user-id") Long userId, @Valid @RequestBody Long blockedUserId) {
+        User blockedUser = userService.block(userId, blockedUserId);
+        return ResponseEntity.ok().body(ResponseDto.create(blockedUser));
     }
 }
