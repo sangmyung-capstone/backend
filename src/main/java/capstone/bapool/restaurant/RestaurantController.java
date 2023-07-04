@@ -27,9 +27,9 @@ public class RestaurantController {
 //        System.out.println("userId = " + userId);
 //        System.out.println("rect = " + rect);
 
-        ResponseDto responseDto = new ResponseDto<GetRestaurantsOnMapRes>(200,"요청성공",restaurantService.findRestaurantsOnMap(rect));
+        ResponseDto response = ResponseDto.create(restaurantService.findRestaurantsOnMap(rect));
 
-        return ResponseEntity.ok().body(ResponseDto.create(restaurantService.findRestaurantsOnMap(rect)));
+        return ResponseEntity.ok(response);
     }
 
 
