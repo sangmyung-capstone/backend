@@ -22,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,7 +53,6 @@ public class PartyService {
                 .name(postPartyReq.getPartyName())
                 .restaurant(restaurant)
                 .startDate(postPartyReq.getStartDate())
-                .endDate(postPartyReq.getEndDate())
                 .menu(postPartyReq.getMenu())
                 .maxPeople(postPartyReq.getMaxPeople())
                 .partyStatus(PartyStatus.RECRUITING)
@@ -94,7 +92,12 @@ public class PartyService {
         return restaurantRepository.save(restaurant);
     }
 
-    // 식당안의 파티리스트 조회
+    /**
+     * 식당안의 파티리스트 조회
+     * @param userId
+     * @param restaurantId 식당id
+     * @return
+     */
     public PartiesInRestaurantRes findPartiesInRestaurant(Long userId, Long restaurantId){
 
         PartiesInRestaurantRes partiesInRestaurantRes = new PartiesInRestaurantRes();
@@ -103,17 +106,12 @@ public class PartyService {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElse(null);
         if(restaurant == null){
-            System.out.println("restaurantId = " + restaurantId);
-            System.out.println("식당 없음!!");
+            log.info("식당안의 파티리스트 조회: 식당 {}이 db에 없음", restaurantId);
             return partiesInRestaurantRes;
         }
 
         // 식당 이름 입력.
         partiesInRestaurantRes.setRestaurantName(restaurant.getName());
-
-        // 임시값
-        List<Double> userRating = new ArrayList<>();
-        userRating.add(4.2);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
@@ -132,8 +130,7 @@ public class PartyService {
                     .participants(party.getCurPartyMember())
                     .maxPeople(party.getMaxPeople())
                     .startDate(party.getStartDate())
-                    .endDate(party.getEndDate())
-                    .userRating(party.getPartyParticipantRating()) // 다시 입력해줘야함!!
+                    .userRating(party.getPartyParticipantAvgRating()) // 다시 입력해줘야함!!
                     .partyHashtag(party.getPartyHashtag())
                     .build();
             partiesInRestaurantRes.addPartyInfos(partyInfo);
@@ -148,7 +145,7 @@ public class PartyService {
                 .orElseThrow(() -> new BaseException(NOT_FOUND_PARTY_FAILURE));
 
         party.update(patchPartyReq.getPartyName(), patchPartyReq.getMaxPeople(),
-                patchPartyReq.getStartDate(), patchPartyReq.getEndDate(),
+                patchPartyReq.getStartDate(),
                 patchPartyReq.getMenu(), patchPartyReq.getDetail());
         fireBasePartyRepository.update(new FireBasePartyInfo(patchPartyReq) , patchPartyReq.getPartyId());
     }

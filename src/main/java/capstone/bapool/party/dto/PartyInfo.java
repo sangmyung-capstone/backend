@@ -30,9 +30,6 @@ public class PartyInfo {
     @JsonProperty(value = "start_date")
     private LocalDateTime startDate;
 
-    @JsonProperty(value = "end_date")
-    private LocalDateTime endDate;
-
     private String menu;
 
     @JsonProperty("party_hashtag")
@@ -44,17 +41,16 @@ public class PartyInfo {
     private boolean hasBlockUser;
 
     @JsonProperty("user_rating")
-    private List<Double> userRating;
+    private Double userRating;
 
     @Builder
-    public PartyInfo(Long partyId, String partyName, boolean isParticipate, int participants, int maxPeople, LocalDateTime startDate, LocalDateTime endDate, String menu, List<Integer> partyHashtag, String detail, boolean hasBlockUser, List<Double> userRating) {
+    public PartyInfo(Long partyId, String partyName, boolean isParticipate, int participants, int maxPeople, LocalDateTime startDate, String menu, List<Integer> partyHashtag, String detail, boolean hasBlockUser, Double userRating) {
         this.partyId = partyId;
         this.partyName = partyName;
         this.isParticipate = isParticipate;
         this.participants = participants;
         this.maxPeople = maxPeople;
         this.startDate = startDate;
-        this.endDate = endDate;
         this.menu = menu;
         this.partyHashtag = partyHashtag;
         this.detail = detail;
