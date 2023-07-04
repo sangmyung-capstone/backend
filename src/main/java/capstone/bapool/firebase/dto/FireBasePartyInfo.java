@@ -21,8 +21,11 @@ public class FireBasePartyInfo {
     private String startDate;
     private String endDate;
     private List<Integer> hashTag;
+    private String siteUrls;
+    private String restaurantName;
+    private Long groupLeaderId;
 
-    public FireBasePartyInfo(PostPartyReq partyReq) {
+    public FireBasePartyInfo(PostPartyReq partyReq, Long userId) {
         this.groupName = partyReq.getPartyName();
         this.groupDetail = partyReq.getDetail();
         this.curNumberOfPeople = 1;
@@ -30,6 +33,9 @@ public class FireBasePartyInfo {
         this.startDate = partyReq.getStartDate().toString();
         this.endDate = partyReq.getEndDate().toString();
         this.hashTag = partyReq.getHashtag();
+        this.siteUrls = partyReq.getPostPartyRestaurantReq().getSiteUrl();
+        this.restaurantName = partyReq.getPostPartyRestaurantReq().getName();
+        this.groupLeaderId = userId;
     }
 
     public FireBasePartyInfo(PatchPartyReq patchPartyReq) {

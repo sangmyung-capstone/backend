@@ -27,4 +27,7 @@ public class SignUpReq {
     @JsonProperty("nickname")
     @NotBlank
     private String nickName;
+
+    @JsonProperty("firebase_token")
+    private String fireBaseToken;
 }
