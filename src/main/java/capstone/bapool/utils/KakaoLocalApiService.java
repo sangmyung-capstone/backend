@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class KakaoLocalApiService {
 
     // rect로 식당 조회
@@ -94,7 +96,13 @@ public class KakaoLocalApiService {
         return kakaoRestaurantList;
     }
 
-    // 식당 검색
+    /**
+     * 식당 검색
+     * @param restaurantId 식당 id
+     * @param x 식당-x
+     * @param y 식당-y
+     * @return
+     */
     public KakaoRestaurant findRestaurant(Long restaurantId, double x, double y){
         String baseUrl = "https://dapi.kakao.com/v2/local/search/category.json?category_group_code=FD6&radius=10";
         String resultUrl;
@@ -108,12 +116,10 @@ public class KakaoLocalApiService {
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("Authorization", "KakaoAK c7c0edb9f622d6932c33a50bd0a2aa07");
 
-                conn.connect();
-
                 // 결과 코드가 200이라면 성공
                 // 200 아닐경우 예외처리 필요
-                System.out.println("conn.getResponseCode() = " + conn.getResponseCode());
-                System.out.println("conn.getResponseMessage() = " + conn.getResponseMessage());
+//                System.out.println("conn.getResponseCode() = " + conn.getResponseCode());
+//                System.out.println("conn.getResponseMessage() = " + conn.getResponseMessage());
 
                 // 요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
                 BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
@@ -133,7 +139,8 @@ public class KakaoLocalApiService {
 
                 for(int i=0; i<documents.size(); i++){
                     JsonObject restaurant = documents.get(i).getAsJsonObject();
-                    if(restaurant.get("id").getAsLong() == restaurantId){ // 일치하는 식당을 찾았다면
+                    // 일치하는 식당을 찾았다면
+                    if(restaurant.get("id").getAsLong() == restaurantId){
                         KakaoRestaurant kakaoRestaurant = KakaoRestaurant.builder()
                                 .id(restaurant.get("id").getAsLong())
                                 .name(restaurant.get("place_name").getAsString())

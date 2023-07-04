@@ -22,6 +22,6 @@ public class SignInRes {
         this.userId = reissueRes.getUserId();
         this.accessToken = reissueRes.getAccessToken();
         this.refreshToken = reissueRes.getRefreshToken();
-        this.nickname = getNickname();
+        this.nickname = nickname;
     }
 }

@@ -67,6 +67,7 @@ public class UserService {
         String email = socialUtils.makeUserInfoByNaver(socialAccessToken.getAccessToken()).get("email");
         User user = userRepository.findUserByEmail(email).orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
         SignInRes reissueRes = new SignInRes(jwtUtils.generateTokens(user.getId()), user.getName());
+        log.info(user.getName());
         user.updateRefreshToken(reissueRes.getRefreshToken());
         return reissueRes;
     }
