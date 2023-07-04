@@ -67,7 +67,7 @@ public class PartyService {
         PartyParticipant partyParticipant = PartyParticipant.makeMapping(user, savedParty, RoleType.LEADER);
         partyParticipantRepository.save(partyParticipant);
 
-        fireBasePartyRepository.save(new FireBasePartyInfo(postPartyReq), user.getId(), party.getId());
+        fireBasePartyRepository.save(new FireBasePartyInfo(postPartyReq, user.getId()), user.getId(), party.getId());
         return savedParty.getId();
     }
 

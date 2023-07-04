@@ -9,4 +9,5 @@ public class FireBaseUser {
     private Long userId;
     private String name;
     private Integer imgUrl;
+    private String firebaseToken;
 }

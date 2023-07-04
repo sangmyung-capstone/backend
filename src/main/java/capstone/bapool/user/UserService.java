@@ -51,19 +51,19 @@ public class UserService {
                 .profileImgId(signUpReq.getProfileImgId())
                 .name(signUpReq.getNickName())
                 .build();
-        User savedUser = userRepository.save(user);
+        User savedUser = saveUser(user, signUpReq.getFireBaseToken());
         ReissueRes reissueRes = jwtUtils.generateTokens(savedUser.getId());
         savedUser.updateRefreshToken(reissueRes.getRefreshToken());
         return reissueRes;
     }
 
-    public Boolean signInKakaoAready(SocialAccessToken socialAccessToken) throws IOException, BaseException{
+    public Boolean signInKakaoAready(SocialAccessToken socialAccessToken) throws IOException, BaseException {
         String email = socialUtils.makeUserInfoByKakao(socialAccessToken.getAccessToken()).get("email");
         return !userRepository.findUserByEmail(email).isEmpty();
     }
 
     @Transactional(readOnly = false)
-    public SignInRes signInNaver(SocialAccessToken socialAccessToken) throws BaseException,IOException {
+    public SignInRes signInNaver(SocialAccessToken socialAccessToken) throws BaseException, IOException {
         String email = socialUtils.makeUserInfoByNaver(socialAccessToken.getAccessToken()).get("email");
         User user = userRepository.findUserByEmail(email).orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
         SignInRes reissueRes = new SignInRes(jwtUtils.generateTokens(user.getId()), user.getName());
@@ -73,7 +73,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = false)
-    public ReissueRes signUpNaver(SignUpReq signUpReq) throws IOException{
+    public ReissueRes signUpNaver(SignUpReq signUpReq) throws IOException {
         Map<String, String> response = socialUtils.makeUserInfoByNaver(signUpReq.getAccessToken());
         User user = User.builder()
                 .email((String) response.get("email"))
@@ -81,19 +81,19 @@ public class UserService {
                 .profileImgId(signUpReq.getProfileImgId())
                 .name(signUpReq.getNickName())
                 .build();
-        User savedUser = saveUser(user);
+        User savedUser = saveUser(user, signUpReq.getFireBaseToken());
         ReissueRes reissueRes = jwtUtils.generateTokens(savedUser.getId());
         savedUser.updateRefreshToken(reissueRes.getRefreshToken());
         return reissueRes;
     }
 
-    private User saveUser(User user) {
+    private User saveUser(User user, String firebaseToken) {
         User savedUser = userRepository.save(user);
-        fireBaseUserDao.save(new FireBaseUser(savedUser.getId(), savedUser.getName(), savedUser.getProfileImgId()));
+        fireBaseUserDao.save(new FireBaseUser(savedUser.getId(), savedUser.getName(), savedUser.getProfileImgId(), firebaseToken));
         return savedUser;
     }
 
-    public Boolean signInNaverAready(SocialAccessToken socialAccessToken) throws IOException, BaseException{
+    public Boolean signInNaverAready(SocialAccessToken socialAccessToken) throws IOException, BaseException {
         String email = socialUtils.makeUserInfoByNaver(socialAccessToken.getAccessToken()).get("email");
         return !userRepository.findUserByEmail(email).isEmpty();
     }
