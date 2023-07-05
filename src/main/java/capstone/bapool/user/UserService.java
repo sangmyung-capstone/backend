@@ -126,6 +126,7 @@ public class UserService {
         return UserRes.builder()
                 .name(user.getName())
                 .profileImgId(user.getProfileImgId())
+                .rating(user.getRating())
                 .build();
     }
 
@@ -152,6 +153,7 @@ public class UserService {
                 .userId(otherUser.getId())
                 .profileImg(otherUser.getProfileImgId())
                 .name(otherUser.getName())
+                .rating(otherUser.getRating())
                 .is_block(is_block)
                 .build();
     }
@@ -168,12 +170,15 @@ public class UserService {
                 BlockUser blockUserTuple = blockUserRepository.findExist(blockUser,blockedUser);
                 blockUserRepository.delete(blockUserTuple);
                 return new BlockUserRes(BlockStatus.UNBLOCK);
-            }else {//else면 차단, if면 차단 해제
+            }else {//else면 차단하기, if면 차단 해제
                 BlockUser blockUserTuple = BlockUser.builder()
                         .blockUser(blockUser)
                         .blockedUser(blockedUser)
                         .build();
                 blockUserRepository.save(blockUserTuple);
+
+                //밑에 시간넣는 부분 한번 물어봐야될듯 프론트가 주는지 우리가 생성할때 넣어야 되는지
+                //프론트가 준다면 blockuserreq수정해야될듯
                 Date date = new Date();
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -183,7 +188,6 @@ public class UserService {
                         .name(blockedUser.getName())
                         .blockDate(LocalDateTime.parse(formatter.format(date)))
                         .build();
-                //blockuserres값 잘 집어넣어보기
                 return blockUserRes;
             }
         }else{

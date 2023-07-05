@@ -1,14 +1,18 @@
 package capstone.bapool.user.dto;
 
 import capstone.bapool.model.User;
+import capstone.bapool.model.UserHashtag;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-@Getter
+import java.util.ArrayList;
+
 @AllArgsConstructor
 @Builder
+@JsonPropertyOrder({"userId", "profileImg", "name", "rating", "is_block"})
 public class OtherUserRes {
 
     @JsonProperty("user_id")
@@ -22,13 +26,11 @@ public class OtherUserRes {
 
     @JsonProperty("is_block")
     boolean is_block;
-//    이거는 타유저 프로필
-//    "user_id": 1,
-//            "profileImg": 2,
-//            "nickname": "최부장0923",
-//            "rating": 4.3,
-//            "hashtag": [
-//            3
-//            ],
-//            "is_block": false
+
+    @JsonProperty("rating")
+    double rating;
+
+//    @JsonProperty("hashtag")
+//    ArrayList<UserHashtag> userHashtags;
+//    여기는 hashtag구하는 메소드 만들고 구현해야지
 }

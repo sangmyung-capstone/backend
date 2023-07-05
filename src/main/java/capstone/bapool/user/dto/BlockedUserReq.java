@@ -14,6 +14,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class BlockedUserReq {
 
-    @JsonProperty("blocked_user")
+    @JsonProperty("blockedUserId")
     Long blockedUserId;
 }

@@ -2,6 +2,7 @@ package capstone.bapool.user.dto;
 
 import capstone.bapool.model.enumerate.BlockStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@JsonPropertyOrder({"userId", "blockStatus", "name", "blockDate"})
 public class BlockUserRes {
 
     @JsonProperty("user_id")
