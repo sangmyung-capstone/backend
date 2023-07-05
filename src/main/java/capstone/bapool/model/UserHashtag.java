@@ -18,7 +18,7 @@ import javax.persistence.Table;
 @Table(name = "user_hashtag")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class UserHashtag {
+public class UserHashtag extends BaseTimeEntity{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_hashtag_id")
     private Long id;

@@ -3,11 +3,10 @@ package capstone.bapool.restaurant;
 import capstone.bapool.config.error.BaseException;
 import capstone.bapool.model.Restaurant;
 import capstone.bapool.party.PartyRepository;
-import capstone.bapool.restaurant.dto.GetRestaurantMarkerInfoRes;
-import capstone.bapool.restaurant.dto.GetRestaurantsOnMapRes;
-import capstone.bapool.restaurant.dto.Menu;
-import capstone.bapool.restaurant.dto.RestaurantInfo;
+import capstone.bapool.restaurant.dto.*;
 import capstone.bapool.utils.KakaoLocalApiService;
+import capstone.bapool.utils.SeleniumService;
+import capstone.bapool.utils.dto.ImgUrlAndMenu;
 import capstone.bapool.utils.dto.KakaoRestaurant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +25,7 @@ public class RestaurantService {
     private final KakaoLocalApiService kakaoLocalApiService;
     private final RestaurantRepository restaurantRepository;
     private final PartyRepository partyRepository;
+    private final SeleniumService seleniumService;
 
     /**
      * 지도화면을 위한 식당리스트 조회
@@ -64,6 +64,14 @@ public class RestaurantService {
         return new GetRestaurantsOnMapRes(restaurantInfoList);
     }
 
+    /**
+     * 식당 마커정보
+     * @param userId 듀저 id
+     * @param restaurantId 식당 id
+     * @param restaurantX 식당-x
+     * @param restaurantY 식당-y
+     * @return
+     */
     public GetRestaurantMarkerInfoRes findRestaurantMakerInfo(Long userId, Long restaurantId, double restaurantX, double restaurantY){
 
         KakaoRestaurant kakaoRestaurant = kakaoLocalApiService.findRestaurant(restaurantId, restaurantX, restaurantY);
@@ -78,10 +86,8 @@ public class RestaurantService {
             partyNum = partyRepository.countByRestaurant(restaurant).intValue();
         }
 
-        // 임시값
-        Menu menu = new Menu("피자", "17,000");
-        List<Menu> menus = new ArrayList<>();
-        menus.add(menu);
+        // 식당의 이미지와 메뉴 크롤링하기
+        ImgUrlAndMenu imgUrlAndMenu = seleniumService.crawlingImgURLAndMenu(kakaoRestaurant.getSiteUrl());
 
         GetRestaurantMarkerInfoRes getRestaurantMarkerInfoRes = GetRestaurantMarkerInfoRes.builder()
                 .restaurantId(kakaoRestaurant.getId())
@@ -93,11 +99,22 @@ public class RestaurantService {
                 .category(kakaoRestaurant.getCategory())
                 .link(kakaoRestaurant.getSiteUrl())
                 .phone(kakaoRestaurant.getPhone())
-                // 수정 필요!!
-                .imgUrl("https://i.namu.wiki/i/umI-heVYVS9miQNqXM13FRUOHHL4l1nzsZgN9XRLFG7nI_7Dyf-Myr6HmiWf9Qd7SAZQz3WYSQHPXXtGAwLTag.webp")
-                .menu(menus) // 수정 필요!!
+                .imgUrl(imgUrlAndMenu.getImgUrl())
+                .menu(imgUrlAndMenu.getMenus())
                 .build();
 
         return getRestaurantMarkerInfoRes;
+    }
+
+    // 식당 바텀리스트
+    public GetRestaurantBottomListRes findRestaurantBottomList(GetRestaurantBottomListReq request){
+
+        List<String> restaurantImgURLs = new ArrayList<>();
+
+        for(String restaurantURLs : request.getRestaurantURLs()){
+            restaurantImgURLs.add(seleniumService.crawlingImgURL(restaurantURLs));
+        }
+
+        return new GetRestaurantBottomListRes(restaurantImgURLs);
     }
 }

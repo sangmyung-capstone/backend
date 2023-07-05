@@ -7,6 +7,11 @@ import capstone.bapool.firebase.dto.FireBaseUser;
 import capstone.bapool.model.BlockUser;
 import capstone.bapool.model.User;
 import capstone.bapool.model.enumerate.BlockStatus;
+import capstone.bapool.user.dto.ReissueReq;
+import capstone.bapool.user.dto.ReissueRes;
+import capstone.bapool.user.dto.SignInRes;
+import capstone.bapool.user.dto.SignUpReq;
+import capstone.bapool.user.dto.SocialAccessToken;
 import capstone.bapool.user.dto.*;
 import capstone.bapool.utils.JwtUtils;
 import capstone.bapool.utils.SocialUtils;
@@ -37,10 +42,10 @@ public class UserService {
     private final FireBaseUserRepository fireBaseUserDao;
 
     @Transactional(readOnly = false)
-    public ReissueRes signInKakao(SocialAccessToken socialAccessToken) throws BaseException, IOException {
+    public SignInRes signInKakao(SocialAccessToken socialAccessToken) throws BaseException, IOException {
         String email = socialUtils.makeUserInfoByKakao(socialAccessToken.getAccessToken()).get("email");
         User user = userRepository.findUserByEmail(email).orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
-        ReissueRes reissueRes = jwtUtils.generateTokens(user.getId());
+        SignInRes reissueRes = new SignInRes(jwtUtils.generateTokens(user.getId()), user.getName());
         user.updateRefreshToken(reissueRes.getRefreshToken());
         return reissueRes;
     }
@@ -66,10 +71,11 @@ public class UserService {
     }
 
     @Transactional(readOnly = false)
-    public ReissueRes signInNaver(SocialAccessToken socialAccessToken) throws BaseException,IOException {
+    public SignInRes signInNaver(SocialAccessToken socialAccessToken) throws BaseException,IOException {
         String email = socialUtils.makeUserInfoByNaver(socialAccessToken.getAccessToken()).get("email");
         User user = userRepository.findUserByEmail(email).orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
-        ReissueRes reissueRes = jwtUtils.generateTokens(user.getId());
+        SignInRes reissueRes = new SignInRes(jwtUtils.generateTokens(user.getId()), user.getName());
+        log.info(user.getName());
         user.updateRefreshToken(reissueRes.getRefreshToken());
         return reissueRes;
     }

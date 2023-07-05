@@ -30,15 +30,26 @@ public class PartyController {
 
     private final PartyService partyService;
 
-    // 식당안의 파티리스트 조회
+
+    /**
+     * [GET] /parties/{user-id}/{restaurant-id}
+     * 식당안의 파티리스트 조회
+     * @param userId
+     * @param restaurantId
+     * @return
+     */
     @GetMapping("/{user-id}/{restaurant-id}")
-    public ResponseDto<PartiesInRestaurantRes> partyInRestaurantList(@PathVariable("user-id")Long userId, @PathVariable("restaurant-id")Long restaurantId) {
+    public ResponseEntity<ResponseDto> partyInRestaurantList(@PathVariable("user-id")Long userId, @PathVariable("restaurant-id")Long restaurantId) {
 
         PartiesInRestaurantRes partiesInRestaurantRes = partyService.findPartiesInRestaurant(userId, restaurantId);
 
         System.out.println("partiesInRestaurantRes = " + partiesInRestaurantRes.getPartyInfos().size());
 
-        return ResponseDto.create(partiesInRestaurantRes);
+        ResponseDto<PartiesInRestaurantRes> response = ResponseDto.create(partiesInRestaurantRes);
+
+        log.info("식당 '{}-{}'의 파티리스트 조회 요청", partiesInRestaurantRes.getRestaurantName(), restaurantId);
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping(value = "/{user-id}")

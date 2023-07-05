@@ -2,6 +2,13 @@ package capstone.bapool.user;
 
 import capstone.bapool.config.error.BaseException;
 import capstone.bapool.config.response.ResponseDto;
+import capstone.bapool.user.dto.ReissueReq;
+import capstone.bapool.user.dto.ReissueRes;
+import capstone.bapool.user.dto.SignInRes;
+import capstone.bapool.user.dto.SignUpReq;
+import capstone.bapool.user.dto.SignupRes;
+import capstone.bapool.user.dto.SocialAccessToken;
+
 import capstone.bapool.model.User;
 import capstone.bapool.user.dto.*;
 import capstone.bapool.utils.JwtUtils;
@@ -27,7 +34,7 @@ public class UserController {
 
     @PostMapping(value = "/kakao/signin")
     public ResponseEntity<Object> SignInKakao(@Valid @RequestBody SocialAccessToken socialAccessToken) throws BaseException, IOException {
-        ReissueRes signupRes = userService.signInKakao(socialAccessToken);
+        SignInRes signupRes = userService.signInKakao(socialAccessToken);
         return ResponseEntity.ok().body(ResponseDto.create(signupRes));
     }
 
@@ -44,7 +51,7 @@ public class UserController {
 
     @PostMapping(value = "/naver/signin")
     public ResponseEntity<ResponseDto> SignInNaver(@Valid @RequestBody SocialAccessToken socialAccessToken) throws BaseException, IOException {
-        ReissueRes signupRes = userService.signInNaver(socialAccessToken);
+        SignInRes signupRes = userService.signInNaver(socialAccessToken);
         return ResponseEntity.ok().body(ResponseDto.create(signupRes));
     }
 

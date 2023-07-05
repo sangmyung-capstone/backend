@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name ="block_user")
-public class BlockUser {
+public class BlockUser extends BaseTimeEntity{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "block_user_id")
     private Long id;
@@ -33,10 +33,6 @@ public class BlockUser {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "blocked_user")
     private User blockedUser;
-
-    @Column(name = "create_at")
-    @CreationTimestamp
-    private LocalDateTime createAt;
 
     @Builder
     private BlockUser(User blockUser, User blockedUser) {
