@@ -68,7 +68,7 @@ public class UserController {
     //마이페이지 로딩
     @GetMapping("/mypage/{user-id}")
     public ResponseEntity<ResponseDto> mypage(@Valid @PathVariable("user-id") Long userId){
-        User user = userService.findById(userId);
+        UserRes user = userService.findById(userId);
         //dto를 만들고 entity반환
         return ResponseEntity.ok().body(ResponseDto.create(user));
     }
@@ -81,10 +81,10 @@ public class UserController {
         return ResponseEntity.ok().body(deleteresult);
     }
 
-    @GetMapping("/profile/{user-id}")
+    @PostMapping("/profile/{user-id}")
     public ResponseEntity<ResponseDto> otherUser(
-            @Valid @PathVariable("user-id") Long userId, @Valid @RequestBody Long otherUserId){
-        OtherUserRes otherUserRes = userService.findOtherById(userId, otherUserId);
+            @Valid @PathVariable("user-id") Long userId, @Valid @RequestBody OtherUserReq otherUserReq){
+        OtherUserRes otherUserRes = userService.findOtherById(userId, otherUserReq.getOtherUserId());
         return ResponseEntity.ok().body(ResponseDto.create(otherUserRes));
     }
 

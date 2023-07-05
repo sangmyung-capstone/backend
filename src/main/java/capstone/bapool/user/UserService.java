@@ -6,6 +6,7 @@ import capstone.bapool.firebase.FireBaseUserRepository;
 import capstone.bapool.firebase.dto.FireBaseUser;
 import capstone.bapool.model.BlockUser;
 import capstone.bapool.model.User;
+import capstone.bapool.model.enumerate.BlockStatus;
 import capstone.bapool.user.dto.*;
 import capstone.bapool.utils.JwtUtils;
 import capstone.bapool.utils.SocialUtils;
@@ -15,6 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Map;
 
 import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_USER_FAILURE;
@@ -110,10 +114,13 @@ public class UserService {
     }
 
     @Transactional
-    public User findById(Long userId) throws BaseException {
+    public UserRes findById(Long userId) throws BaseException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));    //db에 사용자id가 없다면 처리
-        return user;
+        return UserRes.builder()
+                .name(user.getName())
+                .profileImgId(user.getProfileImgId())
+                .build();
     }
 
     @Transactional
@@ -135,7 +142,12 @@ public class UserService {
         User otherUser = userRepository.findById(otherUserId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
         boolean is_block = blockUserRepository.findExist(user,otherUser)!=null;
-        return new OtherUserRes(otherUser, is_block);
+        return OtherUserRes.builder()
+                .userId(otherUser.getId())
+                .profileImg(otherUser.getProfileImgId())
+                .name(otherUser.getName())
+                .is_block(is_block)
+                .build();
     }
 
     @Transactional
@@ -145,17 +157,31 @@ public class UserService {
         User blockedUser = userRepository.findById(blockedUserId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
 
-        if(blockUserRepository.findExist(blockUser,blockedUser)!=null){
-            BlockUser blockUserEntity = blockUserRepository.findExist(blockUser,blockedUser);
-            blockUserRepository.delete(blockUserEntity);
-            return new BlockUserRes(blockedUser.getId());
-        }else {//else면 차단, if면 차단 해제
-            BlockUser blockUserEntity = BlockUser.builder()
-                    .blockUser(blockUser)
-                    .blockedUser(blockedUser)
-                    .build();
-            blockUserRepository.save(blockUserEntity);
-            return new BlockUserRes(blockUserEntity.getBlockedUser().getId());
+        if(blockUser != blockedUser){
+            if(blockUserRepository.findExist(blockUser,blockedUser)!=null){
+                BlockUser blockUserTuple = blockUserRepository.findExist(blockUser,blockedUser);
+                blockUserRepository.delete(blockUserTuple);
+                return new BlockUserRes(BlockStatus.UNBLOCK);
+            }else {//else면 차단, if면 차단 해제
+                BlockUser blockUserTuple = BlockUser.builder()
+                        .blockUser(blockUser)
+                        .blockedUser(blockedUser)
+                        .build();
+                blockUserRepository.save(blockUserTuple);
+                Date date = new Date();
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+                BlockUserRes blockUserRes  = BlockUserRes.builder()
+                        .userId(blockedUser.getId())
+                        .blockStatus(BlockStatus.BLOCK)
+                        .name(blockedUser.getName())
+                        .blockDate(LocalDateTime.parse(formatter.format(date)))
+                        .build();
+                //blockuserres값 잘 집어넣어보기
+                return blockUserRes;
+            }
+        }else{
+            return new BlockUserRes();
         }
     }
 }
