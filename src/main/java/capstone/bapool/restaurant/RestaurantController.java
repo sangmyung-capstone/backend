@@ -55,7 +55,7 @@ public class RestaurantController {
     }
     
     // 식당 바텀리스트
-    @GetMapping("/bottomlist/{user-id}")
+    @PostMapping("/bottomlist/{user-id}")
     public ResponseEntity<ResponseDto> restaurantBottomList(@RequestBody GetRestaurantBottomListReq getRestaurantBottomListReq){
 //        System.out.println("getRestaurantBottomListReq.getRestaurantURLs().size() = " + getRestaurantBottomListReq.getRestaurantURLs().size());
 
