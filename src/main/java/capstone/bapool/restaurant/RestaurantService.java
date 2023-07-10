@@ -118,4 +118,35 @@ public class RestaurantService {
 
         return new GetRestaurantBottomListRes(restaurantImgURLs);
     }
+
+    // 식당 검색
+    public GetSearchRestaurantRes searchRestaurant(String key, String rect){
+
+        List<RestaurantInfo> restaurantInfoList = new ArrayList<>();
+
+        List<KakaoRestaurant> kakaoRestaurantList = kakaoLocalApiService.searchRestaurantByKeyword(key, rect);
+
+        for(KakaoRestaurant kakaoRestaurant : kakaoRestaurantList){
+            // 식당 안의 파티개수
+            int partyNum = 0;
+            Restaurant restaurant = restaurantRepository.findById(kakaoRestaurant.getId()).orElse(null);
+            if(restaurant != null){ // 식당이 db에 저장되어 있으면
+                partyNum = partyRepository.countByRestaurant(restaurant).intValue();
+            }
+
+            RestaurantInfo restaurantInfo = RestaurantInfo.builder()
+                    .restaurantId(kakaoRestaurant.getId())
+                    .restaurantName(kakaoRestaurant.getName())
+                    .restaurantAddress(kakaoRestaurant.getAddress())
+                    .category(kakaoRestaurant.getCategory())
+                    .numOfParty(partyNum)
+                    .restaurantLongitude(kakaoRestaurant.getX())
+                    .restaurantLatitude(kakaoRestaurant.getY())
+                    .build();
+
+            restaurantInfoList.add(restaurantInfo);
+        }
+
+        return new GetSearchRestaurantRes(restaurantInfoList);
+    }
 }
