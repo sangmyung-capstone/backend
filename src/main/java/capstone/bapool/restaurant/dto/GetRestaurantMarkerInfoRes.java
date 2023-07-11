@@ -1,5 +1,6 @@
 package capstone.bapool.restaurant.dto;
 
+import capstone.bapool.utils.dto.Menu;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Builder;

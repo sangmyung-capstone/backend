@@ -5,8 +5,9 @@ import capstone.bapool.model.Restaurant;
 import capstone.bapool.party.PartyRepository;
 import capstone.bapool.restaurant.dto.*;
 import capstone.bapool.utils.KakaoLocalApiService;
+import capstone.bapool.utils.RequestsService;
 import capstone.bapool.utils.SeleniumService;
-import capstone.bapool.utils.dto.ImgUrlAndMenu;
+import capstone.bapool.utils.dto.ImgURLAndMenu;
 import capstone.bapool.utils.dto.KakaoRestaurant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
     private final PartyRepository partyRepository;
     private final SeleniumService seleniumService;
+    private final RequestsService requestsService;
 
     /**
      * 지도화면을 위한 식당리스트 조회
@@ -56,6 +58,7 @@ public class RestaurantService {
                     .numOfParty(partyNum)
                     .restaurantLongitude(kakaoRestaurant.getX())
                     .restaurantLatitude(kakaoRestaurant.getY())
+                    .link(kakaoRestaurant.getSiteUrl())
                     .build();
 
             restaurantInfoList.add(restaurantInfo2);
@@ -87,7 +90,9 @@ public class RestaurantService {
         }
 
         // 식당의 이미지와 메뉴 크롤링하기
-        ImgUrlAndMenu imgUrlAndMenu = seleniumService.crawlingImgURLAndMenu(kakaoRestaurant.getSiteUrl());
+//        ImgUrlAndMenu imgUrlAndMenu = seleniumService.crawlingImgURLAndMenu(kakaoRestaurant.getSiteUrl());
+
+        ImgURLAndMenu imgUrlAndMenu = requestsService.crawlingImgURLAndMenu(kakaoRestaurant.getId());
 
         GetRestaurantMarkerInfoRes getRestaurantMarkerInfoRes = GetRestaurantMarkerInfoRes.builder()
                 .restaurantId(kakaoRestaurant.getId())
@@ -111,10 +116,41 @@ public class RestaurantService {
 
         List<String> restaurantImgURLs = new ArrayList<>();
 
-        for(String restaurantURLs : request.getRestaurantURLs()){
-            restaurantImgURLs.add(seleniumService.crawlingImgURL(restaurantURLs));
+        for(Long restaurantId : request.getRestaurantIdList()){
+            restaurantImgURLs.add(requestsService.crawlingImgURL(restaurantId));
         }
 
         return new GetRestaurantBottomListRes(restaurantImgURLs);
+    }
+
+    // 식당 검색
+    public GetSearchRestaurantRes searchRestaurant(String query, Double x, Double y){
+
+        List<RestaurantInfo> restaurantInfoList = new ArrayList<>();
+
+        List<KakaoRestaurant> kakaoRestaurantList = kakaoLocalApiService.searchRestaurantByKeyword(query, x, y);
+
+        for(KakaoRestaurant kakaoRestaurant : kakaoRestaurantList){
+            // 식당 안의 파티개수
+            int partyNum = 0;
+            Restaurant restaurant = restaurantRepository.findById(kakaoRestaurant.getId()).orElse(null);
+            if(restaurant != null){ // 식당이 db에 저장되어 있으면
+                partyNum = partyRepository.countByRestaurant(restaurant).intValue();
+            }
+
+            RestaurantInfo restaurantInfo = RestaurantInfo.builder()
+                    .restaurantId(kakaoRestaurant.getId())
+                    .restaurantName(kakaoRestaurant.getName())
+                    .restaurantAddress(kakaoRestaurant.getAddress())
+                    .category(kakaoRestaurant.getCategory())
+                    .numOfParty(partyNum)
+                    .restaurantLongitude(kakaoRestaurant.getX())
+                    .restaurantLatitude(kakaoRestaurant.getY())
+                    .build();
+
+            restaurantInfoList.add(restaurantInfo);
+        }
+
+        return new GetSearchRestaurantRes(restaurantInfoList);
     }
 }

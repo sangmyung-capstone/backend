@@ -1,7 +1,7 @@
 package capstone.bapool.utils;
 
-import capstone.bapool.restaurant.dto.Menu;
-import capstone.bapool.utils.dto.ImgUrlAndMenu;
+import capstone.bapool.utils.dto.Menu;
+import capstone.bapool.utils.dto.ImgURLAndMenu;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -56,7 +56,7 @@ public class SeleniumService {
      * @param url 식당의 url
      * @return
      */
-    public ImgUrlAndMenu crawlingImgURLAndMenu(String url){
+    public ImgURLAndMenu crawlingImgURLAndMenu(String url){
         driver.get(url) ;
 
         log.debug("식당 마커정보: '{}'의 이미지, 메뉴 크롤링", driver.getTitle());
@@ -65,7 +65,7 @@ public class SeleniumService {
         String imgUrl = findImgURL();
         this.driver.manage().timeouts().implicitlyWait(Duration.ofMillis(0));
 
-        return new ImgUrlAndMenu(imgUrl, findMenu());
+        return new ImgURLAndMenu(imgUrl, findMenu());
     }
 
     public String crawlingImgURL(String url){

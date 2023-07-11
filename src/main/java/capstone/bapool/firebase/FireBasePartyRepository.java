@@ -46,7 +46,7 @@ public class FireBasePartyRepository {
                 .setValueAsync(curNumberOfPeople + 1);
         databaseReference.child(partyId.toString())
                 .child("groupUsers")
-                .updateChildrenAsync(Map.of(userId.toString(), false));
+                .updateChildrenAsync(Map.of(userId.toString(), true));
     }
 
     public void delete(Long partyId) {

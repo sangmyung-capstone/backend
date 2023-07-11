@@ -9,4 +9,5 @@ import lombok.Getter;
 public class UserDto {
     private String nickName;
     private Integer imgUrl;
+    private String firebaseToken;
 }
