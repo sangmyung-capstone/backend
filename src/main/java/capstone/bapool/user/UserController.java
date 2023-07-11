@@ -9,13 +9,13 @@ import capstone.bapool.user.dto.SignUpReq;
 import capstone.bapool.user.dto.SignupRes;
 import capstone.bapool.user.dto.SocialAccessToken;
 
-import capstone.bapool.model.User;
 import capstone.bapool.user.dto.*;
 import capstone.bapool.utils.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
 
@@ -96,9 +96,17 @@ public class UserController {
     }
 
     @PostMapping("/block/{user-id}")
+    public ResponseEntity<ResponseDto> blockUserWithReqBody(
+            @Valid @PathVariable("user-id") Long blockUserId, @Valid @RequestBody BlockUserReq blockUserReq){
+        BlockUserRes blockUserRes = userService.blockWithReqBody(blockUserReq.getBlockedUserId(), blockUserId);
+        return ResponseEntity.ok().body(ResponseDto.create(blockUserRes));
+    }
+
+    @GetMapping("/block/{user-id}")
     public ResponseEntity<ResponseDto> blockUser(
-            @Valid @PathVariable("user-id") Long userId, @Valid @RequestBody BlockedUserReq blockedUserReq) {
-        BlockUserRes blockUserRes = userService.block(userId, blockedUserReq.getBlockedUserId());
+            @Valid @PathVariable("user-id") Long blockedUserId, HttpServletRequest request) {
+        Long userId = jwtUtils.resolveRequest(request);
+        BlockUserRes blockUserRes = userService.block(blockedUserId, userId);
         return ResponseEntity.ok().body(ResponseDto.create(blockUserRes));
     }
 }
