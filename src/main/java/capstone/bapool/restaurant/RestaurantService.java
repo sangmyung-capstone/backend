@@ -116,8 +116,8 @@ public class RestaurantService {
 
         List<String> restaurantImgURLs = new ArrayList<>();
 
-        for(String restaurantURLs : request.getRestaurantURLs()){
-            restaurantImgURLs.add(seleniumService.crawlingImgURL(restaurantURLs));
+        for(Long restaurantId : request.getRestaurantIdList()){
+            restaurantImgURLs.add(requestsService.crawlingImgURL(restaurantId));
         }
 
         return new GetRestaurantBottomListRes(restaurantImgURLs);
