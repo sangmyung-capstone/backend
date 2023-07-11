@@ -43,8 +43,6 @@ public class PartyController {
 
         PartiesInRestaurantRes partiesInRestaurantRes = partyService.findPartiesInRestaurant(userId, restaurantId);
 
-        System.out.println("partiesInRestaurantRes = " + partiesInRestaurantRes.getPartyInfos().size());
-
         ResponseDto<PartiesInRestaurantRes> response = ResponseDto.create(partiesInRestaurantRes);
 
         log.info("식당 '{}-{}'의 파티리스트 조회 요청", partiesInRestaurantRes.getRestaurantName(), restaurantId);

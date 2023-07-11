@@ -12,8 +12,8 @@ import java.util.List;
 @Getter
 public class GetRestaurantBottomListReq {
 
-    @JsonProperty("restaurant_urls")
-    private List<String> restaurantURLs;
+    @JsonProperty("restaurant_ids")
+    private List<Long> restaurantIdList;
 
 //    @Override
 //    public String toString(){

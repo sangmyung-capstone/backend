@@ -1,10 +1,7 @@
 package capstone.bapool.restaurant;
 
 import capstone.bapool.config.response.ResponseDto;
-import capstone.bapool.restaurant.dto.GetRestaurantBottomListReq;
-import capstone.bapool.restaurant.dto.GetRestaurantBottomListRes;
-import capstone.bapool.restaurant.dto.GetRestaurantMarkerInfoRes;
-import capstone.bapool.restaurant.dto.GetRestaurantsOnMapRes;
+import capstone.bapool.restaurant.dto.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,13 +52,24 @@ public class RestaurantController {
     }
     
     // 식당 바텀리스트
-    @GetMapping("/bottomlist/{user-id}")
+    @PostMapping("/bottomlist/{user-id}")
     public ResponseEntity<ResponseDto> restaurantBottomList(@RequestBody GetRestaurantBottomListReq getRestaurantBottomListReq){
 //        System.out.println("getRestaurantBottomListReq.getRestaurantURLs().size() = " + getRestaurantBottomListReq.getRestaurantURLs().size());
 
         GetRestaurantBottomListRes getRestaurantBottomListRes = restaurantService.findRestaurantBottomList(getRestaurantBottomListReq);
 
         ResponseDto response = ResponseDto.create(getRestaurantBottomListRes);
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 식당 검색
+    @GetMapping("/search/{user-id}")
+    public ResponseEntity<ResponseDto> searchRestaurant(@PathVariable("user-id") Long userId, @RequestParam("q") String query, @RequestParam("longitude") Double x, @RequestParam("latitude") Double y){
+
+        GetSearchRestaurantRes getSearchRestaurantRes = restaurantService.searchRestaurant(query, x, y);
+
+        ResponseDto<GetSearchRestaurantRes> response = ResponseDto.create(getSearchRestaurantRes);
 
         return ResponseEntity.ok(response);
     }

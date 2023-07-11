@@ -144,4 +144,14 @@ public class Party extends BaseTimeEntity{
 
         return sum / partyParticipants.size();
     }
+
+    // 모집중인지
+    public Boolean is_recruiting(){
+        if(PartyStatus.RECRUITING.equals(partyStatus)){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 }

@@ -132,6 +132,7 @@ public class PartyService {
                     .startDate(party.getStartDate())
                     .userRating(party.getPartyParticipantAvgRating()) // 다시 입력해줘야함!!
                     .partyHashtag(party.getPartyHashtag())
+                    .isRecruiting(party.is_recruiting())
                     .build();
             partiesInRestaurantRes.addPartyInfos(partyInfo);
         }
