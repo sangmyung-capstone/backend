@@ -65,12 +65,9 @@ public class RestaurantController {
 
     // 식당 검색
     @GetMapping("/search/{user-id}")
-    public ResponseEntity<ResponseDto> searchRestaurant(@PathVariable("user-id") Long userId, @RequestParam("q") String query, @RequestParam("rect") String rect){
+    public ResponseEntity<ResponseDto> searchRestaurant(@PathVariable("user-id") Long userId, @RequestParam("q") String query, @RequestParam("longitude") Double x, @RequestParam("latitude") Double y){
 
-        System.out.println("query = " + query);
-        System.out.println("rect = " + rect);
-
-        GetSearchRestaurantRes getSearchRestaurantRes = restaurantService.searchRestaurant(query, rect);
+        GetSearchRestaurantRes getSearchRestaurantRes = restaurantService.searchRestaurant(query, x, y);
 
         ResponseDto<GetSearchRestaurantRes> response = ResponseDto.create(getSearchRestaurantRes);
 

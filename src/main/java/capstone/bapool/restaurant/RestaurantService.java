@@ -124,11 +124,11 @@ public class RestaurantService {
     }
 
     // 식당 검색
-    public GetSearchRestaurantRes searchRestaurant(String key, String rect){
+    public GetSearchRestaurantRes searchRestaurant(String query, Double x, Double y){
 
         List<RestaurantInfo> restaurantInfoList = new ArrayList<>();
 
-        List<KakaoRestaurant> kakaoRestaurantList = kakaoLocalApiService.searchRestaurantByKeyword(key, rect);
+        List<KakaoRestaurant> kakaoRestaurantList = kakaoLocalApiService.searchRestaurantByKeyword(query, x, y);
 
         for(KakaoRestaurant kakaoRestaurant : kakaoRestaurantList){
             // 식당 안의 파티개수

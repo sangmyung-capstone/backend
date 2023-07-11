@@ -176,15 +176,22 @@ public class KakaoLocalApiService {
     }
 
     // 키워드로 식당조회
-    public List<KakaoRestaurant> searchRestaurantByKeyword(String key, String rect){
+    public List<KakaoRestaurant> searchRestaurantByKeyword(String query, Double x, Double y){
         String baseUrl = "https://dapi.kakao.com/v2/local/search/keyword.json?category_group_code=FD6";
         String resultUrl;
         List<KakaoRestaurant> kakaoRestaurantList = new ArrayList<>();
 
+        try {
+            query = URLEncoder.encode(query, "UTF-8"); // 한글 인코딩
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+
         for(int page=1; page<=3; page++){
             try{
-                key = URLEncoder.encode(key, "UTF-8"); // 한글 인코딩
-                resultUrl = baseUrl + "&rect=" + rect + "&query=" + key + "&page=" + page;
+                resultUrl = baseUrl + "&x=" + x + "&y=" + y + "&query=" + query + "&page=" + page;
                 URL url = new URL(resultUrl);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
