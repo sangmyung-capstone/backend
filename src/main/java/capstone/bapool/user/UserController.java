@@ -31,47 +31,6 @@ public class UserController {
         this.userService = userService;
         this.jwtUtils = jwtUtils;
     }
-
-    @PostMapping(value = "/kakao/signin")
-    public ResponseEntity<Object> SignInKakao(@Valid @RequestBody SocialAccessToken socialAccessToken) throws BaseException, IOException {
-        SignInRes signupRes = userService.signInKakao(socialAccessToken);
-        return ResponseEntity.ok().body(ResponseDto.create(signupRes));
-    }
-
-    @PostMapping(value = "/kakao/signup")
-    public ResponseEntity<ResponseDto> SignUpKakao(@Valid @RequestBody SignUpReq signUpReq) throws BaseException, IOException {
-        ReissueRes signupRes = userService.signUpKakao(signUpReq);
-        return ResponseEntity.ok().body(ResponseDto.create(signupRes));
-    }
-
-    @PostMapping(value = "/kakao/signin/already")
-    public ResponseEntity<Object> SignInKakaoAlready(@Valid @RequestBody SocialAccessToken socialAccessToken) throws BaseException, IOException {
-        return ResponseEntity.ok().body(ResponseDto.create(userService.signInKakaoAready(socialAccessToken)));
-    }
-
-    @PostMapping(value = "/naver/signin")
-    public ResponseEntity<ResponseDto> SignInNaver(@Valid @RequestBody SocialAccessToken socialAccessToken) throws BaseException, IOException {
-        SignInRes signupRes = userService.signInNaver(socialAccessToken);
-        return ResponseEntity.ok().body(ResponseDto.create(signupRes));
-    }
-
-    @PostMapping(value = "/naver/signup")
-    public ResponseEntity<ResponseDto> SignUpNaver(@Valid @RequestBody SignUpReq signUpReq) throws BaseException, IOException {
-        ReissueRes signupRes = userService.signUpNaver(signUpReq);
-        return ResponseEntity.ok().body(ResponseDto.create(signupRes));
-    }
-
-    @PostMapping(value = "/naver/signin/already")
-    public ResponseEntity<Object> SignInNaverAlready(@Valid @RequestBody SocialAccessToken socialAccessToken) throws BaseException, IOException {
-        return ResponseEntity.ok().body(ResponseDto.create(userService.signInNaverAready(socialAccessToken)));
-    }
-
-    @PostMapping(value = "/reissuance")
-    public ResponseEntity<Object> reissueAccessToken(@Valid @RequestBody ReissueReq reissueReq) throws BaseException {
-        ReissueRes signupRes = userService.reissueAccessToken(reissueReq);
-        return ResponseEntity.ok().body(ResponseDto.create(signupRes));
-    }
-
     //마이페이지 로딩
     @GetMapping("/mypage/{user-id}")
     public ResponseEntity<ResponseDto> mypage(@Valid @PathVariable("user-id") Long userId){

@@ -41,6 +41,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         }
         Long userId = jwtUtils.resolveRequest(request);
         request.setAttribute("userId", userId);
+        log.info("userid={}", userId);
         return true;
     }
 

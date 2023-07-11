@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OtherUserReq {
 
-    @JsonProperty("OtherUserId")
+    @JsonProperty("other_user_id")
     Long otherUserId;
 }
