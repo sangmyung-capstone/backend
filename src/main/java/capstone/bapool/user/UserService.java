@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 
 import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_USER_FAILURE;
 
@@ -109,5 +110,14 @@ public class UserService {
         ReissueRes reissueRes = jwtUtils.generateTokens(user.getId());
         user.updateRefreshToken(reissueRes.getRefreshToken());
         return reissueRes;
+    }
+
+    public Optional<User> findById(Long userId){
+        Optional<User> user = userRepository.findById(userId);
+        return user;
+    }
+
+    public void deleteById(Long userId){
+        userRepository.deleteById(userId);
     }
 }

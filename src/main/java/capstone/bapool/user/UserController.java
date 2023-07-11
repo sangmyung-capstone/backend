@@ -2,6 +2,7 @@ package capstone.bapool.user;
 
 import capstone.bapool.config.error.BaseException;
 import capstone.bapool.config.response.ResponseDto;
+import capstone.bapool.model.User;
 import capstone.bapool.user.dto.ReissueReq;
 import capstone.bapool.user.dto.ReissueRes;
 import capstone.bapool.user.dto.SignInRes;
@@ -11,13 +12,11 @@ import capstone.bapool.user.dto.SocialAccessToken;
 import capstone.bapool.utils.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -70,5 +69,18 @@ public class UserController {
     public ResponseEntity<Object> reissueAccessToken(@Valid @RequestBody ReissueReq reissueReq) throws BaseException {
         ReissueRes signupRes = userService.reissueAccessToken(reissueReq);
         return ResponseEntity.ok().body(ResponseDto.create(signupRes));
+    }
+
+    //마이페이지 로딩
+    @GetMapping("/mypage/{user-id}")
+    public ResponseDto<Object> mypage(@Valid @PathVariable("user-id") Long userId){
+        Optional<User> user = userService.findById(userId);
+        return ResponseDto.create(user);
+    }
+
+    //회원 탈퇴
+    @DeleteMapping("user/{user-id}")
+    public void deleteUser(@Valid @PathVariable("user-id") Long userId){
+        userService.deleteById(userId);
     }
 }
