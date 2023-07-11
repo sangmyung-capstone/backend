@@ -7,7 +7,7 @@ import capstone.bapool.restaurant.dto.*;
 import capstone.bapool.utils.KakaoLocalApiService;
 import capstone.bapool.utils.RequestsService;
 import capstone.bapool.utils.SeleniumService;
-import capstone.bapool.utils.dto.ImgUrlAndMenu;
+import capstone.bapool.utils.dto.ImgURLAndMenu;
 import capstone.bapool.utils.dto.KakaoRestaurant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -92,7 +92,7 @@ public class RestaurantService {
         // 식당의 이미지와 메뉴 크롤링하기
 //        ImgUrlAndMenu imgUrlAndMenu = seleniumService.crawlingImgURLAndMenu(kakaoRestaurant.getSiteUrl());
 
-        String imgUrl = requestsService.getImgURl(kakaoRestaurant.getId());
+        ImgURLAndMenu imgUrlAndMenu = requestsService.crawlingImgURLAndMenu(kakaoRestaurant.getId());
 
         GetRestaurantMarkerInfoRes getRestaurantMarkerInfoRes = GetRestaurantMarkerInfoRes.builder()
                 .restaurantId(kakaoRestaurant.getId())
@@ -104,10 +104,8 @@ public class RestaurantService {
                 .category(kakaoRestaurant.getCategory())
                 .link(kakaoRestaurant.getSiteUrl())
                 .phone(kakaoRestaurant.getPhone())
-//                .imgUrl(imgUrlAndMenu.getImgUrl())
-//                .menu(imgUrlAndMenu.getMenus())
-                .imgUrl(imgUrl)
-                .menu(null)
+                .imgUrl(imgUrlAndMenu.getImgUrl())
+                .menu(imgUrlAndMenu.getMenus())
                 .build();
 
         return getRestaurantMarkerInfoRes;
