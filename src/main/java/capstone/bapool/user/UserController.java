@@ -47,18 +47,12 @@ public class UserController {
         return ResponseEntity.ok().body(deleteresult);
     }
 
-    @PostMapping("/profile/{user-id}")
+    @GetMapping("/profile/{user-id}")
     public ResponseEntity<ResponseDto> otherUser(
-            @Valid @PathVariable("user-id") Long userId, @Valid @RequestBody OtherUserReq otherUserReq){
-        OtherUserRes otherUserRes = userService.findOtherById(userId, otherUserReq.getOtherUserId());
+            @PathVariable("user-id") Long otherUserId, HttpServletRequest request){
+        Long userId = jwtUtils.resolveRequest(request);
+        OtherUserRes otherUserRes = userService.findOtherById(userId, otherUserId);
         return ResponseEntity.ok().body(ResponseDto.create(otherUserRes));
-    }
-
-    @PostMapping("/block/{user-id}")
-    public ResponseEntity<ResponseDto> blockUserWithReqBody(
-            @Valid @PathVariable("user-id") Long blockUserId, @Valid @RequestBody BlockUserReq blockUserReq){
-        BlockUserRes blockUserRes = userService.blockWithReqBody(blockUserReq.getBlockedUserId(), blockUserId);
-        return ResponseEntity.ok().body(ResponseDto.create(blockUserRes));
     }
 
     @GetMapping("/block/{user-id}")

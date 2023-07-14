@@ -65,10 +65,6 @@ public class UserService {
 
     @Transactional
     public OtherUserRes findOtherById(Long userId, Long otherUserId) throws BaseException {
-        //내id랑 userid랑 확인해야되나, 카톡은 내 결과도 그냥 뜨는데
-        //내id랑 userid랑 구별을 해야 block유무를 확인할수있는데 우짜지...
-//        User user = jwtUtils.resolveRequest(). 어쩌구 하면 userid뽑을수 있을거같은데....
-
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
         User otherUser = userRepository.findById(otherUserId)
@@ -94,37 +90,6 @@ public class UserService {
             if(blockUserRepository.findExist(blockUser,blockedUser)!=null){
                 BlockUser blockUserTuple = blockUserRepository.findExist(blockUser,blockedUser);
                 blockUserRepository.delete(blockUserTuple);
-                return new BlockUserRes(BlockStatus.UNBLOCK);
-            }else {//else면 차단하기, if면 차단 해제
-                BlockUser blockUserTuple = BlockUser.builder()
-                        .blockUser(blockUser)
-                        .blockedUser(blockedUser)
-                        .build();
-                blockUserRepository.save(blockUserTuple);
-
-                BlockUserRes blockUserRes  = BlockUserRes.builder()
-                        .userId(blockedUser.getId())
-                        .blockStatus(BlockStatus.BLOCK)
-                        .name(blockedUser.getName())
-                        .blockDate(blockUserTuple.getUpdatedDate())
-                        .build();
-                return blockUserRes;
-            }
-        }else{
-            return new BlockUserRes(BlockStatus.SAMEUSEREXCEPTION);
-        }
-    }
-
-    @Transactional
-    public BlockUserRes blockWithReqBody(Long blockedUserId, Long blockUserId){
-        User blockUser = userRepository.findById(blockUserId)
-                .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
-        User blockedUser = userRepository.findById(blockedUserId)
-                .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
-
-        if(blockUser != blockedUser){
-            if(blockUserRepository.findExist(blockUser,blockedUser)!=null){
-                blockUserRepository.delete(blockUserRepository.findExist(blockUser,blockedUser));
                 return new BlockUserRes(BlockStatus.UNBLOCK);
             }else {//else면 차단하기, if면 차단 해제
                 BlockUser blockUserTuple = BlockUser.builder()
