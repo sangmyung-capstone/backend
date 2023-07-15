@@ -1,4 +1,4 @@
-package capstone.bapool.restaurant.dto;
+package capstone.bapool.utils.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

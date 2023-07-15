@@ -36,7 +36,7 @@ public class FireBaseUserRepository {
     // 저장
     public void save(FireBaseUser fireBaseUser) throws BaseException {
         databaseReference.child(String.valueOf(fireBaseUser.getUserId()))
-                .setValueAsync(new UserDto(fireBaseUser.getName(), fireBaseUser.getImgUrl()));
+                .setValueAsync(new UserDto(fireBaseUser.getName(), fireBaseUser.getImgUrl(), fireBaseUser.getFirebaseToken()));
         existUser(fireBaseUser.getUserId());
     }
 

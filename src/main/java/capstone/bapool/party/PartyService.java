@@ -67,7 +67,7 @@ public class PartyService {
         PartyParticipant partyParticipant = PartyParticipant.makeMapping(user, savedParty, RoleType.LEADER);
         partyParticipantRepository.save(partyParticipant);
 
-        fireBasePartyRepository.save(new FireBasePartyInfo(postPartyReq), user.getId(), party.getId());
+        fireBasePartyRepository.save(new FireBasePartyInfo(postPartyReq, user.getId()), user.getId(), party.getId());
         return savedParty.getId();
     }
 
@@ -132,6 +132,7 @@ public class PartyService {
                     .startDate(party.getStartDate())
                     .userRating(party.getPartyParticipantAvgRating()) // 다시 입력해줘야함!!
                     .partyHashtag(party.getPartyHashtag())
+                    .isRecruiting(party.is_recruiting())
                     .build();
             partiesInRestaurantRes.addPartyInfos(partyInfo);
         }
