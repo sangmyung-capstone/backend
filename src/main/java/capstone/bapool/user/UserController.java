@@ -62,4 +62,11 @@ public class UserController {
         BlockUserRes blockUserRes = userService.block(blockedUserId, userId);
         return ResponseEntity.ok().body(ResponseDto.create(blockUserRes));
     }
+
+    @PostMapping("/block/{user-id}")
+    public ResponseEntity<ResponseDto> blockUserWithReqBody(
+            @PathVariable("user-id") Long blockUserId, @Valid @RequestBody BlockUserReq blockUserReq){
+        BlockUserRes blockUserRes = userService.blockWithReqBody(blockUserReq.getBlockedUserId(), blockUserId);
+        return ResponseEntity.ok().body(ResponseDto.create(blockUserRes));
+    }
 }
