@@ -45,7 +45,7 @@ public class UserService {
 
     private final FireBaseUserRepository fireBaseUserDao;
 
-    @Transactional
+    @Transactional(readOnly=true)
     public UserRes findById(Long userId) throws BaseException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));    //db에 사용자id가 없다면 처리
@@ -68,14 +68,14 @@ public class UserService {
         return ResponseDto.create(userId+" deleted successfully");
     }
 
-    @Transactional
+    @Transactional(readOnly=true)
     public OtherUserRes findOtherById(Long userId, Long otherUserId) throws BaseException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
         User otherUser = userRepository.findById(otherUserId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
         List<UserHashtag> userHashtags = userHashtagRepository.findByUserId(otherUserId);
-        boolean is_block = blockUserRepository.findExist(user,otherUser)!=null;
+        boolean is_block = blockUserRepository.findByBlockUserAndBlockedUser(user, otherUser)!=null;
         return OtherUserRes.builder()
                 .userId(otherUser.getId())
                 .profileImg(otherUser.getProfileImgId())
@@ -94,8 +94,8 @@ public class UserService {
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
 
         if(blockUser != blockedUser){
-            if(blockUserRepository.findExist(blockUser,blockedUser)!=null){
-                BlockUser blockUserTuple = blockUserRepository.findExist(blockUser,blockedUser);
+            if(blockUserRepository.findByBlockUserAndBlockedUser(blockUser, blockedUser)!=null){
+                BlockUser blockUserTuple = blockUserRepository.findByBlockUserAndBlockedUser(blockUser, blockedUser);
                 blockUserRepository.delete(blockUserTuple);
                 return new BlockUserRes(BlockStatus.UNBLOCK);
             }else {//else면 차단하기, if면 차단 해제
@@ -126,8 +126,8 @@ public class UserService {
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
 
         if(blockUser != blockedUser){
-            if(blockUserRepository.findExist(blockUser,blockedUser)!=null){
-                blockUserRepository.delete(blockUserRepository.findExist(blockUser,blockedUser));
+            if(blockUserRepository.findByBlockUserAndBlockedUser(blockUser, blockedUser)!=null){
+                blockUserRepository.delete(blockUserRepository.findByBlockUserAndBlockedUser(blockUser, blockedUser));
                 return new BlockUserRes(BlockStatus.UNBLOCK);
             }else {//else면 차단하기, if면 차단 해제
                 BlockUser blockUserTuple = BlockUser.builder()

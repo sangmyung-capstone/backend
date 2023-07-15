@@ -9,11 +9,11 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface BlockUserRepository extends JpaRepository<BlockUser, Long> {
 
-    @Query("select b from BlockUser b where b.blockUser = :blockuser and b.blockedUser = :blockeduser")
-    BlockUser findExist(@Param("blockuser")User blockuser, @Param("blockeduser")User blockeduser);
+    BlockUser findByBlockUserAndBlockedUser(User blockUser, User blockedUser);
 }
