@@ -98,7 +98,8 @@ public class RequestsService {
 
         System.out.println("imgURL = " + imgURL);
         if(imgURL != null){
-            return imgURL.toString();
+            String imgURLString = imgURL.toString();
+            return imgURLString.substring(imgURLString.indexOf('"')+1, imgURLString.lastIndexOf('"'));
         }
         else{
             return null;
