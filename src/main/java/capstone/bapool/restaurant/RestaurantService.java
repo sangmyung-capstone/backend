@@ -1,9 +1,15 @@
 package capstone.bapool.restaurant;
 
 import capstone.bapool.config.error.BaseException;
+import capstone.bapool.model.Party;
 import capstone.bapool.model.Restaurant;
+import capstone.bapool.model.User;
+import capstone.bapool.model.enumerate.PartyStatus;
 import capstone.bapool.party.PartyRepository;
+import capstone.bapool.party.dto.PartyInfoSimple;
 import capstone.bapool.restaurant.dto.*;
+import capstone.bapool.user.UserRepository;
+import capstone.bapool.user.UserService;
 import capstone.bapool.utils.KakaoLocalApiService;
 import capstone.bapool.utils.RequestsService;
 import capstone.bapool.utils.SeleniumService;
@@ -17,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_RESTAURANT_FAILURE;
+import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_USER_FAILURE;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +35,7 @@ public class RestaurantService {
     private final PartyRepository partyRepository;
     private final SeleniumService seleniumService;
     private final RequestsService requestsService;
+    private final UserRepository userRepository;
 
     /**
      * 지도화면을 위한 식당리스트 조회
@@ -152,5 +160,37 @@ public class RestaurantService {
         }
 
         return new GetSearchRestaurantRes(restaurantInfoList);
+    }
+
+    // 먹었던 식당정보 리스트
+    public GetAtePartyInfoRes findAtePartyInfo(Long userId){
+
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> {throw new BaseException(NOT_FOUND_USER_FAILURE);}
+        );
+        
+        List<Party> parties = partyRepository.findAtePartyByUser(user.getId(), PartyStatus.DONE.toString()).orElse(null);
+
+        System.out.println("parties.size() = " + parties.size());
+        
+        List<PartyInfoSimple> partyInfoSimpleList = new ArrayList<>();
+        for(Party party : parties){
+            Restaurant restaurant = restaurantRepository.findById(party.getRestaurant().getId()).orElseThrow(
+                    () -> {throw new BaseException(NOT_FOUND_RESTAURANT_FAILURE);}
+            );
+
+            PartyInfoSimple partyInfoSimple = PartyInfoSimple.builder()
+                    .partyId(party.getId())
+                    .partyName(party.getName())
+                    .restaurantName(restaurant.getName())
+                    .restaurantImgURL(restaurant.getImgUrl())
+                    .restaurantAddress(restaurant.getAddress())
+                    .category(restaurant.getCategory())
+                    .build();
+
+            partyInfoSimpleList.add(partyInfoSimple);
+        }
+        
+        return new GetAtePartyInfoRes(partyInfoSimpleList);
     }
 }
