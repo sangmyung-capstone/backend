@@ -50,7 +50,7 @@ public class AuthService {
                 .profileImgId(signUpReq.getProfileImgId())
                 .name(signUpReq.getNickName())
                 .build();
-        User savedUser = userRepository.save(user);
+        User savedUser = saveUser(user, signUpReq.getFireBaseToken());
         ReissueRes reissueRes = jwtUtils.generateTokens(savedUser.getId());
         savedUser.updateRefreshToken(reissueRes.getRefreshToken());
         return reissueRes;
@@ -80,15 +80,15 @@ public class AuthService {
                 .profileImgId(signUpReq.getProfileImgId())
                 .name(signUpReq.getNickName())
                 .build();
-        User savedUser = saveUser(user);
+        User savedUser = saveUser(user, signUpReq.getFireBaseToken());
         ReissueRes reissueRes = jwtUtils.generateTokens(savedUser.getId());
         savedUser.updateRefreshToken(reissueRes.getRefreshToken());
         return reissueRes;
     }
 
-    private User saveUser(User user) {
+    private User saveUser(User user, String firebaseToken) {
         User savedUser = userRepository.save(user);
-        fireBaseUserDao.save(new FireBaseUser(savedUser.getId(), savedUser.getName(), savedUser.getProfileImgId()));
+        fireBaseUserDao.save(new FireBaseUser(savedUser.getId(), savedUser.getName(), savedUser.getProfileImgId(), firebaseToken));
         return savedUser;
     }
 

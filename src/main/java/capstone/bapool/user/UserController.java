@@ -71,17 +71,4 @@ public class UserController {
         BlockUserRes blockUserRes = userService.blockWithReqBody(blockUserReq.getBlockedUserId(), blockUserId);
         return ResponseEntity.ok().body(ResponseDto.create(blockUserRes));
     }
-
-    //마이페이지 로딩
-    @GetMapping("/mypage/{user-id}")
-    public ResponseDto<Object> mypage(@Valid @PathVariable("user-id") Long userId){
-        Optional<User> user = userService.findById(userId);
-        return ResponseDto.create(user);
-    }
-
-    //회원 탈퇴
-    @DeleteMapping("user/{user-id}")
-    public void deleteUser(@Valid @PathVariable("user-id") Long userId){
-        userService.deleteById(userId);
-    }
 }
