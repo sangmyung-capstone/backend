@@ -1,10 +1,13 @@
 package capstone.bapool.restaurant;
 
+import capstone.bapool.config.error.BaseException;
 import capstone.bapool.config.response.ResponseDto;
 import capstone.bapool.restaurant.dto.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static capstone.bapool.config.error.StatusEnum.TOO_MANY_REQUEST;
 
 @RestController
 @RequestMapping(path = {"/restaurants", "/test/restaurants"})
@@ -55,6 +58,10 @@ public class RestaurantController {
     @PostMapping("/bottomlist/{user-id}")
     public ResponseEntity<ResponseDto> restaurantBottomList(@RequestBody GetRestaurantBottomListReq getRestaurantBottomListReq){
 //        System.out.println("getRestaurantBottomListReq.getRestaurantURLs().size() = " + getRestaurantBottomListReq.getRestaurantURLs().size());
+
+        if(getRestaurantBottomListReq.getRestaurantIdList().size() > 3){
+            throw new BaseException(TOO_MANY_REQUEST);
+        }
 
         GetRestaurantBottomListRes getRestaurantBottomListRes = restaurantService.findRestaurantBottomList(getRestaurantBottomListReq);
 
