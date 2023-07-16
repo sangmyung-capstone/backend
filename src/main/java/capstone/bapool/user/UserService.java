@@ -149,13 +149,4 @@ public class UserService {
             return new BlockUserRes(BlockStatus.SAMEUSEREXCEPTION);
         }
     }
-
-    public Optional<User> findById(Long userId){
-        Optional<User> user = userRepository.findById(userId);
-        return user;
-    }
-
-    public void deleteById(Long userId){
-        userRepository.deleteById(userId);
-    }
 }
