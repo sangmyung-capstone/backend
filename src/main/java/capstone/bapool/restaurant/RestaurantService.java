@@ -66,7 +66,6 @@ public class RestaurantService {
                     .numOfParty(partyNum)
                     .restaurantLongitude(kakaoRestaurant.getX())
                     .restaurantLatitude(kakaoRestaurant.getY())
-                    .link(kakaoRestaurant.getSiteUrl())
                     .build();
 
             restaurantInfoList.add(restaurantInfo2);
