@@ -1,22 +1,14 @@
 package capstone.bapool;
 
-import capstone.bapool.utils.SeleniumService;
-import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
+import capstone.bapool.utils.SeleniumUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.concurrent.TimeUnit;
 
 @SpringBootTest
 public class SeleniumTests {
     
     @Autowired
-    private SeleniumService seleniumService;
+    private SeleniumUtils seleniumUtils;
     
 //    @Test
 //    public void testCrawlingImgUrl(){

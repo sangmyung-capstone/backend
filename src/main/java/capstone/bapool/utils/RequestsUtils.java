@@ -5,6 +5,7 @@ import capstone.bapool.utils.dto.Menu;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -15,8 +16,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
-public class RequestsService {
+@Component
+public class RequestsUtils {
 
     public ImgURLAndMenu crawlingImgURLAndMenu(Long restaurantId){
         System.out.println("크롤링 테스트");

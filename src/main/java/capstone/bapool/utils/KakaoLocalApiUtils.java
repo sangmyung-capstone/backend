@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -17,9 +18,9 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Component
 @Slf4j
-public class KakaoLocalApiService {
+public class KakaoLocalApiUtils {
 
     // rect로 식당 조회
     public List<KakaoRestaurant> searchByCategory(String rect){
