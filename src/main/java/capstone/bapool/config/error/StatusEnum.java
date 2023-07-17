@@ -38,6 +38,12 @@ public enum StatusEnum {
     NOT_FOUND_PARTY_PARTICIPANT_FAILURE(404, "파티에 참여해있지 않은 참가자입니다."),
 
     /**
+     * Too Many Request 너무 많은 요청 오류
+     * 429 오류
+     */
+    TOO_MANY_REQUEST(429, "TOO MANY REQUEST"),
+
+    /**
      * 통상 오류
      * 500 번대 오류
      */

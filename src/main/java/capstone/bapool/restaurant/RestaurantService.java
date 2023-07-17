@@ -1,12 +1,17 @@
 package capstone.bapool.restaurant;
 
 import capstone.bapool.config.error.BaseException;
+import capstone.bapool.model.Party;
 import capstone.bapool.model.Restaurant;
+import capstone.bapool.model.User;
+import capstone.bapool.model.enumerate.PartyStatus;
 import capstone.bapool.party.PartyRepository;
+import capstone.bapool.party.dto.PartyInfoSimple;
 import capstone.bapool.restaurant.dto.*;
-import capstone.bapool.utils.KakaoLocalApiService;
-import capstone.bapool.utils.RequestsService;
-import capstone.bapool.utils.SeleniumService;
+import capstone.bapool.user.UserRepository;
+import capstone.bapool.utils.KakaoLocalApiUtils;
+import capstone.bapool.utils.RequestsUtils;
+import capstone.bapool.utils.SeleniumUtils;
 import capstone.bapool.utils.dto.ImgURLAndMenu;
 import capstone.bapool.utils.dto.KakaoRestaurant;
 import lombok.RequiredArgsConstructor;
@@ -17,17 +22,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_RESTAURANT_FAILURE;
+import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_USER_FAILURE;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class RestaurantService {
 
-    private final KakaoLocalApiService kakaoLocalApiService;
+    private final KakaoLocalApiUtils kakaoLocalApiUtils;
     private final RestaurantRepository restaurantRepository;
     private final PartyRepository partyRepository;
-    private final SeleniumService seleniumService;
-    private final RequestsService requestsService;
+    private final SeleniumUtils seleniumUtils;
+    private final RequestsUtils requestsUtils;
+    private final UserRepository userRepository;
 
     /**
      * 지도화면을 위한 식당리스트 조회
@@ -37,7 +44,7 @@ public class RestaurantService {
     public GetRestaurantsOnMapRes findRestaurantsOnMap(String rect){
 
         // 카카오 로컬 api 통신
-        List<KakaoRestaurant> kakaoRestaurantList = kakaoLocalApiService.searchByCategory(rect);
+        List<KakaoRestaurant> kakaoRestaurantList = kakaoLocalApiUtils.searchByCategory(rect);
 
         List<RestaurantInfo> restaurantInfoList = new ArrayList<>();
 
@@ -58,7 +65,6 @@ public class RestaurantService {
                     .numOfParty(partyNum)
                     .restaurantLongitude(kakaoRestaurant.getX())
                     .restaurantLatitude(kakaoRestaurant.getY())
-                    .link(kakaoRestaurant.getSiteUrl())
                     .build();
 
             restaurantInfoList.add(restaurantInfo2);
@@ -77,7 +83,7 @@ public class RestaurantService {
      */
     public GetRestaurantMarkerInfoRes findRestaurantMakerInfo(Long userId, Long restaurantId, double restaurantX, double restaurantY){
 
-        KakaoRestaurant kakaoRestaurant = kakaoLocalApiService.findRestaurant(restaurantId, restaurantX, restaurantY);
+        KakaoRestaurant kakaoRestaurant = kakaoLocalApiUtils.findRestaurant(restaurantId, restaurantX, restaurantY);
         if(kakaoRestaurant == null){ // 해당하는 식당정보를 찾을 수 없으면
             throw new BaseException(NOT_FOUND_RESTAURANT_FAILURE);
         }
@@ -92,7 +98,7 @@ public class RestaurantService {
         // 식당의 이미지와 메뉴 크롤링하기
 //        ImgUrlAndMenu imgUrlAndMenu = seleniumService.crawlingImgURLAndMenu(kakaoRestaurant.getSiteUrl());
 
-        ImgURLAndMenu imgUrlAndMenu = requestsService.crawlingImgURLAndMenu(kakaoRestaurant.getId());
+        ImgURLAndMenu imgUrlAndMenu = requestsUtils.crawlingImgURLAndMenu(kakaoRestaurant.getId());
 
         GetRestaurantMarkerInfoRes getRestaurantMarkerInfoRes = GetRestaurantMarkerInfoRes.builder()
                 .restaurantId(kakaoRestaurant.getId())
@@ -117,7 +123,7 @@ public class RestaurantService {
         List<String> restaurantImgURLs = new ArrayList<>();
 
         for(Long restaurantId : request.getRestaurantIdList()){
-            restaurantImgURLs.add(requestsService.crawlingImgURL(restaurantId));
+            restaurantImgURLs.add(requestsUtils.crawlingImgURL(restaurantId));
         }
 
         return new GetRestaurantBottomListRes(restaurantImgURLs);
@@ -128,7 +134,7 @@ public class RestaurantService {
 
         List<RestaurantInfo> restaurantInfoList = new ArrayList<>();
 
-        List<KakaoRestaurant> kakaoRestaurantList = kakaoLocalApiService.searchRestaurantByKeyword(query, x, y);
+        List<KakaoRestaurant> kakaoRestaurantList = kakaoLocalApiUtils.searchRestaurantByKeyword(query, x, y);
 
         for(KakaoRestaurant kakaoRestaurant : kakaoRestaurantList){
             // 식당 안의 파티개수
@@ -152,5 +158,37 @@ public class RestaurantService {
         }
 
         return new GetSearchRestaurantRes(restaurantInfoList);
+    }
+
+    // 먹었던 식당정보 리스트
+    public GetAtePartyInfoRes findAtePartyInfo(Long userId){
+
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> {throw new BaseException(NOT_FOUND_USER_FAILURE);}
+        );
+        
+        List<Party> parties = partyRepository.findAtePartyByUser(user.getId(), PartyStatus.DONE.toString()).orElse(null);
+
+        System.out.println("parties.size() = " + parties.size());
+        
+        List<PartyInfoSimple> partyInfoSimpleList = new ArrayList<>();
+        for(Party party : parties){
+            Restaurant restaurant = restaurantRepository.findById(party.getRestaurant().getId()).orElseThrow(
+                    () -> {throw new BaseException(NOT_FOUND_RESTAURANT_FAILURE);}
+            );
+
+            PartyInfoSimple partyInfoSimple = PartyInfoSimple.builder()
+                    .partyId(party.getId())
+                    .partyName(party.getName())
+                    .restaurantName(restaurant.getName())
+                    .restaurantImgURL(restaurant.getImgUrl())
+                    .restaurantAddress(restaurant.getAddress())
+                    .category(restaurant.getCategory())
+                    .build();
+
+            partyInfoSimpleList.add(partyInfoSimple);
+        }
+        
+        return new GetAtePartyInfoRes(partyInfoSimpleList);
     }
 }
