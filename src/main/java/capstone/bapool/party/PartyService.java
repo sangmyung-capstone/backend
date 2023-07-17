@@ -5,17 +5,14 @@ import capstone.bapool.firebase.dto.FireBasePartyInfo;
 import capstone.bapool.model.Party;
 import capstone.bapool.model.PartyHashtag;
 import capstone.bapool.model.Restaurant;
-import capstone.bapool.party.dto.PartiesInRestaurantRes;
-import capstone.bapool.party.dto.PartyInfoDetail;
+import capstone.bapool.party.dto.*;
 import capstone.bapool.config.error.BaseException;
 import capstone.bapool.model.PartyParticipant;
 import capstone.bapool.model.User;
 import capstone.bapool.model.enumerate.PartyStatus;
 import capstone.bapool.model.enumerate.RoleType;
-import capstone.bapool.party.dto.PatchPartyReq;
-import capstone.bapool.party.dto.PostPartyReq;
-import capstone.bapool.party.dto.PostPartyRestaurantReq;
 import capstone.bapool.restaurant.RestaurantRepository;
+import capstone.bapool.party.dto.GetAtePartyInfoRes;
 import capstone.bapool.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_PARTY_FAILURE;
-import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_PARTY_PARTICIPANT_FAILURE;
-import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_USER_FAILURE;
+import static capstone.bapool.config.error.StatusEnum.*;
 
 @Slf4j
 @Service
@@ -218,5 +213,19 @@ public class PartyService {
                 .orElseThrow(() -> new BaseException(NOT_FOUND_PARTY_PARTICIPANT_FAILURE));
         newLeader.becomeLeader();
         fireBasePartyRepository.becomeLeader(partyId, otherUserId);
+    }
+
+    // 먹었던 파티정보 리스트
+    public GetAtePartyInfoRes findAtePartyInfo(Long userId){
+
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> {throw new BaseException(NOT_FOUND_USER_FAILURE);}
+        );
+
+        List<PartyInfoSimple> partyInfoSimpleList = partyRepository.findByUserAndPartyStatus(user, PartyStatus.DONE);
+
+        System.out.println("parties.size() = " + partyInfoSimpleList.size());
+
+        return new GetAtePartyInfoRes(partyInfoSimpleList);
     }
 }

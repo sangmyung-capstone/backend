@@ -159,36 +159,4 @@ public class RestaurantService {
 
         return new GetSearchRestaurantRes(restaurantInfoList);
     }
-
-    // 먹었던 식당정보 리스트
-    public GetAtePartyInfoRes findAtePartyInfo(Long userId){
-
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> {throw new BaseException(NOT_FOUND_USER_FAILURE);}
-        );
-        
-        List<Party> parties = partyRepository.findAtePartyByUser(user.getId(), PartyStatus.DONE.toString()).orElse(null);
-
-        System.out.println("parties.size() = " + parties.size());
-        
-        List<PartyInfoSimple> partyInfoSimpleList = new ArrayList<>();
-        for(Party party : parties){
-            Restaurant restaurant = restaurantRepository.findById(party.getRestaurant().getId()).orElseThrow(
-                    () -> {throw new BaseException(NOT_FOUND_RESTAURANT_FAILURE);}
-            );
-
-            PartyInfoSimple partyInfoSimple = PartyInfoSimple.builder()
-                    .partyId(party.getId())
-                    .partyName(party.getName())
-                    .restaurantName(restaurant.getName())
-                    .restaurantImgURL(restaurant.getImgUrl())
-                    .restaurantAddress(restaurant.getAddress())
-                    .category(restaurant.getCategory())
-                    .build();
-
-            partyInfoSimpleList.add(partyInfoSimple);
-        }
-        
-        return new GetAtePartyInfoRes(partyInfoSimpleList);
-    }
 }

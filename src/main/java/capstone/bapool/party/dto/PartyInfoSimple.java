@@ -16,7 +16,7 @@ public class PartyInfoSimple {
     @JsonProperty("restaurant_name")
     private String restaurantName;
 
-    @JsonProperty("imgUrl")
+    @JsonProperty("restaurant_img_url")
     private String restaurantImgURL;
 
     @JsonProperty("restaurant_address")
