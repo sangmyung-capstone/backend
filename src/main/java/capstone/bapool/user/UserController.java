@@ -23,7 +23,7 @@ import java.util.Optional;
 
 @Slf4j
 @RestController
-@RequestMapping("/users")
+@RequestMapping(path = {"/users", "/test/users"})
 public class UserController {
 
     private final UserService userService;
