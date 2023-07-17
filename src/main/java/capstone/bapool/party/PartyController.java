@@ -5,6 +5,7 @@ import capstone.bapool.config.response.ResponseDto;
 import capstone.bapool.party.dto.PartiesInRestaurantRes;
 import capstone.bapool.party.dto.PatchPartyReq;
 import capstone.bapool.party.dto.PostPartyParticipantReq;
+import capstone.bapool.party.dto.GetAtePartyInfoRes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,6 +47,17 @@ public class PartyController {
         ResponseDto<PartiesInRestaurantRes> response = ResponseDto.create(partiesInRestaurantRes);
 
         log.info("식당 '{}-{}'의 파티리스트 조회 요청", partiesInRestaurantRes.getRestaurantName(), restaurantId);
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 먹었던 식당정보 조회
+    @GetMapping("/log/{user-id}")
+    public ResponseEntity<ResponseDto> atePartyInfoList(@PathVariable("user-id") Long userId){
+
+        GetAtePartyInfoRes getAtePartyInfoRes = partyService.findAtePartyInfo(userId);
+
+        ResponseDto<GetAtePartyInfoRes> response = ResponseDto.create(getAtePartyInfoRes);
 
         return ResponseEntity.ok(response);
     }

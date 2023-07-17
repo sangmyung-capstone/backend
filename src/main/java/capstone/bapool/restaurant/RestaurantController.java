@@ -80,15 +80,4 @@ public class RestaurantController {
 
         return ResponseEntity.ok(response);
     }
-
-    // 먹었던 식당정보 조회
-    @GetMapping("/log/{user-id}")
-    public ResponseEntity<ResponseDto> atePartyInfoList(@PathVariable("user-id") Long userId){
-
-        GetAtePartyInfoRes getAtePartyInfoRes = restaurantService.findAtePartyInfo(userId);
-
-        ResponseDto<GetAtePartyInfoRes> response = ResponseDto.create(getAtePartyInfoRes);
-
-        return ResponseEntity.ok(response);
-    }
 }
