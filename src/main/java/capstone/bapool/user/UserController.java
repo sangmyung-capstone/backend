@@ -49,11 +49,18 @@ public class UserController {
         return ResponseEntity.ok().body(deleteresult);
     }
 
+    @GetMapping("/profilewithno/{user-id}")
+    public ResponseEntity<ResponseDto> otherUser(
+            @PathVariable("user-id") Long otherUserId){
+        Long userId = 2L;
+        OtherUserRes otherUserRes = userService.findOtherById(userId, otherUserId);
+        return ResponseEntity.ok().body(ResponseDto.create(otherUserRes));
+    }
+
     @GetMapping("/profile/{user-id}")
     public ResponseEntity<ResponseDto> otherUser(
             @PathVariable("user-id") Long otherUserId, HttpServletRequest request){
-//        Long userId = jwtUtils.resolveRequest(request);
-        Long userId = 1L;
+        Long userId = jwtUtils.resolveRequest(request);
         OtherUserRes otherUserRes = userService.findOtherById(userId, otherUserId);
         return ResponseEntity.ok().body(ResponseDto.create(otherUserRes));
     }
