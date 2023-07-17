@@ -52,10 +52,12 @@ public class UserController {
     @GetMapping("/profile/{user-id}")
     public ResponseEntity<ResponseDto> otherUser(
             @PathVariable("user-id") Long otherUserId, HttpServletRequest request){
-        Long userId = jwtUtils.resolveRequest(request);
+//        Long userId = jwtUtils.resolveRequest(request);
+        Long userId = 1L;
         OtherUserRes otherUserRes = userService.findOtherById(userId, otherUserId);
         return ResponseEntity.ok().body(ResponseDto.create(otherUserRes));
     }
+
 
     @GetMapping("/block/{user-id}")
     public ResponseEntity<ResponseDto> blockUser(
