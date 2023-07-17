@@ -72,4 +72,11 @@ public class FireBasePartyRepository {
                 .child(userId.toString())
                 .setValueAsync(true);
     }
+
+    public void becomeMember(Long partyId, Long userId) {
+        databaseReference.child(partyId.toString())
+                .child("groupUsers")
+                .child(userId.toString())
+                .setValueAsync(false);
+    }
 }

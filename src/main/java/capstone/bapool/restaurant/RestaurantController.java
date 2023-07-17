@@ -1,10 +1,13 @@
 package capstone.bapool.restaurant;
 
+import capstone.bapool.config.error.BaseException;
 import capstone.bapool.config.response.ResponseDto;
 import capstone.bapool.restaurant.dto.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static capstone.bapool.config.error.StatusEnum.TOO_MANY_REQUEST;
 
 @RestController
 @RequestMapping(path = {"/restaurants", "/test/restaurants"})
@@ -56,6 +59,10 @@ public class RestaurantController {
     public ResponseEntity<ResponseDto> restaurantBottomList(@RequestBody GetRestaurantBottomListReq getRestaurantBottomListReq){
 //        System.out.println("getRestaurantBottomListReq.getRestaurantURLs().size() = " + getRestaurantBottomListReq.getRestaurantURLs().size());
 
+        if(getRestaurantBottomListReq.getRestaurantIdList().size() > 3){
+            throw new BaseException(TOO_MANY_REQUEST);
+        }
+
         GetRestaurantBottomListRes getRestaurantBottomListRes = restaurantService.findRestaurantBottomList(getRestaurantBottomListReq);
 
         ResponseDto response = ResponseDto.create(getRestaurantBottomListRes);
@@ -70,6 +77,17 @@ public class RestaurantController {
         GetSearchRestaurantRes getSearchRestaurantRes = restaurantService.searchRestaurant(query, x, y);
 
         ResponseDto<GetSearchRestaurantRes> response = ResponseDto.create(getSearchRestaurantRes);
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 먹었던 식당정보 조회
+    @GetMapping("/log/{user-id}")
+    public ResponseEntity<ResponseDto> atePartyInfoList(@PathVariable("user-id") Long userId){
+
+        GetAtePartyInfoRes getAtePartyInfoRes = restaurantService.findAtePartyInfo(userId);
+
+        ResponseDto<GetAtePartyInfoRes> response = ResponseDto.create(getAtePartyInfoRes);
 
         return ResponseEntity.ok(response);
     }

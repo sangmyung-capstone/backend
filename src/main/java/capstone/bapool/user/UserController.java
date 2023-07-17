@@ -2,6 +2,7 @@ package capstone.bapool.user;
 
 import capstone.bapool.config.error.BaseException;
 import capstone.bapool.config.response.ResponseDto;
+import capstone.bapool.model.User;
 import capstone.bapool.user.dto.ReissueReq;
 import capstone.bapool.user.dto.ReissueRes;
 import capstone.bapool.user.dto.SignInRes;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 @RestController

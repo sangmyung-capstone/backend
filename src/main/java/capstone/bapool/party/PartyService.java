@@ -6,7 +6,7 @@ import capstone.bapool.model.Party;
 import capstone.bapool.model.PartyHashtag;
 import capstone.bapool.model.Restaurant;
 import capstone.bapool.party.dto.PartiesInRestaurantRes;
-import capstone.bapool.party.dto.PartyInfo;
+import capstone.bapool.party.dto.PartyInfoDetail;
 import capstone.bapool.config.error.BaseException;
 import capstone.bapool.model.PartyParticipant;
 import capstone.bapool.model.User;
@@ -120,7 +120,7 @@ public class PartyService {
         List<Party> parties = partyRepository.findByRestaurant(restaurant);
         for(Party party : parties){ // 파티 정보 입력.
 
-            PartyInfo partyInfo = PartyInfo.builder()
+            PartyInfoDetail partyInfoDetail = PartyInfoDetail.builder()
                     .partyId(party.getId())
                     .partyName(party.getName())
                     .isParticipate(party.isMeParticipate(user))
@@ -134,7 +134,7 @@ public class PartyService {
                     .partyHashtag(party.getPartyHashtag())
                     .isRecruiting(party.is_recruiting())
                     .build();
-            partiesInRestaurantRes.addPartyInfos(partyInfo);
+            partiesInRestaurantRes.addPartyInfos(partyInfoDetail);
         }
 
         return partiesInRestaurantRes;
@@ -201,5 +201,22 @@ public class PartyService {
         PartyParticipant partyParticipant = PartyParticipant.makeMapping(user, party, RoleType.MEMBER);
         partyParticipantRepository.save(partyParticipant);
         fireBasePartyRepository.participate(partyId, userId, curNumberOfPeople);
+    }
+
+    @Transactional(readOnly = false)
+    public void changeLeader(Long userId, Long partyId, Long otherUserId) {
+        Party partyReference = partyRepository.getReferenceById(partyId);
+        User userReference = userRepository.getReferenceById(userId);
+        User otherUserReference = userRepository.getReferenceById(otherUserId);
+
+        PartyParticipant partyParticipant = partyParticipantRepository.findPartyParticipantByUserAndParty(userReference, partyReference)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_PARTY_PARTICIPANT_FAILURE));
+        partyParticipant.becomeMember();
+        fireBasePartyRepository.becomeMember(partyId, userId);
+
+        PartyParticipant newLeader = partyParticipantRepository.findPartyParticipantByUserAndParty(otherUserReference, partyReference)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_PARTY_PARTICIPANT_FAILURE));
+        newLeader.becomeLeader();
+        fireBasePartyRepository.becomeLeader(partyId, otherUserId);
     }
 }

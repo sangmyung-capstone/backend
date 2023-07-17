@@ -7,8 +7,7 @@ import lombok.*;
 
 @Getter
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"restaurantId", "restaurantName", "restaurantAddress", "category", "link", "numOfParty", "restaurantLongitude", "restaurantLatitude"})
+@JsonPropertyOrder({"restaurantId", "restaurantName", "restaurantAddress", "category", "numOfParty", "restaurantLongitude", "restaurantLatitude"})
 public class RestaurantInfo {
 
     @JsonProperty("restaurant_id")
@@ -31,10 +30,9 @@ public class RestaurantInfo {
     @JsonProperty("restaurant_latitude")
     private double restaurantLatitude; //y
 
-    private String link;
 
     @Builder
-    public RestaurantInfo(Long restaurantId, String restaurantName, String restaurantAddress, String category, int numOfParty, double restaurantLongitude, double restaurantLatitude, String link) {
+    public RestaurantInfo(Long restaurantId, String restaurantName, String restaurantAddress, String category, int numOfParty, double restaurantLongitude, double restaurantLatitude) {
         this.restaurantId = restaurantId;
         this.restaurantName = restaurantName;
         this.restaurantAddress = restaurantAddress;
@@ -42,7 +40,6 @@ public class RestaurantInfo {
         this.numOfParty = numOfParty;
         this.restaurantLongitude = restaurantLongitude;
         this.restaurantLatitude = restaurantLatitude;
-        this.link = link;
     }
 
     @Override

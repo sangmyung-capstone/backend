@@ -66,4 +66,11 @@ public class PartyParticipant extends BaseTimeEntity{
         this.roleType = RoleType.LEADER;
     }
 
+    public void becomeMember() {
+        if (this.roleType != RoleType.LEADER) {
+            throw new BaseException(StatusEnum.NOT_PARTY_LEADER_);
+        }
+        this.roleType = RoleType.MEMBER;
+    }
+
 }

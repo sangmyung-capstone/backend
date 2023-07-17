@@ -9,20 +9,21 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Component
 @Slf4j
-public class SeleniumService {
+public class SeleniumUtils {
     private WebDriver driver;
     public static String WEB_DRIVER_ID = "webdriver.chrome.driver"; // Properties 설정
     public static String WEB_DRIVER_PATH; // WebDriver 경로
 
-    public SeleniumService(@Value("${selenium.path}") String path){
+    public SeleniumUtils(@Value("${selenium.path}") String path){
         WEB_DRIVER_PATH = path;
         setDriver();
 //        webDriverWait = new WebDriverWait(driver, Duration.ofMillis(500));
