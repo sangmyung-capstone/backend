@@ -24,7 +24,9 @@ public enum StatusEnum {
      * 403 오류
      */
     PARTY_STATUS_IS_NOT_RECRUITING(403,"파티가 모집중인 상태가 아닙니다."),
-    PARTY_IS_FULL(403,"더 이상 파티에 "),
+    PARTY_IS_FULL(403,"더 이상 파티에 들어 갈 수 없습니다."),
+    NOT_PARTY_LEADER_(403,"파티 리더가 아닙니다."),
+
 
     /**
      * NOT FOUND 오류

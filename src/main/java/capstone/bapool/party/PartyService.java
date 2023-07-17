@@ -202,4 +202,21 @@ public class PartyService {
         partyParticipantRepository.save(partyParticipant);
         fireBasePartyRepository.participate(partyId, userId, curNumberOfPeople);
     }
+
+    @Transactional(readOnly = false)
+    public void changeLeader(Long userId, Long partyId, Long otherUserId) {
+        Party partyReference = partyRepository.getReferenceById(partyId);
+        User userReference = userRepository.getReferenceById(userId);
+        User otherUserReference = userRepository.getReferenceById(otherUserId);
+
+        PartyParticipant partyParticipant = partyParticipantRepository.findPartyParticipantByUserAndParty(userReference, partyReference)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_PARTY_PARTICIPANT_FAILURE));
+        partyParticipant.becomeMember();
+        fireBasePartyRepository.becomeMember(partyId, userId);
+
+        PartyParticipant newLeader = partyParticipantRepository.findPartyParticipantByUserAndParty(otherUserReference, partyReference)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_PARTY_PARTICIPANT_FAILURE));
+        newLeader.becomeLeader();
+        fireBasePartyRepository.becomeLeader(partyId, otherUserId);
+    }
 }
