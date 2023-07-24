@@ -7,8 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 public class SeleniumTests {
     
-    @Autowired
-    private SeleniumUtils seleniumUtils;
+//    @Autowired
+//    private SeleniumUtils seleniumUtils;
     
 //    @Test
 //    public void testCrawlingImgUrl(){

@@ -1,17 +1,12 @@
 package capstone.bapool.restaurant;
 
 import capstone.bapool.config.error.BaseException;
-import capstone.bapool.model.Party;
 import capstone.bapool.model.Restaurant;
-import capstone.bapool.model.User;
-import capstone.bapool.model.enumerate.PartyStatus;
 import capstone.bapool.party.PartyRepository;
-import capstone.bapool.party.dto.PartyInfoSimple;
 import capstone.bapool.restaurant.dto.*;
 import capstone.bapool.user.UserRepository;
 import capstone.bapool.utils.KakaoLocalApiUtils;
 import capstone.bapool.utils.RequestsUtils;
-import capstone.bapool.utils.SeleniumUtils;
 import capstone.bapool.utils.dto.ImgURLAndMenu;
 import capstone.bapool.utils.dto.KakaoRestaurant;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_RESTAURANT_FAILURE;
-import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_USER_FAILURE;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +26,6 @@ public class RestaurantService {
     private final KakaoLocalApiUtils kakaoLocalApiUtils;
     private final RestaurantRepository restaurantRepository;
     private final PartyRepository partyRepository;
-    private final SeleniumUtils seleniumUtils;
     private final RequestsUtils requestsUtils;
     private final UserRepository userRepository;
 
