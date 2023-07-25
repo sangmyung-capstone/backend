@@ -16,4 +16,6 @@ import java.util.Optional;
 public interface BlockUserRepository extends JpaRepository<BlockUser, Long> {
 
     BlockUser findByBlockUserAndBlockedUser(User blockUser, User blockedUser);
+
+    List<BlockUser> findByBlockUserOrderByUpdatedDate(User blockUser);
 }

@@ -5,29 +5,27 @@ import capstone.bapool.firebase.dto.FireBasePartyInfo;
 import capstone.bapool.model.Party;
 import capstone.bapool.model.PartyHashtag;
 import capstone.bapool.model.Restaurant;
-import capstone.bapool.party.dto.PartiesInRestaurantRes;
-import capstone.bapool.party.dto.PartyInfoDetail;
+import capstone.bapool.party.dto.*;
 import capstone.bapool.config.error.BaseException;
 import capstone.bapool.model.PartyParticipant;
 import capstone.bapool.model.User;
 import capstone.bapool.model.enumerate.PartyStatus;
 import capstone.bapool.model.enumerate.RoleType;
-import capstone.bapool.party.dto.PatchPartyReq;
-import capstone.bapool.party.dto.PostPartyReq;
-import capstone.bapool.party.dto.PostPartyRestaurantReq;
 import capstone.bapool.restaurant.RestaurantRepository;
+import capstone.bapool.party.dto.GetAtePartyInfoRes;
 import capstone.bapool.user.UserRepository;
+import capstone.bapool.user.dto.GetUserRatingVeiwRes;
+import capstone.bapool.user.dto.RatingUserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_PARTY_FAILURE;
-import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_PARTY_PARTICIPANT_FAILURE;
-import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_USER_FAILURE;
+import static capstone.bapool.config.error.StatusEnum.*;
 
 @Slf4j
 @Service
@@ -224,5 +222,47 @@ public class PartyService {
                 .orElseThrow(() -> new BaseException(NOT_FOUND_PARTY_PARTICIPANT_FAILURE));
         newLeader.becomeLeader();
         fireBasePartyRepository.becomeLeader(partyId, otherUserId);
+    }
+
+    // 먹었던 파티정보 리스트
+    public GetAtePartyInfoRes findAtePartyInfo(Long userId){
+
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> {throw new BaseException(NOT_FOUND_USER_FAILURE);}
+        );
+
+        List<PartyInfoSimple> partyInfoSimpleList = partyRepository.findByUserAndPartyStatus(user, PartyStatus.DONE);
+
+        System.out.println("parties.size() = " + partyInfoSimpleList.size());
+
+        return new GetAtePartyInfoRes(partyInfoSimpleList);
+    }
+
+    // 사용자 평가화면 조회
+    public GetUserRatingVeiwRes findPartyParticipantForRating(Long userId, Long partyId){
+
+        User user = userRepository.findById(userId).orElseThrow(() -> {
+            throw new BaseException(NOT_FOUND_USER_FAILURE);
+        });
+
+        Party party = partyRepository.findById(partyId).orElseThrow(() -> {
+            throw new BaseException(NOT_FOUND_PARTY_FAILURE);
+        });
+
+        // 해당 파티에 내가 참여하지 않았으면
+        if(!party.isMeParticipate(user)){
+            throw new BaseException(NOT_PARTY_PARTICIPANT);
+        }
+
+        List<RatingUserInfo> ratingUserInfoList = new ArrayList<>();
+        for(PartyParticipant partyParticipant: party.getPartyParticipants()){
+            User ratingUser = partyParticipant.getUser();
+            if(ratingUser.equals(user)){ // 자기 자신은 평가에서 제외
+                continue;
+            }
+            ratingUserInfoList.add(new RatingUserInfo(ratingUser.getId(), ratingUser.getName()));
+        }
+
+        return new GetUserRatingVeiwRes(ratingUserInfoList);
     }
 }

@@ -8,8 +8,7 @@ import lombok.Builder;
 
 import java.util.List;
 
-@AllArgsConstructor
-@Builder
+
 @JsonPropertyOrder({"userId", "profileImg", "name", "rating", "is_block"})
 public class OtherUserRes {
 
@@ -29,5 +28,15 @@ public class OtherUserRes {
     double rating;
 
     @JsonProperty("hashtag")
-    List<UserHashtag> userHashtags;
+    List<Integer> hashtag;
+
+    @Builder
+    public OtherUserRes(Long userId, Integer profileImg, String name, boolean is_block, double rating, List<Integer> hashtag) {
+        this.userId = userId;
+        this.profileImg = profileImg;
+        this.name = name;
+        this.is_block = is_block;
+        this.rating = rating;
+        this.hashtag = hashtag;
+    }
 }

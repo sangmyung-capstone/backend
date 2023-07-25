@@ -1,36 +1,21 @@
 package capstone.bapool.user;
 
 import capstone.bapool.config.error.BaseException;
-import capstone.bapool.config.interceptor.AuthenticationInterceptor;
 import capstone.bapool.config.response.ResponseDto;
 import capstone.bapool.firebase.FireBaseUserRepository;
-import capstone.bapool.firebase.dto.FireBaseUser;
 import capstone.bapool.model.BlockUser;
 import capstone.bapool.model.User;
-import capstone.bapool.model.UserHashtag;
 import capstone.bapool.model.enumerate.BlockStatus;
-import capstone.bapool.user.dto.ReissueReq;
-import capstone.bapool.user.dto.ReissueRes;
-import capstone.bapool.user.dto.SignInRes;
-import capstone.bapool.user.dto.SignUpReq;
-import capstone.bapool.user.dto.SocialAccessToken;
+import capstone.bapool.user.dto.BlockUserListRes;
 import capstone.bapool.user.dto.*;
-import capstone.bapool.utils.JwtUtils;
-import capstone.bapool.utils.SocialUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+
 
 import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_USER_FAILURE;
 
@@ -50,12 +35,14 @@ public class UserService {
     public UserRes findById(Long userId) throws BaseException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));    //db에 사용자id가 없다면 처리
-        List<UserHashtag> userHashtags = userHashtagRepository.findByUserId(userId);
+        List<Integer> hashtags = userHashtagRepository.findByUserId(userId)
+                .stream().map((userHashtag -> userHashtag.getHashtagId()))
+                .collect(Collectors.toList());
         return UserRes.builder()
                 .name(user.getName())
                 .profileImgId(user.getProfileImgId())
                 .rating(user.getRating())
-                .userHashtags(userHashtags)
+                .hashtag(hashtags)
                 .build();
     }
 
@@ -75,14 +62,17 @@ public class UserService {
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
         User otherUser = userRepository.findById(otherUserId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
-        List<UserHashtag> userHashtags = userHashtagRepository.findByUserId(otherUserId);
+        List<Integer> hashtags = userHashtagRepository.findByUserId(otherUserId)
+                .stream().map((userHashtag -> userHashtag.getHashtagId()))
+                .collect(Collectors.toList());
         boolean is_block = blockUserRepository.findByBlockUserAndBlockedUser(user, otherUser)!=null;
+
         return OtherUserRes.builder()
                 .userId(otherUser.getId())
                 .profileImg(otherUser.getProfileImgId())
                 .name(otherUser.getName())
                 .rating(otherUser.getRating())
-                .userHashtags(userHashtags)
+                .hashtag(hashtags)
                 .is_block(is_block)
                 .build();
     }
@@ -148,5 +138,19 @@ public class UserService {
         }else{
             return new BlockUserRes(BlockStatus.SAMEUSEREXCEPTION);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List blockList(Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
+        List<BlockUserListRes> blockList = blockUserRepository.findByBlockUserOrderByUpdatedDate(user)
+                .stream().map(BlockUser -> BlockUserListRes.builder()
+                        .userId(BlockUser.getBlockedUser().getId())
+                        .name(BlockUser.getBlockedUser().getName())
+                        .blockDate(BlockUser.getUpdatedDate())
+                        .build())
+                .collect(Collectors.toList());
+        return blockList;
     }
 }

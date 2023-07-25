@@ -28,18 +28,13 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
      */
     List<Party> findByRestaurant(Restaurant restaurant);
 
-//    @Query("SELECT p FROM Party p JOIN p.partyParticipants u WHERE p.partyStatus=:partyStatus")
-    @Query(value = "select *\n" +
-            "from party join party_participant pp\n" +
-            "where party.party_id = pp.party_id\n" +
-            "    and party_status=:partyStatus\n" +
-            "    and pp.user_id=:userId", nativeQuery = true)
-    Optional<List<Party>> findAtePartyByUser(@Param("userId") Long userId, @Param("partyStatus") String partyStatus);
 
-    @Query(value = "select new capstone.bapool.party.dto.PartyInfoSimple(p.id, p.name, res.name, res.imgUrl, res.address, res.category)" +
-            "from Party p" +
-            " join PartyParticipant pp on pp.party = p" +
-            " join Restaurant res on p.restaurant = res" +
-            " and pp.user=:user")
-    List<PartyInfoSimple> findTemp(@Param("user") User user);
+    @Query(value = "select new capstone.bapool.party.dto.PartyInfoSimple(p.id, p.name, res.name, res.imgUrl, res.address, res.category)\n" +
+            "from Party p\n" +
+            "join fetch PartyParticipant pp on pp.party = p\n" +
+            "join fetch Restaurant res on p.restaurant = res\n" +
+            "where p.partyStatus =:partyStatus\n" +
+            "and pp.user=:user")
+    List<PartyInfoSimple> findByUserAndPartyStatus(@Param("user") User user, @Param("partyStatus") PartyStatus partyStatus);
+
 }

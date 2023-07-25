@@ -25,5 +25,5 @@ public class UserRes {
     double rating;
 
     @JsonProperty("hashtag")
-    List<UserHashtag> userHashtags;
+    List<Integer> hashtag;
 }
