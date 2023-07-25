@@ -86,13 +86,14 @@ public class UserController {
 
     // 사용자 평가 화면을 띄우기 위한 정보 조회
     @GetMapping("/rating/{user-id}")
-    public ResponseEntity<ResponseDto> userRatingViewDetails(@PathVariable("user-id")Long userId, @RequestParam("party_id") Long partyId){
+    public ResponseEntity<ResponseDto> userRatingViewDetails(@PathVariable("user-id")Long userId, @RequestParam("party_id") Long partyId) {
 
         GetUserRatingVeiwRes getUserRatingVeiwRes = partyService.findPartyParticipantForRating(userId, partyId);
 
         ResponseDto<GetUserRatingVeiwRes> response = ResponseDto.create(getUserRatingVeiwRes);
 
         return ResponseEntity.ok(response);
+    }
 
     @GetMapping("/blocklist/{user-id}")
     public ResponseEntity<ResponseDto> blockUserList(@PathVariable("user-id") Long userId){
