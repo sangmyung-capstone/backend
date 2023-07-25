@@ -3,6 +3,7 @@ package capstone.bapool.user;
 import capstone.bapool.config.error.BaseException;
 import capstone.bapool.config.response.ResponseDto;
 import capstone.bapool.model.User;
+import capstone.bapool.party.PartyService;
 import capstone.bapool.user.dto.ReissueReq;
 import capstone.bapool.user.dto.ReissueRes;
 import capstone.bapool.user.dto.SignInRes;
@@ -12,7 +13,9 @@ import capstone.bapool.user.dto.SocialAccessToken;
 
 import capstone.bapool.user.dto.*;
 import capstone.bapool.utils.JwtUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,16 +27,15 @@ import java.util.Optional;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(path = {"/users", "/test/users"})
 public class UserController {
 
     private final UserService userService;
     private final JwtUtils jwtUtils;
+    private final PartyService partyService;
 
-    public UserController(UserService userService, JwtUtils jwtUtils) {
-        this.userService = userService;
-        this.jwtUtils = jwtUtils;
-    }
+
     //마이페이지 로딩
     @GetMapping("/mypage/{user-id}")
     public ResponseEntity<ResponseDto> mypage(@Valid @PathVariable("user-id") Long userId){
@@ -81,6 +83,16 @@ public class UserController {
         BlockUserRes blockUserRes = userService.blockWithReqBody(blockUserReq.getBlockedUserId(), blockUserId);
         return ResponseEntity.ok().body(ResponseDto.create(blockUserRes));
     }
+
+    // 사용자 평가 화면을 띄우기 위한 정보 조회
+    @GetMapping("/rating/{user-id}")
+    public ResponseEntity<ResponseDto> userRatingViewDetails(@PathVariable("user-id")Long userId, @RequestParam("party_id") Long partyId){
+
+        GetUserRatingVeiwRes getUserRatingVeiwRes = partyService.findPartyParticipantForRating(userId, partyId);
+
+        ResponseDto<GetUserRatingVeiwRes> response = ResponseDto.create(getUserRatingVeiwRes);
+
+        return ResponseEntity.ok(response);
 
     @GetMapping("/blocklist/{user-id}")
     public ResponseEntity<ResponseDto> blockUserList(@PathVariable("user-id") Long userId){
