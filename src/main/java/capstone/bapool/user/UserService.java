@@ -78,38 +78,6 @@ public class UserService {
     }
 
     @Transactional
-    public BlockUserRes block(Long blockedUserId, Long blockUserId){
-        User blockUser = userRepository.findById(blockUserId)
-                .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
-        User blockedUser = userRepository.findById(blockedUserId)
-                .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
-
-        if(blockUser != blockedUser){
-            if(blockUserRepository.findByBlockUserAndBlockedUser(blockUser, blockedUser)!=null){
-                BlockUser blockUserTuple = blockUserRepository.findByBlockUserAndBlockedUser(blockUser, blockedUser);
-                blockUserRepository.delete(blockUserTuple);
-                return new BlockUserRes(BlockStatus.UNBLOCK);
-            }else {//else면 차단하기, if면 차단 해제
-                BlockUser blockUserTuple = BlockUser.builder()
-                        .blockUser(blockUser)
-                        .blockedUser(blockedUser)
-                        .build();
-                blockUserRepository.save(blockUserTuple);
-
-                BlockUserRes blockUserRes  = BlockUserRes.builder()
-                        .userId(blockedUser.getId())
-                        .blockStatus(BlockStatus.BLOCK)
-                        .name(blockedUser.getName())
-                        .blockDate(blockUserTuple.getUpdatedDate())
-                        .build();
-                return blockUserRes;
-            }
-        }else{
-            return new BlockUserRes(BlockStatus.SAMEUSEREXCEPTION);
-        }
-    }
-
-    @Transactional
     public BlockUserRes blockWithReqBody(Long blockedUserId, Long blockUserId){
         User blockUser = userRepository.findById(blockUserId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
