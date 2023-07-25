@@ -4,6 +4,7 @@ import capstone.bapool.model.Party;
 import capstone.bapool.model.Restaurant;
 import capstone.bapool.model.User;
 import capstone.bapool.model.enumerate.PartyStatus;
+import capstone.bapool.party.dto.PartyInfoSimple;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -34,4 +35,11 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
             "    and party_status=:partyStatus\n" +
             "    and pp.user_id=:userId", nativeQuery = true)
     Optional<List<Party>> findAtePartyByUser(@Param("userId") Long userId, @Param("partyStatus") String partyStatus);
+
+    @Query(value = "select new capstone.bapool.party.dto.PartyInfoSimple(p.id, p.name, res.name, res.imgUrl, res.address, res.category)" +
+            "from Party p" +
+            " join PartyParticipant pp on pp.party = p" +
+            " join Restaurant res on p.restaurant = res" +
+            " and pp.user=:user")
+    List<PartyInfoSimple> findTemp(@Param("user") User user);
 }

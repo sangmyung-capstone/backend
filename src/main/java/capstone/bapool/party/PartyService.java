@@ -145,6 +145,12 @@ public class PartyService {
         Party party = partyRepository.findById(patchPartyReq.getPartyId())
                 .orElseThrow(() -> new BaseException(NOT_FOUND_PARTY_FAILURE));
 
+        party.removeHashtags();
+        for (Integer value : patchPartyReq.getHashtag()) {
+            PartyHashtag partyHashtag = PartyHashtag.create(party, value);
+            partyHashtagRepository.save(partyHashtag);
+        }
+
         party.update(patchPartyReq.getPartyName(), patchPartyReq.getMaxPeople(),
                 patchPartyReq.getStartDate(),
                 patchPartyReq.getMenu(), patchPartyReq.getDetail());
