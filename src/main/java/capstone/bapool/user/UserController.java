@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -92,5 +93,10 @@ public class UserController {
         ResponseDto<GetUserRatingVeiwRes> response = ResponseDto.create(getUserRatingVeiwRes);
 
         return ResponseEntity.ok(response);
+
+    @GetMapping("/blocklist/{user-id}")
+    public ResponseEntity<ResponseDto> blockUserList(@PathVariable("user-id") Long userId){
+        List<BlockUserRes> blockList = userService.blockList(userId);
+        return ResponseEntity.ok().body(ResponseDto.create(blockList));
     }
 }

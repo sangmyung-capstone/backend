@@ -1,37 +1,20 @@
 package capstone.bapool.user;
 
 import capstone.bapool.config.error.BaseException;
-import capstone.bapool.config.interceptor.AuthenticationInterceptor;
 import capstone.bapool.config.response.ResponseDto;
 import capstone.bapool.firebase.FireBaseUserRepository;
-import capstone.bapool.firebase.dto.FireBaseUser;
 import capstone.bapool.model.BlockUser;
 import capstone.bapool.model.User;
-import capstone.bapool.model.UserHashtag;
 import capstone.bapool.model.enumerate.BlockStatus;
-import capstone.bapool.user.dto.ReissueReq;
-import capstone.bapool.user.dto.ReissueRes;
-import capstone.bapool.user.dto.SignInRes;
-import capstone.bapool.user.dto.SignUpReq;
-import capstone.bapool.user.dto.SocialAccessToken;
+import capstone.bapool.user.dto.BlockUserListRes;
 import capstone.bapool.user.dto.*;
-import capstone.bapool.utils.JwtUtils;
-import capstone.bapool.utils.SocialUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.Optional;
 
 
 import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_USER_FAILURE;
@@ -155,5 +138,19 @@ public class UserService {
         }else{
             return new BlockUserRes(BlockStatus.SAMEUSEREXCEPTION);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List blockList(Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
+        List<BlockUserListRes> blockList = blockUserRepository.findByBlockUserOrderByUpdatedDate(user)
+                .stream().map(BlockUser -> BlockUserListRes.builder()
+                        .userId(BlockUser.getBlockedUser().getId())
+                        .name(BlockUser.getBlockedUser().getName())
+                        .blockDate(BlockUser.getUpdatedDate())
+                        .build())
+                .collect(Collectors.toList());
+        return blockList;
     }
 }
