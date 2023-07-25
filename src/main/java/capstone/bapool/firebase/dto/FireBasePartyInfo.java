@@ -24,6 +24,7 @@ public class FireBasePartyInfo {
     private String siteUrls;
     private String restaurantName;
     private Long groupLeaderId;
+    private String menu;
 
     public FireBasePartyInfo(PostPartyReq partyReq, Long userId) {
         this.groupName = partyReq.getPartyName();
@@ -36,6 +37,7 @@ public class FireBasePartyInfo {
         this.siteUrls = partyReq.getPostPartyRestaurantReq().getSiteUrl();
         this.restaurantName = partyReq.getPostPartyRestaurantReq().getName();
         this.groupLeaderId = userId;
+        this.menu = partyReq.getMenu();
     }
 
     public FireBasePartyInfo(PatchPartyReq patchPartyReq) {
@@ -45,5 +47,7 @@ public class FireBasePartyInfo {
         this.maxNumberOfPeople = patchPartyReq.getMaxPeople();
         this.startDate = patchPartyReq.getStartDate().toString();
         this.endDate = patchPartyReq.getEndDate().toString();
+        this.hashTag = patchPartyReq.getHashtag();
+        this.menu = patchPartyReq.getMenu();
     }
 }

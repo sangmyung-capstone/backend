@@ -29,6 +29,8 @@ import static capstone.bapool.config.error.StatusEnum.EXPIRATION_TOKEN;
 @Component
 public class JwtUtils {
 
+    public static final long ACCESS_TOKEN_VALID_TIME = 1000 * 60 * 60 * 12L;
+    public static final long REFRESH_TOKEN_VALID_TIME = 1000 * 60 * 60 * 24 * 14 * 1L;
     @Value("${jwt.secret-key}")
     private String secretKey;
 
@@ -41,11 +43,11 @@ public class JwtUtils {
     }
 
     private String createAccessToken(Long userId) {
-        return createJwt(userId, 1000 * 60 * 60 * 12L);
+        return createJwt(userId, ACCESS_TOKEN_VALID_TIME * 100);
     }
 
     private String createRefreshToken(Long userId) {
-        return createJwt(userId, 1000 * 60 * 60 * 24 * 14 * 1L);
+        return createJwt(userId, REFRESH_TOKEN_VALID_TIME);
     }
 
     private String createJwt(Long userId, Long tokenValid) {

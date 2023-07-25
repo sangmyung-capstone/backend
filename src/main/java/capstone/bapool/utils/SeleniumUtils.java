@@ -16,7 +16,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+//@Component
 @Slf4j
 public class SeleniumUtils {
     private WebDriver driver;
