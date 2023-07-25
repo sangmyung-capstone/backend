@@ -1,5 +1,7 @@
 package capstone.bapool.config.interceptor;
 
+import capstone.bapool.config.error.ErrorResponse;
+import capstone.bapool.config.error.StatusEnum;
 import capstone.bapool.user.UserRepository;
 import capstone.bapool.utils.JwtUtils;
 import com.google.gson.Gson;
@@ -35,7 +37,11 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (!jwtUtils.validateRequest(request)) {
             Gson gson = new Gson();
-            String exception = gson.toJson(new ResponseEntity<>(UNAUTHORIZED));
+            String exception = gson.toJson(ResponseEntity.badRequest()
+                    .body(ErrorResponse.builder()
+                    .code(StatusEnum.EXPIRATION_TOKEN.getCode())
+                    .message(StatusEnum.EXPIRATION_TOKEN.getMessage())
+                    .build()));
             makeResponse(response, exception);
             return false;
         }
