@@ -4,19 +4,13 @@ package capstone.bapool.model;
 import capstone.bapool.config.error.BaseException;
 import capstone.bapool.config.error.StatusEnum;
 import capstone.bapool.model.enumerate.PartyStatus;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import org.hibernate.annotations.ColumnDefault;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +48,7 @@ public class Party extends BaseTimeEntity{
     @OneToMany(mappedBy = "party")
     private List<PartyParticipant> partyParticipants = new ArrayList<PartyParticipant>();
 
-    @OneToMany(mappedBy = "party")
+    @OneToMany(mappedBy = "party", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PartyHashtag> partyHashtags = new ArrayList<>();
 
     // 게터 사용 제한
@@ -153,5 +147,9 @@ public class Party extends BaseTimeEntity{
         else {
             return false;
         }
+    }
+
+    public void removeHashtags() {
+        this.partyHashtags.clear();
     }
 }

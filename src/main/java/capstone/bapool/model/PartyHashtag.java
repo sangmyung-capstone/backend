@@ -18,8 +18,9 @@ import javax.persistence.Table;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "party_hashtag")
-public class PartyHashtag extends BaseTimeEntity{
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class PartyHashtag extends BaseTimeEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "party_hashtag_id")
     private Long id;
 
