@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -79,5 +80,11 @@ public class UserController {
             @PathVariable("user-id") Long blockUserId, @Valid @RequestBody BlockUserReq blockUserReq){
         BlockUserRes blockUserRes = userService.blockWithReqBody(blockUserReq.getBlockedUserId(), blockUserId);
         return ResponseEntity.ok().body(ResponseDto.create(blockUserRes));
+    }
+
+    @GetMapping("/blocklist/{user-id}")
+    public ResponseEntity<ResponseDto> blockUserList(@PathVariable("user-id") Long userId){
+        List<BlockUserRes> blockList = userService.blockList(userId);
+        return ResponseEntity.ok().body(ResponseDto.create(blockList));
     }
 }
