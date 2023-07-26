@@ -79,4 +79,9 @@ public class User extends BaseTimeEntity{
 
         return sum / userRatings.size();
     }
+
+    public void update(String newName, int newProfileImg){
+        this.name = newName;
+        this.profileImgId = newProfileImg;
+    }
 }
