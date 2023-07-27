@@ -109,16 +109,17 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List blockList(Long userId){
+    public BlockUserListRes blockList(Long userId){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
-        List<BlockUserListRes> blockList = blockUserRepository.findByBlockUserOrderByUpdatedDate(user)
-                .stream().map(BlockUser -> BlockUserListRes.builder()
+        List<BlockedUserInfo> blockedUserInfoList = blockUserRepository.findByBlockUserOrderByUpdatedDate(user)
+                .stream().map(BlockUser ->BlockedUserInfo.builder()
                         .userId(BlockUser.getBlockedUser().getId())
                         .name(BlockUser.getBlockedUser().getName())
                         .blockDate(BlockUser.getUpdatedDate())
                         .build())
                 .collect(Collectors.toList());
-        return blockList;
+        BlockUserListRes blockUserListRes = new BlockUserListRes(blockedUserInfoList);
+        return blockUserListRes;
     }
 }
