@@ -10,6 +10,12 @@ public enum StatusEnum {
     SUCCESS(200, "OK"),
 
     /**
+     * 중복 오류
+     * 300 오류
+     */
+    ALREADY_EXIST_NAME_FAILURE(300, "이미 존재하는 이름입니다."),
+
+    /**
      * 인증 오류
      * 401 오류
      */

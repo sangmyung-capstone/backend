@@ -1,5 +1,7 @@
 package capstone.bapool.user;
 
+import capstone.bapool.config.error.BaseException;
+import capstone.bapool.config.error.StatusEnum;
 import capstone.bapool.config.response.ResponseDto;
 import capstone.bapool.party.PartyService;
 import capstone.bapool.user.dto.*;
@@ -78,5 +80,11 @@ public class UserController {
     public ResponseEntity<ResponseDto> blockUserList(@PathVariable("user-id") Long userId){
         List<BlockUserRes> blockList = userService.blockList(userId);
         return ResponseEntity.ok().body(ResponseDto.create(blockList));
+    }
+
+    @PatchMapping("/info/{user-id}")
+    public ResponseEntity<ResponseDto> patchUserInfo(
+            @PathVariable("user-id") Long userId, @RequestBody UserInfoReq userInfoReq){
+        return ResponseEntity.ok().body(ResponseDto.create(userService.updateUserInfo(userId, userInfoReq)));
     }
 }

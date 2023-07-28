@@ -1,6 +1,7 @@
 package capstone.bapool.user;
 
 import capstone.bapool.config.error.BaseException;
+import capstone.bapool.config.error.StatusEnum;
 import capstone.bapool.config.response.ResponseDto;
 import capstone.bapool.firebase.FireBaseUserRepository;
 import capstone.bapool.model.BlockUser;
@@ -17,6 +18,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
+import static capstone.bapool.config.error.StatusEnum.ALREADY_EXIST_NAME_FAILURE;
 import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_USER_FAILURE;
 
 @Slf4j
@@ -120,5 +122,19 @@ public class UserService {
                         .build())
                 .collect(Collectors.toList());
         return blockList;
+    }
+
+    @Transactional
+    public boolean updateUserInfo(Long userId, UserInfoReq userInfoReq){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
+        String newName = userInfoReq.getName();
+        int newProfileImg = userInfoReq.getProfileImg();
+        if(userRepository.existsByName(newName)){
+            throw new BaseException(ALREADY_EXIST_NAME_FAILURE);
+        }else{
+            user.update(newName, newProfileImg);
+        }
+        return false;
     }
 }
