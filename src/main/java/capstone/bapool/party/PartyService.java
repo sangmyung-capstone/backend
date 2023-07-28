@@ -193,6 +193,7 @@ public class PartyService {
         Party party = partyRepository.findById(partyId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_PARTY_FAILURE));
         party.close();
+        fireBasePartyRepository.closeParty(partyId);
     }
 
     @Transactional(readOnly = false)
