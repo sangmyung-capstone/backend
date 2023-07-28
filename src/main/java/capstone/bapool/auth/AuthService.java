@@ -1,6 +1,7 @@
 package capstone.bapool.auth;
 
 import capstone.bapool.config.error.BaseException;
+import capstone.bapool.config.error.StatusEnum;
 import capstone.bapool.firebase.FireBaseUserRepository;
 import capstone.bapool.firebase.dto.FireBaseUser;
 import capstone.bapool.model.User;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.Map;
 
+import static capstone.bapool.config.error.StatusEnum.DUPLICATE_NICKNAME;
 import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_USER_FAILURE;
 
 @Slf4j
@@ -87,6 +89,9 @@ public class AuthService {
     }
 
     private User saveUser(User user, String firebaseToken) {
+        if (userRepository.existsUserByName(user.getName())) {
+            throw new BaseException(DUPLICATE_NICKNAME);
+        }
         User savedUser = userRepository.save(user);
         fireBaseUserDao.save(new FireBaseUser(savedUser.getId(), savedUser.getName(), savedUser.getProfileImgId(), firebaseToken));
         return savedUser;
