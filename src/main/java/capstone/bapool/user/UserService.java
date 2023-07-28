@@ -131,7 +131,7 @@ public class UserService {
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
         String newName = userInfoReq.getName();
         int newProfileImg = userInfoReq.getProfileImg();
-        if(userRepository.existsByName(newName)){
+        if(userRepository.existsUserByName(newName)){
             throw new BaseException(ALREADY_EXIST_NAME_FAILURE);
         }else{
             user.update(newName, newProfileImg);
