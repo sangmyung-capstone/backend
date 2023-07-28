@@ -78,7 +78,7 @@ public class UserController {
 
     @GetMapping("/block/{user-id}")
     public ResponseEntity<ResponseDto> blockUserList(@PathVariable("user-id") Long userId){
-        List<BlockUserRes> blockList = userService.blockList(userId);
+        BlockUserListRes blockList = userService.blockList(userId);
         return ResponseEntity.ok().body(ResponseDto.create(blockList));
     }
 
