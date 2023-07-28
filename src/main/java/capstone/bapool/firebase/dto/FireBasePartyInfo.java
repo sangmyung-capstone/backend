@@ -1,6 +1,7 @@
 package capstone.bapool.firebase.dto;
 
 
+import capstone.bapool.model.enumerate.PartyStatus;
 import capstone.bapool.party.dto.PatchPartyReq;
 import capstone.bapool.party.dto.PostPartyReq;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,7 @@ public class FireBasePartyInfo {
     private String restaurantName;
     private Long groupLeaderId;
     private String menu;
+    private String status;
 
     public FireBasePartyInfo(PostPartyReq partyReq, Long userId) {
         this.groupName = partyReq.getPartyName();
@@ -38,12 +40,12 @@ public class FireBasePartyInfo {
         this.restaurantName = partyReq.getPostPartyRestaurantReq().getName();
         this.groupLeaderId = userId;
         this.menu = partyReq.getMenu();
+        this.status = PartyStatus.RECRUITING.toString();
     }
 
     public FireBasePartyInfo(PatchPartyReq patchPartyReq) {
         this.groupName = patchPartyReq.getPartyName();
         this.groupDetail = patchPartyReq.getDetail();
-        this.curNumberOfPeople = 1;
         this.maxNumberOfPeople = patchPartyReq.getMaxPeople();
         this.startDate = patchPartyReq.getStartDate().toString();
         this.endDate = patchPartyReq.getEndDate().toString();
