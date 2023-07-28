@@ -9,6 +9,8 @@ public enum StatusEnum {
      */
     SUCCESS(200, "OK"),
 
+    DUPLICATE_NICKNAME(300, "중복된 닉네임이 있습니다."),
+
     /**
      * 중복 오류
      * 300 오류

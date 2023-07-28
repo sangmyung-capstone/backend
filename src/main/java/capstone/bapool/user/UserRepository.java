@@ -2,6 +2,7 @@ package capstone.bapool.user;
 
 import capstone.bapool.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import javax.swing.text.html.Option;
 import javax.validation.constraints.NotNull;
@@ -12,5 +13,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findUserByRefreshToken(String refreshToken);
 
-    boolean existsByName(String name);
+    boolean existsUserByName(String name);
 }
