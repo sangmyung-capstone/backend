@@ -2,6 +2,7 @@ package capstone.bapool.firebase;
 
 import capstone.bapool.firebase.dto.FireBaseParty;
 import capstone.bapool.firebase.dto.FireBasePartyInfo;
+import capstone.bapool.model.enumerate.PartyStatus;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -16,6 +17,7 @@ import java.util.Map;
 @Repository
 public class FireBasePartyRepository {
 
+    public static final String DEADLINE = "DEADLINE";
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
 
@@ -36,7 +38,32 @@ public class FireBasePartyRepository {
     public void update(FireBasePartyInfo fireBasePartyInfo, Long groupId) {
         databaseReference.child(groupId.toString())
                 .child("groupInfo")
-                .setValueAsync(fireBasePartyInfo);
+                .child("groupName")
+                .setValueAsync(fireBasePartyInfo.getGroupName());
+        databaseReference.child(groupId.toString())
+                .child("groupInfo")
+                .child("groupDetail")
+                .setValueAsync(fireBasePartyInfo.getGroupDetail());
+        databaseReference.child(groupId.toString())
+                .child("groupInfo")
+                .child("maxNumberOfPeople")
+                .setValueAsync(fireBasePartyInfo.getMaxNumberOfPeople());
+        databaseReference.child(groupId.toString())
+                .child("groupInfo")
+                .child("startDate")
+                .setValueAsync(fireBasePartyInfo.getStartDate());
+        databaseReference.child(groupId.toString())
+                .child("groupInfo")
+                .child("endDate")
+                .setValueAsync(fireBasePartyInfo.getEndDate());
+        databaseReference.child(groupId.toString())
+                .child("groupInfo")
+                .child("hashTag")
+                .setValueAsync(fireBasePartyInfo.getHashTag());
+        databaseReference.child(groupId.toString())
+                .child("groupInfo")
+                .child("menu")
+                .setValueAsync(fireBasePartyInfo.getMenu());
     }
 
     public void participate(Long partyId, Long userId, int curNumberOfPeople) {
@@ -78,5 +105,12 @@ public class FireBasePartyRepository {
                 .child("groupUsers")
                 .child(userId.toString())
                 .setValueAsync(false);
+    }
+
+    public void closeParty(Long partyId) {
+        databaseReference.child(partyId.toString())
+                .child("groupInfo")
+                .child("status")
+                .setValueAsync(DEADLINE);
     }
 }

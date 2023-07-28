@@ -1,29 +1,19 @@
 package capstone.bapool.user;
 
 import capstone.bapool.config.error.BaseException;
+import capstone.bapool.config.error.StatusEnum;
 import capstone.bapool.config.response.ResponseDto;
-import capstone.bapool.model.User;
 import capstone.bapool.party.PartyService;
-import capstone.bapool.user.dto.ReissueReq;
-import capstone.bapool.user.dto.ReissueRes;
-import capstone.bapool.user.dto.SignInRes;
-import capstone.bapool.user.dto.SignUpReq;
-import capstone.bapool.user.dto.SignupRes;
-import capstone.bapool.user.dto.SocialAccessToken;
-
 import capstone.bapool.user.dto.*;
 import capstone.bapool.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -68,15 +58,6 @@ public class UserController {
         return ResponseEntity.ok().body(ResponseDto.create(otherUserRes));
     }
 
-
-    @GetMapping("/block/{user-id}")
-    public ResponseEntity<ResponseDto> blockUser(
-            @Valid @PathVariable("user-id") Long blockedUserId, HttpServletRequest request) {
-        Long userId = jwtUtils.resolveRequest(request);
-        BlockUserRes blockUserRes = userService.block(blockedUserId, userId);
-        return ResponseEntity.ok().body(ResponseDto.create(blockUserRes));
-    }
-
     @PostMapping("/block/{user-id}")
     public ResponseEntity<ResponseDto> blockUserWithReqBody(
             @PathVariable("user-id") Long blockUserId, @Valid @RequestBody BlockUserReq blockUserReq){
@@ -95,9 +76,15 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/blocklist/{user-id}")
+    @GetMapping("/block/{user-id}")
     public ResponseEntity<ResponseDto> blockUserList(@PathVariable("user-id") Long userId){
-        List<BlockUserRes> blockList = userService.blockList(userId);
+        BlockUserListRes blockList = userService.blockList(userId);
         return ResponseEntity.ok().body(ResponseDto.create(blockList));
+    }
+
+    @PatchMapping("/info/{user-id}")
+    public ResponseEntity<ResponseDto> patchUserInfo(
+            @PathVariable("user-id") Long userId, @RequestBody UserInfoReq userInfoReq){
+        return ResponseEntity.ok().body(ResponseDto.create(userService.updateUserInfo(userId, userInfoReq)));
     }
 }

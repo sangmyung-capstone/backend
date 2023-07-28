@@ -1,6 +1,7 @@
 package capstone.bapool.user;
 
 import capstone.bapool.config.error.BaseException;
+import capstone.bapool.config.error.StatusEnum;
 import capstone.bapool.config.response.ResponseDto;
 import capstone.bapool.firebase.FireBaseUserRepository;
 import capstone.bapool.model.BlockUser;
@@ -17,6 +18,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
+import static capstone.bapool.config.error.StatusEnum.ALREADY_EXIST_NAME_FAILURE;
 import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_USER_FAILURE;
 
 @Slf4j
@@ -78,38 +80,6 @@ public class UserService {
     }
 
     @Transactional
-    public BlockUserRes block(Long blockedUserId, Long blockUserId){
-        User blockUser = userRepository.findById(blockUserId)
-                .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
-        User blockedUser = userRepository.findById(blockedUserId)
-                .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
-
-        if(blockUser != blockedUser){
-            if(blockUserRepository.findByBlockUserAndBlockedUser(blockUser, blockedUser)!=null){
-                BlockUser blockUserTuple = blockUserRepository.findByBlockUserAndBlockedUser(blockUser, blockedUser);
-                blockUserRepository.delete(blockUserTuple);
-                return new BlockUserRes(BlockStatus.UNBLOCK);
-            }else {//else면 차단하기, if면 차단 해제
-                BlockUser blockUserTuple = BlockUser.builder()
-                        .blockUser(blockUser)
-                        .blockedUser(blockedUser)
-                        .build();
-                blockUserRepository.save(blockUserTuple);
-
-                BlockUserRes blockUserRes  = BlockUserRes.builder()
-                        .userId(blockedUser.getId())
-                        .blockStatus(BlockStatus.BLOCK)
-                        .name(blockedUser.getName())
-                        .blockDate(blockUserTuple.getUpdatedDate())
-                        .build();
-                return blockUserRes;
-            }
-        }else{
-            return new BlockUserRes(BlockStatus.SAMEUSEREXCEPTION);
-        }
-    }
-
-    @Transactional
     public BlockUserRes blockWithReqBody(Long blockedUserId, Long blockUserId){
         User blockUser = userRepository.findById(blockUserId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
@@ -141,16 +111,31 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List blockList(Long userId){
+    public BlockUserListRes blockList(Long userId){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
-        List<BlockUserListRes> blockList = blockUserRepository.findByBlockUserOrderByUpdatedDate(user)
-                .stream().map(BlockUser -> BlockUserListRes.builder()
+        List<BlockedUserInfo> blockedUserInfoList = blockUserRepository.findByBlockUserOrderByUpdatedDate(user)
+                .stream().map(BlockUser ->BlockedUserInfo.builder()
                         .userId(BlockUser.getBlockedUser().getId())
                         .name(BlockUser.getBlockedUser().getName())
                         .blockDate(BlockUser.getUpdatedDate())
                         .build())
                 .collect(Collectors.toList());
-        return blockList;
+        BlockUserListRes blockUserListRes = new BlockUserListRes(blockedUserInfoList);
+        return blockUserListRes;
+    }
+
+    @Transactional
+    public boolean updateUserInfo(Long userId, UserInfoReq userInfoReq){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
+        String newName = userInfoReq.getName();
+        int newProfileImg = userInfoReq.getProfileImg();
+        if(userRepository.existsByName(newName)){
+            throw new BaseException(ALREADY_EXIST_NAME_FAILURE);
+        }else{
+            user.update(newName, newProfileImg);
+        }
+        return false;
     }
 }

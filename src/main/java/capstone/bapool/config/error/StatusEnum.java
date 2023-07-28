@@ -12,6 +12,12 @@ public enum StatusEnum {
     DUPLICATE_NICKNAME(300, "중복된 닉네임이 있습니다."),
 
     /**
+     * 중복 오류
+     * 300 오류
+     */
+    ALREADY_EXIST_NAME_FAILURE(300, "이미 존재하는 이름입니다."),
+
+    /**
      * 인증 오류
      * 401 오류
      */
