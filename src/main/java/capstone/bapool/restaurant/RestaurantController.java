@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static capstone.bapool.config.error.StatusEnum.TOO_MANY_REQUEST;
+import static capstone.bapool.config.error.StatusEnum.PAYLOAD_TOO_LARGE;
 
 @RestController
 @RequestMapping(path = {"/restaurants", "/test/restaurants"})
@@ -60,7 +60,7 @@ public class RestaurantController {
 //        System.out.println("getRestaurantBottomListReq.getRestaurantURLs().size() = " + getRestaurantBottomListReq.getRestaurantURLs().size());
 
         if(getRestaurantBottomListReq.getRestaurantIdList().size() > 3){
-            throw new BaseException(TOO_MANY_REQUEST);
+            throw new BaseException(PAYLOAD_TOO_LARGE);
         }
 
         GetRestaurantBottomListRes getRestaurantBottomListRes = restaurantService.findRestaurantBottomList(getRestaurantBottomListReq);

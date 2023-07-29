@@ -4,9 +4,9 @@ import capstone.bapool.config.error.BaseException;
 import capstone.bapool.config.error.StatusEnum;
 import capstone.bapool.config.response.ResponseDto;
 import capstone.bapool.firebase.FireBaseUserRepository;
-import capstone.bapool.model.BlockUser;
-import capstone.bapool.model.User;
+import capstone.bapool.model.*;
 import capstone.bapool.model.enumerate.BlockStatus;
+import capstone.bapool.model.enumerate.PartyStatus;
 import capstone.bapool.user.dto.BlockUserListRes;
 import capstone.bapool.party.PartyRepository;
 import capstone.bapool.user.dto.*;
@@ -30,6 +30,7 @@ public class UserService {
     private final BlockUserRepository blockUserRepository;
     private final UserHashtagRepository userHashtagRepository;
     private final PartyRepository partyRepository;
+    private final UserRatingRepository userRatingRepository;
 
     private final FireBaseUserRepository fireBaseUserDao;
 
@@ -37,9 +38,12 @@ public class UserService {
     public UserRes findById(Long userId) throws BaseException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));    //db에 사용자id가 없다면 처리
+
+        // gana-수정 필요해 보임.
         List<Integer> hashtags = userHashtagRepository.findByUserId(userId)
                 .stream().map((userHashtag -> userHashtag.getHashtagId()))
                 .collect(Collectors.toList());
+
         return UserRes.builder()
                 .name(user.getName())
                 .profileImgId(user.getProfileImgId())
@@ -141,10 +145,46 @@ public class UserService {
     }
 
     // 유저 평가하기
-    public void userRating(Long userId, PostUserRatingReq postUserRatingReq){
+    @Transactional
+    public void userRating(Long userId, Long partyId, PostUserRatingReq postUserRatingReq){
         User user = userRepository.findById(userId).orElseThrow(() -> {
             throw new BaseException(NOT_FOUND_USER_FAILURE);
         });
+
+        Party party = partyRepository.findById(partyId).orElseThrow(() -> {
+            throw new BaseException(NOT_FOUND_PARTY_FAILURE);
+        });
+
+        // 아직 유저평가 알람이 가지 않았으면 or 다 먹은 파티가 아니면
+        if(party.getPartyStatus() != PartyStatus.DONE){
+            throw new BaseException(PARTY_NOT_DONE);
+        }
+
+        // 해당 파티에 내가 참여하지 않았으면
+        if(!party.isMeParticipate(user)){
+            throw new BaseException(NOT_PARTY_PARTICIPANT);
+        }
+
+        for(RatingUser ratingUser : postUserRatingReq.getRatingUserList()){
+            User evaluatedUser = userRepository.findById(ratingUser.getUserId()).orElseThrow(() -> {
+                throw new BaseException(NOT_FOUND_USER_FAILURE);
+            });
+
+            // 해당 파티에 참여하지 않은 유저면
+            if(!party.isMeParticipate(evaluatedUser)){
+                throw new BaseException(NOT_PARTY_PARTICIPANT);
+            }
+
+            // 유저 평점 반영
+            UserRating userRating = new UserRating(user, evaluatedUser, party, ratingUser.getRating());
+            userRatingRepository.save(userRating);
+
+            // 유저 해시태그 반영
+            for(int hashtag : ratingUser.getHashtag()){
+                UserHashtag userHashtag = UserHashtag.create(evaluatedUser, hashtag);
+                userHashtagRepository.save(userHashtag);
+            }
+        }
 
     }
 }
