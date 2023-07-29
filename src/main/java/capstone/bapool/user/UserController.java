@@ -87,4 +87,15 @@ public class UserController {
             @PathVariable("user-id") Long userId, @RequestBody UserInfoReq userInfoReq){
         return ResponseEntity.ok().body(ResponseDto.create(userService.updateUserInfo(userId, userInfoReq)));
     }
+    
+    // 유저 평가하기
+    @PostMapping("/rating/{user-id}")
+    public ResponseEntity<ResponseDto> userRating(@PathVariable("user-id")Long userId, @RequestBody PostUserRatingReq postUserRatingReq){
+
+        System.out.println("postUserRatingReq = " + postUserRatingReq.getRatingUserList().size());
+
+        userService.userRating(userId, postUserRatingReq);
+
+        return null;
+    }
 }
