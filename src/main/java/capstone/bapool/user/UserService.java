@@ -7,6 +7,7 @@ import capstone.bapool.model.BlockUser;
 import capstone.bapool.model.User;
 import capstone.bapool.model.enumerate.BlockStatus;
 import capstone.bapool.user.dto.BlockUserListRes;
+import capstone.bapool.party.PartyRepository;
 import capstone.bapool.user.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
-import static capstone.bapool.config.error.StatusEnum.NOT_FOUND_USER_FAILURE;
+import static capstone.bapool.config.error.StatusEnum.*;
 
 @Slf4j
 @Service
@@ -28,6 +28,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final BlockUserRepository blockUserRepository;
     private final UserHashtagRepository userHashtagRepository;
+    private final PartyRepository partyRepository;
 
     private final FireBaseUserRepository fireBaseUserDao;
 
@@ -140,8 +141,9 @@ public class UserService {
         }
     }
 
+
     @Transactional(readOnly = true)
-    public List blockList(Long userId){
+    public List blockList(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
         List<BlockUserListRes> blockList = blockUserRepository.findByBlockUserOrderByUpdatedDate(user)
@@ -152,5 +154,13 @@ public class UserService {
                         .build())
                 .collect(Collectors.toList());
         return blockList;
+    }
+
+    // 유저 평가하기
+    public void userRating(Long userId, PostUserRatingReq postUserRatingReq){
+        User user = userRepository.findById(userId).orElseThrow(() -> {
+            throw new BaseException(NOT_FOUND_USER_FAILURE);
+        });
+
     }
 }
