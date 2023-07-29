@@ -28,4 +28,13 @@ public class UserRating extends BaseTimeEntity{
 
     @ColumnDefault("4.5")
     private Double rating;
+
+    public UserRating(User user, User evaluatedUser, Party party, Double rating){
+        this.evaluateUser = user;
+        this.evaluatedUser = evaluatedUser;
+        this.party = party;
+        this.rating = rating;
+
+        this.evaluateUser.addUserRating(this);
+    }
 }

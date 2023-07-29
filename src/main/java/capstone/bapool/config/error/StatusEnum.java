@@ -16,6 +16,12 @@ public enum StatusEnum {
     ALREADY_EXIST_NAME_FAILURE(300, "이미 존재하는 이름입니다."),
 
     /**
+     * 잘못된 요청
+     * 400 오류
+     */
+    PARTY_NOT_DONE(400, "파티가 끝나지 않았습니다"),
+
+    /**
      * 인증 오류
      * 401 오류
      */
@@ -45,10 +51,10 @@ public enum StatusEnum {
     NOT_FOUND_PARTY_PARTICIPANT_FAILURE(404, "파티에 참여해있지 않은 참가자입니다."),
 
     /**
-     * Too Many Request 너무 많은 요청 오류
-     * 429 오류
+     * Payload Too Large 너무 많은 요청 오류
+     * 413 오류
      */
-    TOO_MANY_REQUEST(429, "TOO MANY REQUEST"),
+    PAYLOAD_TOO_LARGE(413, "PAYLOAD TOO LARGE"),
 
     /**
      * 통상 오류

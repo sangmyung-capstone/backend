@@ -9,6 +9,7 @@ import capstone.bapool.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -86,5 +87,17 @@ public class UserController {
     public ResponseEntity<ResponseDto> patchUserInfo(
             @PathVariable("user-id") Long userId, @RequestBody UserInfoReq userInfoReq){
         return ResponseEntity.ok().body(ResponseDto.create(userService.updateUserInfo(userId, userInfoReq)));
+    }
+    
+    // 유저 평가하기
+    @PostMapping("/rating/{user-id}")
+    public ResponseEntity<ResponseDto> userRating(@PathVariable("user-id")Long userId, @RequestParam("party_id") Long partyId, @RequestBody @Validated PostUserRatingReq postUserRatingReq){
+
+        System.out.println("유저 평가하기");
+
+        userService.userRating(userId, partyId, postUserRatingReq);
+
+        ResponseDto response = ResponseDto.create(null);
+        return ResponseEntity.ok(response);
     }
 }

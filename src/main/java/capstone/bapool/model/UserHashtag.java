@@ -33,6 +33,8 @@ public class UserHashtag extends BaseTimeEntity{
     private UserHashtag(User user, int hashtagId) {
         this.user = user;
         this.hashtagId = hashtagId;
+
+        this.user.addUserHashtag(this);
     }
 
     public static UserHashtag create(User user, int hashtagId) {

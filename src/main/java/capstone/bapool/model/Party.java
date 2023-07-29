@@ -51,10 +51,6 @@ public class Party extends BaseTimeEntity{
     @OneToMany(mappedBy = "party", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PartyHashtag> partyHashtags = new ArrayList<>();
 
-    // 게터 사용 제한
-    private List<PartyHashtag> getPartyHashtags() {
-        return partyHashtags;
-    }
 
     @Builder
     public Party(Restaurant restaurant, PartyStatus partyStatus, String name, int maxPeople, LocalDateTime startDate, String menu, String detail) {
