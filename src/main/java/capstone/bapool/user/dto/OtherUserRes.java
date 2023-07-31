@@ -9,7 +9,7 @@ import lombok.Builder;
 import java.util.List;
 
 
-@JsonPropertyOrder({"userId", "profileImg", "name", "rating", "is_block"})
+@JsonPropertyOrder({"userId", "profileImg", "name", "rating", "hashtag", "is_block"})
 public class OtherUserRes {
 
     @JsonProperty("user_id")
