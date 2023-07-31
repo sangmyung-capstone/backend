@@ -1,7 +1,6 @@
 package capstone.bapool.user;
 
 import capstone.bapool.config.error.BaseException;
-import capstone.bapool.config.error.StatusEnum;
 import capstone.bapool.config.response.ResponseDto;
 import capstone.bapool.firebase.FireBaseUserRepository;
 import capstone.bapool.model.*;

@@ -14,7 +14,7 @@ public class BlockedUserInfo {
     @JsonProperty("nickname")
     private String name;
 
-    @JsonProperty("blcok_date")
+    @JsonProperty("block_date")
     private LocalDateTime blockDate;
 
     @Builder
