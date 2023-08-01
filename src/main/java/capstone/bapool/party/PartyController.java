@@ -42,20 +42,30 @@ public class PartyController {
     @GetMapping("/{user-id}/{restaurant-id}")
     public ResponseEntity<ResponseDto> partyInRestaurantList(@PathVariable("user-id")Long userId, @PathVariable("restaurant-id")Long restaurantId) {
 
+        log.info("식당안의 파티리스트 조회 요청: userId={}, restaurantId={}", userId, restaurantId);
+
         PartiesInRestaurantRes partiesInRestaurantRes = partyService.findPartiesInRestaurant(userId, restaurantId);
 
+        log.info("식당안의 파티리스트 조회 요청처리 완료: userId={}, restaurantId={}", userId, restaurantId);
+
         ResponseDto<PartiesInRestaurantRes> response = ResponseDto.create(partiesInRestaurantRes);
-
-        log.info("식당 '{}-{}'의 파티리스트 조회 요청", partiesInRestaurantRes.getRestaurantName(), restaurantId);
-
         return ResponseEntity.ok(response);
     }
 
-    // 먹었던 식당정보 조회
+    /**
+     * [GET] /parties/log/{user-id}
+     * 먹었던 파티정보 리스트 조회
+     * @param userId
+     * @return
+     */
     @GetMapping("/log/{user-id}")
     public ResponseEntity<ResponseDto> atePartyInfoList(@PathVariable("user-id") Long userId){
 
+        log.info("먹었던 파티정보 리스트 조회 요청: userId={}", userId);
+
         GetAtePartyInfoRes getAtePartyInfoRes = partyService.findAtePartyInfo(userId);
+
+        log.info("먹었던 파티정보 리스트 조회 요청처리 완료: userId={}", userId);
 
         ResponseDto<GetAtePartyInfoRes> response = ResponseDto.create(getAtePartyInfoRes);
 

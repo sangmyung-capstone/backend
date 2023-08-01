@@ -144,34 +144,43 @@ public class UserService {
         return false;
     }
 
-    // 유저 평가하기
+    /**
+     * 유저 평가하기
+     * @exception BaseException NOT_FOUND_USER_FAILURE, NOT_FOUND_PARTY_FAILURE, PARTY_NOT_DONE, NOT_PARTY_PARTICIPANT
+     */
     @Transactional
     public void userRating(Long userId, Long partyId, PostUserRatingReq postUserRatingReq){
         User user = userRepository.findById(userId).orElseThrow(() -> {
+            log.error("유저 평가하기: 존재하지 않는 유저입니다. userId-{}", userId);
             throw new BaseException(NOT_FOUND_USER_FAILURE);
         });
 
         Party party = partyRepository.findById(partyId).orElseThrow(() -> {
+            log.error("유저 평가하기: 존재하지 않는 파티입니다. partyId-{}", partyId);
             throw new BaseException(NOT_FOUND_PARTY_FAILURE);
         });
 
         // 아직 유저평가 알람이 가지 않았으면 or 다 먹은 파티가 아니면
         if(party.getPartyStatus() != PartyStatus.DONE){
+            log.error("유저 평가하기: partyStatus가 Done이 아닙니다. partyId-{}", partyId);
             throw new BaseException(PARTY_NOT_DONE);
         }
 
         // 해당 파티에 내가 참여하지 않았으면
         if(!party.isMeParticipate(user)){
+            log.error("유저 평가하기: 해당 유저가 참여하지 않은 파티입니다. userId-{}, partyId-{}", userId, partyId);
             throw new BaseException(NOT_PARTY_PARTICIPANT);
         }
 
         for(RatingUser ratingUser : postUserRatingReq.getRatingUserList()){
             User evaluatedUser = userRepository.findById(ratingUser.getUserId()).orElseThrow(() -> {
+                log.error("유저 평가하기: 존재하지 않는 유저입니다. userId-{}", userId);
                 throw new BaseException(NOT_FOUND_USER_FAILURE);
             });
 
             // 해당 파티에 참여하지 않은 유저면
             if(!party.isMeParticipate(evaluatedUser)){
+                log.error("유저 평가하기: 해당 유저는 파티에 참여하지 않았습니다. userId-{}, partyId-{}", evaluatedUser.getId(), partyId);
                 throw new BaseException(NOT_PARTY_PARTICIPANT);
             }
 
