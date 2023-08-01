@@ -12,6 +12,4 @@ public interface PartyParticipantRepository extends JpaRepository<PartyParticipa
 
     boolean existsByUserAndParty(User user, Party party);
 
-
-
 }

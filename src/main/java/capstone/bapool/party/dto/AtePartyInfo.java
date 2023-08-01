@@ -1,11 +1,14 @@
 package capstone.bapool.party.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-public class PartyInfoSimple {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class AtePartyInfo {
 
     @JsonProperty("party_id")
     private Long partyId;
@@ -25,13 +28,17 @@ public class PartyInfoSimple {
     @JsonProperty("category")
     private String category;
 
+    @JsonProperty("rating_complete")
+    private Boolean ratingComplete;
+
     @Builder
-    public PartyInfoSimple(Long partyId, String partyName, String restaurantName, String restaurantImgURL, String restaurantAddress, String category) {
+    public AtePartyInfo(Long partyId, String partyName, String restaurantName, String restaurantImgURL, String restaurantAddress, String category, Boolean ratingComplete) {
         this.partyId = partyId;
         this.partyName = partyName;
         this.restaurantName = restaurantName;
         this.restaurantImgURL = restaurantImgURL;
         this.restaurantAddress = restaurantAddress;
         this.category = category;
+        this.ratingComplete = ratingComplete;
     }
 }

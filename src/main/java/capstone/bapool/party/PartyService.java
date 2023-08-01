@@ -118,7 +118,7 @@ public class PartyService {
         List<Party> parties = partyRepository.findByRestaurant(restaurant);
         for(Party party : parties){ // 파티 정보 입력.
 
-            PartyInfoDetail partyInfoDetail = PartyInfoDetail.builder()
+            PartyInfo partyInfo = PartyInfo.builder()
                     .partyId(party.getId())
                     .partyName(party.getName())
                     .isParticipate(party.isMeParticipate(user))
@@ -132,7 +132,7 @@ public class PartyService {
                     .partyHashtag(party.getPartyHashtag())
                     .isRecruiting(party.is_recruiting())
                     .build();
-            partiesInRestaurantRes.addPartyInfos(partyInfoDetail);
+            partiesInRestaurantRes.addPartyInfos(partyInfo);
         }
 
         return partiesInRestaurantRes;
@@ -235,9 +235,9 @@ public class PartyService {
             throw new BaseException(NOT_FOUND_USER_FAILURE);
         });
 
-        List<PartyInfoSimple> partyInfoSimpleList = partyRepository.findByUserAndPartyStatus(user, PartyStatus.DONE);
+        List<AtePartyInfo> atePartyInfoList = partyRepository.findByUserAndPartyStatus(user, PartyStatus.DONE);
 
-        return new GetAtePartyInfoRes(partyInfoSimpleList);
+        return new GetAtePartyInfoRes(atePartyInfoList);
     }
 
 

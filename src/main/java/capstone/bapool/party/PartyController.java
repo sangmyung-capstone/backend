@@ -68,7 +68,6 @@ public class PartyController {
         log.info("먹었던 파티정보 리스트 조회 요청처리 완료: userId={}", userId);
 
         ResponseDto<GetAtePartyInfoRes> response = ResponseDto.create(getAtePartyInfoRes);
-
         return ResponseEntity.ok(response);
     }
 
