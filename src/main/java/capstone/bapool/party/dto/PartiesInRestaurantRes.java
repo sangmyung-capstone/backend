@@ -16,21 +16,21 @@ public class PartiesInRestaurantRes {
     private String restaurantName;
 
     @JsonProperty(value = "parties")
-    private List<PartyInfoDetail> partyInfoDetails;
+    private List<PartyInfo> partyInfos;
 
     public PartiesInRestaurantRes(){
-        this.partyInfoDetails = new ArrayList<>();
+        this.partyInfos = new ArrayList<>();
     }
 
     public void setRestaurantName(String restaurantName){
         this.restaurantName = restaurantName;
     }
 
-    public void setPartyInfoDetails(List<PartyInfoDetail> partyInfoDetails){
-        this.partyInfoDetails = partyInfoDetails;
+    public void setPartyInfos(List<PartyInfo> partyInfos){
+        this.partyInfos = partyInfos;
     }
 
-    public void addPartyInfos(PartyInfoDetail partyInfoDetail){
-        partyInfoDetails.add(partyInfoDetail);
+    public void addPartyInfos(PartyInfo partyInfo){
+        partyInfos.add(partyInfo);
     }
 }

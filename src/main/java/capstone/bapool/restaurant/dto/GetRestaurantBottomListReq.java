@@ -15,12 +15,17 @@ public class GetRestaurantBottomListReq {
     @JsonProperty("restaurant_ids")
     private List<Long> restaurantIdList;
 
-//    @Override
-//    public String toString(){
-//        String result = "";
-//
-//        for(String url : restaurantURLs){
-//            result
-//        }
-//    }
+    @Override
+    public String toString(){
+        String result = "[";
+
+        for(Long id : restaurantIdList){
+            result += id;
+            result += ", ";
+        }
+
+        result = result.substring(0, result.lastIndexOf(','));
+        result += "]";
+        return result;
+    }
 }

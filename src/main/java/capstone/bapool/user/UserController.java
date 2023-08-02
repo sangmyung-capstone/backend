@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
+import static capstone.bapool.config.error.StatusEnum.OUT_OF_RATING_RANGE;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -66,11 +68,18 @@ public class UserController {
         return ResponseEntity.ok().body(ResponseDto.create(blockUserRes));
     }
 
-    // 사용자 평가 화면을 띄우기 위한 정보 조회
+    /**
+     * [GET] /users/rating/{user-id}?party_id=
+     * 사용자 평가 화면을 띄우기 위한 정보 조회
+     */
     @GetMapping("/rating/{user-id}")
     public ResponseEntity<ResponseDto> userRatingViewDetails(@PathVariable("user-id")Long userId, @RequestParam("party_id") Long partyId) {
 
+        log.info("사용차 평가화면 정보 요청: userId={}, partyId={}", userId, partyId);
+
         GetUserRatingVeiwRes getUserRatingVeiwRes = partyService.findPartyParticipantForRating(userId, partyId);
+
+        log.info("사용차 평가화면 정보 요청처리 완료: userId={}, partyId={}", userId, partyId);
 
         ResponseDto<GetUserRatingVeiwRes> response = ResponseDto.create(getUserRatingVeiwRes);
 
@@ -88,14 +97,26 @@ public class UserController {
             @PathVariable("user-id") Long userId, @RequestBody UserInfoReq userInfoReq){
         return ResponseEntity.ok().body(ResponseDto.create(userService.updateUserInfo(userId, userInfoReq)));
     }
-    
-    // 유저 평가하기
+
+    /**
+     * [POST] /users/rating/{user-id}?party_id=
+     * 유저 평가하기
+     */
     @PostMapping("/rating/{user-id}")
     public ResponseEntity<ResponseDto> userRating(@PathVariable("user-id")Long userId, @RequestParam("party_id") Long partyId, @RequestBody @Validated PostUserRatingReq postUserRatingReq){
 
-        System.out.println("유저 평가하기");
+        log.info("유저 평가하기 요청: userId={}, partyId={}", userId, partyId);
+
+        // 평점이 0.0~5.0 사이가 아닌 경우
+        for(RatingUser user : postUserRatingReq.getRatingUserList()){
+            if(user.getRating() < 0.0 || 5.0 < user.getRating()){
+                throw new BaseException(OUT_OF_RATING_RANGE);
+            }
+        }
 
         userService.userRating(userId, partyId, postUserRatingReq);
+
+        log.info("유저 평가하기 요청처리 완료: userId={}, partyId={}", userId, partyId);
 
         ResponseDto response = ResponseDto.create(null);
         return ResponseEntity.ok(response);

@@ -6,6 +6,7 @@ import capstone.bapool.firebase.FireBaseUserRepository;
 import capstone.bapool.model.*;
 import capstone.bapool.model.enumerate.BlockStatus;
 import capstone.bapool.model.enumerate.PartyStatus;
+import capstone.bapool.party.PartyParticipantRepository;
 import capstone.bapool.user.dto.BlockUserListRes;
 import capstone.bapool.party.PartyRepository;
 import capstone.bapool.user.dto.*;
@@ -30,6 +31,7 @@ public class UserService {
     private final UserHashtagRepository userHashtagRepository;
     private final PartyRepository partyRepository;
     private final UserRatingRepository userRatingRepository;
+    private final PartyParticipantRepository partyParticipantRepository;
 
     private final FireBaseUserRepository fireBaseUserDao;
 
@@ -143,35 +145,67 @@ public class UserService {
         return false;
     }
 
-    // 유저 평가하기
+    /**
+     * 유저 평가하기
+     * @exception BaseException NOT_FOUND_USER_FAILURE, NOT_FOUND_PARTY_FAILURE, PARTY_NOT_DONE, NOT_PARTY_PARTICIPANT
+     */
     @Transactional
     public void userRating(Long userId, Long partyId, PostUserRatingReq postUserRatingReq){
         User user = userRepository.findById(userId).orElseThrow(() -> {
+            log.error("유저 평가하기: 존재하지 않는 유저입니다. userId-{}", userId);
             throw new BaseException(NOT_FOUND_USER_FAILURE);
         });
 
         Party party = partyRepository.findById(partyId).orElseThrow(() -> {
+            log.error("유저 평가하기: 존재하지 않는 파티입니다. partyId-{}", partyId);
             throw new BaseException(NOT_FOUND_PARTY_FAILURE);
+        });
+
+        PartyParticipant partyParticipant = partyParticipantRepository.findPartyParticipantByUserAndParty(user, party)
+            .orElseThrow(() -> {
+                throw new BaseException(NOT_FOUND_PARTY_PARTICIPANT_FAILURE);
         });
 
         // 아직 유저평가 알람이 가지 않았으면 or 다 먹은 파티가 아니면
         if(party.getPartyStatus() != PartyStatus.DONE){
+            log.error("유저 평가하기: partyStatus가 Done이 아닙니다. partyId={}", partyId);
             throw new BaseException(PARTY_NOT_DONE);
         }
 
         // 해당 파티에 내가 참여하지 않았으면
         if(!party.isMeParticipate(user)){
+            log.error("유저 평가하기: 해당 유저가 참여하지 않은 파티입니다. userId={}, partyId={}", userId, partyId);
             throw new BaseException(NOT_PARTY_PARTICIPANT);
+        }
+
+        // 이미 평가를 완료한 유저라면
+        if(partyParticipant.getRatingComplete()){
+            log.error("유저 평가하기: 이미 유저평가를 완료했습니다. userId={}, partyId={}", userId, partyId);
+            throw new BaseException(ALREADY_RATING_COMPLETE);
+        }
+
+        // 모든 유저에 대해 평가한 것이 아니면
+        if(postUserRatingReq.getRatingUserList().size() != party.getCurPartyMember()-1){
+            log.error("유저 평가하기: 모든 유저에 대해 평가하지 않았습니다. userId={}, partyId={}", userId, partyId);
+            throw new BaseException(NOT_SUFFICIENT_NUM_OF_USER);
         }
 
         for(RatingUser ratingUser : postUserRatingReq.getRatingUserList()){
             User evaluatedUser = userRepository.findById(ratingUser.getUserId()).orElseThrow(() -> {
+                log.error("유저 평가하기: 존재하지 않는 유저입니다. userId-{}", userId);
                 throw new BaseException(NOT_FOUND_USER_FAILURE);
             });
 
-            // 해당 파티에 참여하지 않은 유저면
+            // 해당 파티에 참여하지 않았으면
             if(!party.isMeParticipate(evaluatedUser)){
+                log.error("유저 평가하기: 해당 유저가 참여하지 않은 파티입니다. userId={}, partyId={}", evaluatedUser.getId(), partyId);
                 throw new BaseException(NOT_PARTY_PARTICIPANT);
+            }
+
+            // 자기 자신에 대해 평가할 수 없음
+            if(userId.equals(ratingUser.getUserId())){
+                log.error("유저 평가하기: 자기 자신에 대해 평가할 수 없습니다. userId={}, partyId={}", evaluatedUser.getId(), partyId);
+                throw new BaseException(CAN_NOT_RATING_MYSELF);
             }
 
             // 유저 평점 반영
@@ -185,5 +219,7 @@ public class UserService {
             }
         }
 
+        // 유저 평가 완료
+        partyParticipant.setRatingComplete();
     }
 }

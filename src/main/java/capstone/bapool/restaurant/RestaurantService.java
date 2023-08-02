@@ -30,27 +30,25 @@ public class RestaurantService {
     private final UserRepository userRepository;
 
     /**
-     * 지도화면을 위한 식당리스트 조회
+     * 지도화면을 위한 식당리스트 조회, 현위치에서 식당 재검색
      * @param rect 화면의 꼭짓점 값
-     * @return
      */
     public GetRestaurantsOnMapRes findRestaurantsOnMap(String rect){
 
         // 카카오 로컬 api 통신
-        List<KakaoRestaurant> kakaoRestaurantList = kakaoLocalApiUtils.searchByCategory(rect);
+        List<KakaoRestaurant> kakaoRestaurantList = kakaoLocalApiUtils.searchPlaceWithRestaurantCategory(rect);
 
         List<RestaurantInfo> restaurantInfoList = new ArrayList<>();
-
         // 카카오와 통신한 응답값으로부터 원하는 값만 추출해 리스트에 추가하기
         for(KakaoRestaurant kakaoRestaurant : kakaoRestaurantList){
-            // 식당 안의 파티개수
-            int partyNum = 0;
+
+            int partyNum = 0; // 식당 안의 파티개수
             Restaurant restaurant = restaurantRepository.findById(kakaoRestaurant.getId()).orElse(null);
             if(restaurant != null){ // 식당이 db에 저장되어 있으면
                 partyNum = partyRepository.countByRestaurant(restaurant).intValue();
             }
 
-            RestaurantInfo restaurantInfo2 = RestaurantInfo.builder()
+            RestaurantInfo restaurantInfo = RestaurantInfo.builder()
                     .restaurantId(kakaoRestaurant.getId())
                     .restaurantName(kakaoRestaurant.getName())
                     .restaurantAddress(kakaoRestaurant.getAddress())
@@ -60,19 +58,18 @@ public class RestaurantService {
                     .restaurantLatitude(kakaoRestaurant.getY())
                     .build();
 
-            restaurantInfoList.add(restaurantInfo2);
+            restaurantInfoList.add(restaurantInfo);
         }
 
         return new GetRestaurantsOnMapRes(restaurantInfoList);
     }
 
     /**
-     * 식당 마커정보
-     * @param userId 듀저 id
+     * 식당 마커정보 조회
+     * @param userId 유저 id
      * @param restaurantId 식당 id
      * @param restaurantX 식당-x
      * @param restaurantY 식당-y
-     * @return
      */
     public GetRestaurantMarkerInfoRes findRestaurantMakerInfo(Long userId, Long restaurantId, double restaurantX, double restaurantY){
 
@@ -81,16 +78,13 @@ public class RestaurantService {
             throw new BaseException(NOT_FOUND_RESTAURANT_FAILURE);
         }
 
-        // 식당 안의 파티개수
-        int partyNum = 0;
+        int partyNum = 0; // 식당 안의 파티개수
         Restaurant restaurant = restaurantRepository.findById(kakaoRestaurant.getId()).orElse(null);
         if(restaurant != null){ // 식당이 db에 저장되어 있으면
             partyNum = partyRepository.countByRestaurant(restaurant).intValue();
         }
 
-        // 식당의 이미지와 메뉴 크롤링하기
-//        ImgUrlAndMenu imgUrlAndMenu = seleniumService.crawlingImgURLAndMenu(kakaoRestaurant.getSiteUrl());
-
+        // 식당의 이미지, 메뉴 크롤링
         ImgURLAndMenu imgUrlAndMenu = requestsUtils.crawlingImgURLAndMenu(kakaoRestaurant.getId());
 
         GetRestaurantMarkerInfoRes getRestaurantMarkerInfoRes = GetRestaurantMarkerInfoRes.builder()
@@ -122,7 +116,11 @@ public class RestaurantService {
         return new GetRestaurantBottomListRes(restaurantImgURLs);
     }
 
-    // 식당 검색
+    /**
+     * 식당 검색
+     * @param x 이 x좌표 주위의 식당을 위주로 검색
+     * @param y 이 y좌표 주위의 식당을 위주로 검색
+     */
     public GetSearchRestaurantRes searchRestaurant(String query, Double x, Double y){
 
         List<RestaurantInfo> restaurantInfoList = new ArrayList<>();
@@ -130,8 +128,7 @@ public class RestaurantService {
         List<KakaoRestaurant> kakaoRestaurantList = kakaoLocalApiUtils.searchRestaurantByKeyword(query, x, y);
 
         for(KakaoRestaurant kakaoRestaurant : kakaoRestaurantList){
-            // 식당 안의 파티개수
-            int partyNum = 0;
+            int partyNum = 0; // 식당 안의 파티개수
             Restaurant restaurant = restaurantRepository.findById(kakaoRestaurant.getId()).orElse(null);
             if(restaurant != null){ // 식당이 db에 저장되어 있으면
                 partyNum = partyRepository.countByRestaurant(restaurant).intValue();

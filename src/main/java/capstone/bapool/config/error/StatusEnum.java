@@ -20,6 +20,10 @@ public enum StatusEnum {
      * 400 오류
      */
     PARTY_NOT_DONE(400, "파티가 끝나지 않았습니다"),
+    NOT_SUFFICIENT_NUM_OF_USER(400, "모든 유저에 대해 평가해 주세요."),
+    OUT_OF_RATING_RANGE(400, "평점이 범위(0.0~5.0)를 벗어났습니다."),
+    ALREADY_RATING_COMPLETE(400, "이미 유저평가를 완료했습니다."),
+    CAN_NOT_RATING_MYSELF(400, "자기 자신에 대해선 평가할 수 없습니다."),
 
     /**
      * 인증 오류

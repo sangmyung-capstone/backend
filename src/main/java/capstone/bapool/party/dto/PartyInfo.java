@@ -11,7 +11,7 @@ import java.util.List;
 //파티정보
 @Getter
 @JsonPropertyOrder({"partyId", "partyName", "isParticipate", "isRecruiting", "menu", "detail", "hasBlockUser", "participants", "maxPeople", "startDate", "endDate", "userRating", "partyHashtag"})
-public class PartyInfoDetail {
+public class PartyInfo {
 
     @JsonProperty(value = "party_id")
     private Long partyId;
@@ -47,7 +47,7 @@ public class PartyInfoDetail {
     private Boolean isRecruiting;
 
     @Builder
-    public PartyInfoDetail(Long partyId, String partyName, boolean isParticipate, int participants, int maxPeople, LocalDateTime startDate, String menu, List<Integer> partyHashtag, String detail, boolean hasBlockUser, Double userRating, Boolean isRecruiting) {
+    public PartyInfo(Long partyId, String partyName, boolean isParticipate, int participants, int maxPeople, LocalDateTime startDate, String menu, List<Integer> partyHashtag, String detail, boolean hasBlockUser, Double userRating, Boolean isRecruiting) {
         this.partyId = partyId;
         this.partyName = partyName;
         this.isParticipate = isParticipate;
@@ -61,4 +61,5 @@ public class PartyInfoDetail {
         this.userRating = userRating;
         this.isRecruiting = isRecruiting;
     }
+
 }

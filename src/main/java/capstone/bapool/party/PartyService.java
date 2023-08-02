@@ -118,7 +118,7 @@ public class PartyService {
         List<Party> parties = partyRepository.findByRestaurant(restaurant);
         for(Party party : parties){ // 파티 정보 입력.
 
-            PartyInfoDetail partyInfoDetail = PartyInfoDetail.builder()
+            PartyInfo partyInfo = PartyInfo.builder()
                     .partyId(party.getId())
                     .partyName(party.getName())
                     .isParticipate(party.isMeParticipate(user))
@@ -132,7 +132,7 @@ public class PartyService {
                     .partyHashtag(party.getPartyHashtag())
                     .isRecruiting(party.is_recruiting())
                     .build();
-            partiesInRestaurantRes.addPartyInfos(partyInfoDetail);
+            partiesInRestaurantRes.addPartyInfos(partyInfo);
         }
 
         return partiesInRestaurantRes;
@@ -225,33 +225,41 @@ public class PartyService {
         fireBasePartyRepository.becomeLeader(partyId, otherUserId);
     }
 
-    // 먹었던 파티정보 리스트
+    /**
+     * 먹었던 파티정보 리스트 조회
+     */
     public GetAtePartyInfoRes findAtePartyInfo(Long userId){
 
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> {throw new BaseException(NOT_FOUND_USER_FAILURE);}
-        );
+        User user = userRepository.findById(userId).orElseThrow(() -> {
+            log.error("먹었던 파티정보 리스트 조회: 존재하지 않는 유저입니다. userId-{}", userId);
+            throw new BaseException(NOT_FOUND_USER_FAILURE);
+        });
 
-        List<PartyInfoSimple> partyInfoSimpleList = partyRepository.findByUserAndPartyStatus(user, PartyStatus.DONE);
+        List<AtePartyInfo> atePartyInfoList = partyRepository.findByUserAndPartyStatus(user, PartyStatus.DONE);
 
-        System.out.println("parties.size() = " + partyInfoSimpleList.size());
-
-        return new GetAtePartyInfoRes(partyInfoSimpleList);
+        return new GetAtePartyInfoRes(atePartyInfoList);
     }
 
-    // 사용자 평가화면 조회
+
+    /**
+     * 사용자 평가화면 정보 조회
+     * @exception BaseException NOT_FOUND_USER_FAILURE, NOT_FOUND_PARTY_FAILURE, NOT_PARTY_PARTICIPANT
+     */
     public GetUserRatingVeiwRes findPartyParticipantForRating(Long userId, Long partyId){
 
         User user = userRepository.findById(userId).orElseThrow(() -> {
+            log.error("사용자 평가화면 정보 조회: 존재하지 않는 유저입니다. userId-{}", userId);
             throw new BaseException(NOT_FOUND_USER_FAILURE);
         });
 
         Party party = partyRepository.findById(partyId).orElseThrow(() -> {
+            log.error("사용자 평가화면 정보 조회: 존재하지 않는 파티입니다. partyId-{}", partyId);
             throw new BaseException(NOT_FOUND_PARTY_FAILURE);
         });
 
         // 해당 파티에 내가 참여하지 않았으면
         if(!party.isMeParticipate(user)){
+            log.error("사용자 평가화면 정보 조회: 해당 사용자가 참여하지 않은 파티입니다, userId-{}, partyId-{}", userId, partyId);
             throw new BaseException(NOT_PARTY_PARTICIPANT);
         }
 

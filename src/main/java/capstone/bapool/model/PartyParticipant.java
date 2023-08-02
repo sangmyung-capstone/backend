@@ -6,6 +6,7 @@ import capstone.bapool.model.enumerate.RoleType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,6 +35,9 @@ public class PartyParticipant extends BaseTimeEntity{
 
     @Enumerated(value = EnumType.STRING)
     private RoleType roleType;
+
+    @ColumnDefault("false")
+    private Boolean ratingComplete;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "party_id")
@@ -71,6 +75,11 @@ public class PartyParticipant extends BaseTimeEntity{
             throw new BaseException(StatusEnum.NOT_PARTY_LEADER_);
         }
         this.roleType = RoleType.MEMBER;
+    }
+
+    // 유저 평가 완료
+    public void setRatingComplete(){
+        this.ratingComplete = true;
     }
 
 }

@@ -5,6 +5,7 @@ import capstone.bapool.utils.dto.Menu;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -17,49 +18,54 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@Slf4j
 public class RequestsUtils {
 
+    private static final String BASE_URL = "https://place.map.kakao.com/main/v/";
+
+    /**
+     * 식당 이미지, 메뉴 크롤링
+     * @param restaurantId 식당id
+     */
     public ImgURLAndMenu crawlingImgURLAndMenu(Long restaurantId){
-        System.out.println("크롤링 테스트");
-        String resultUrl = "https://place.map.kakao.com/main/v/" + restaurantId;
+        String totalURL = BASE_URL + restaurantId;
 
         try{
-            URL url = new URL(resultUrl);
+            URL url = new URL(totalURL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
             conn.setRequestMethod("GET");
 
             // 결과 코드가 200이라면 성공
-            // 200 아닐경우 예외처리 필요
-            System.out.println("conn.getResponseCode() = " + conn.getResponseCode());
-            System.out.println("conn.getResponseMessage() = " + conn.getResponseMessage());
+            log.debug("식당 이미지, 메뉴 크롤링: restaurantId={}, status_code={}", restaurantId, conn.getResponseCode());
 
             // 요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-            String line = "";
-            String result = "";
 
+            StringBuilder sb = new StringBuilder(); // string의 많은 덧셈연산은 성능상 좋지 않아서
+            String line = "";
             while ((line = br.readLine()) != null) {
-                result += line;
+                sb.append(line);
             }
-//            System.out.println("result = " + result);
 
             //Gson 라이브러리에 포함된 클래스로 JSON파싱 객체 생성
-            JsonElement element = JsonParser.parseString(result);
+            JsonElement element = JsonParser.parseString(sb.toString());
 
             return new ImgURLAndMenu(getImgURL(element), getMenus(element));
         }catch (IOException e) {
+            log.error("식당, 이미지 크롤링 에러: restaurantId={}", restaurantId);
             e.printStackTrace();
         }
 
         return null;
     }
 
-    // 이미지 크롤링
+    /**
+     * 식당 이미지 크롤링
+     * @param restaurantId 식당id
+     */
     public String crawlingImgURL(Long restaurantId){
-        System.out.println("크롤링 테스트");
 
-        String resultUrl = "https://place.map.kakao.com/main/v/" + restaurantId;
+        String resultUrl = BASE_URL + restaurantId;
 
         try{
             URL url = new URL(resultUrl);
@@ -68,22 +74,19 @@ public class RequestsUtils {
             conn.setRequestMethod("GET");
 
             // 결과 코드가 200이라면 성공
-            // 200 아닐경우 예외처리 필요
-            System.out.println("conn.getResponseCode() = " + conn.getResponseCode());
-            System.out.println("conn.getResponseMessage() = " + conn.getResponseMessage());
+            log.debug("식당 이미지 크롤링: restaurantId-{}, status_code-{}", restaurantId, conn.getResponseCode());
 
             // 요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-            String line = "";
-            String result = "";
 
+            StringBuilder sb = new StringBuilder();
+            String line = "";
             while ((line = br.readLine()) != null) {
-                result += line;
+                sb.append(line);
             }
-//            System.out.println("result = " + result);
 
             //Gson 라이브러리에 포함된 클래스로 JSON파싱 객체 생성
-            JsonElement element = JsonParser.parseString(result);
+            JsonElement element = JsonParser.parseString(sb.toString());
 
             return getImgURL(element);
         }catch (IOException e) {
@@ -97,9 +100,9 @@ public class RequestsUtils {
     private String getImgURL(JsonElement element){
         JsonElement imgURL = element.getAsJsonObject().get("basicInfo").getAsJsonObject().get("mainphotourl");
 
-        System.out.println("imgURL = " + imgURL);
         if(imgURL != null){
             String imgURLString = imgURL.toString();
+            log.info("이미지 크롤링: imgURL={}", imgURLString);
             return imgURLString.substring(imgURLString.indexOf('"')+1, imgURLString.lastIndexOf('"'));
         }
         else{
@@ -107,6 +110,7 @@ public class RequestsUtils {
         }
     }
 
+    // 메뉴 크롤링
     private List<Menu> getMenus(JsonElement element){
         JsonElement menuInfo = element.getAsJsonObject().get("menuInfo");
         List<Menu> menus = new ArrayList<>();
@@ -120,7 +124,7 @@ public class RequestsUtils {
                 menuName = menu.getAsJsonObject().get("menu").getAsString();
 
                 menus.add(new Menu(menuName, price));
-                System.out.println("menuName = " + menuName + ", price = " + price);
+                log.info("메뉴 크롤링: menu={}, price={}", menuName, price);
             }
         }
 
