@@ -61,6 +61,14 @@ public class UserController {
         return ResponseEntity.ok().body(ResponseDto.create(otherUserRes));
     }
 
+    @GetMapping("/profile/{user-id}/{other-user-id}")
+    public ResponseEntity<ResponseDto> otherUser(
+            @PathVariable("user-id") Long userId,
+            @PathVariable("other-user-id") Long otherUserId){
+        OtherUserRes otherUserRes = userService.findOtherById(userId, otherUserId);
+        return ResponseEntity.ok().body(ResponseDto.create(otherUserRes));
+    }
+
     @PostMapping("/block/{user-id}")
     public ResponseEntity<ResponseDto> blockUserWithReqBody(
             @PathVariable("user-id") Long blockUserId, @Valid @RequestBody BlockUserReq blockUserReq){
