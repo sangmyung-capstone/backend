@@ -27,6 +27,7 @@ public class FireBasePartyInfo {
     private Long groupLeaderId;
     private String menu;
     private String status;
+    private String restaurantImgUrl;
 
     public FireBasePartyInfo(PostPartyReq partyReq, Long userId) {
         this.groupName = partyReq.getPartyName();
@@ -41,6 +42,7 @@ public class FireBasePartyInfo {
         this.groupLeaderId = userId;
         this.menu = partyReq.getMenu();
         this.status = PartyStatus.RECRUITING.toString();
+        this.restaurantImgUrl = partyReq.getPostPartyRestaurantReq().getImgUrl();
     }
 
     public FireBasePartyInfo(PatchPartyReq patchPartyReq) {

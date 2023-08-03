@@ -121,4 +121,11 @@ public class PartyController {
         partyService.changeLeader(userId, partyId, otherUserId);
         return ResponseEntity.ok(ResponseDto.create(null));
     }
+
+    @PatchMapping("/done/{user-id}/{party-id}")
+    public ResponseEntity<Object> changePartyDone(
+            @PathVariable("user-id") Long userId, @PathVariable("party-id") Long partyId) {
+        partyService.changePartyDone(userId, partyId);
+        return ResponseEntity.ok(ResponseDto.create(null));
+    }
 }

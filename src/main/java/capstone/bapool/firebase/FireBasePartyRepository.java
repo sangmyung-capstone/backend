@@ -18,6 +18,7 @@ import java.util.Map;
 public class FireBasePartyRepository {
 
     public static final String DEADLINE = "DEADLINE";
+    public static final String DONE = "DONE";
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
 
@@ -112,5 +113,12 @@ public class FireBasePartyRepository {
                 .child("groupInfo")
                 .child("status")
                 .setValueAsync(DEADLINE);
+    }
+
+    public void doneParty(Long partyId) {
+        databaseReference.child(partyId.toString())
+                .child("groupInfo")
+                .child("status")
+                .setValueAsync(DONE);
     }
 }
