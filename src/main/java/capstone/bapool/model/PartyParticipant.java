@@ -47,9 +47,10 @@ public class PartyParticipant extends BaseTimeEntity{
     private PartyParticipant(User user, Party party, RoleType roleType) {
         this.user = user;
         this.party = party;
+        this.roleType = roleType;
+        this.ratingComplete = false;
         user.getPartyParticipants().add(this);
         party.getPartyParticipants().add(this);
-        this.roleType = roleType;
     }
 
     public static PartyParticipant makeMapping(User user, Party party, RoleType roleType) {
