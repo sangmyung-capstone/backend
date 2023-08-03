@@ -148,4 +148,8 @@ public class Party extends BaseTimeEntity{
     public void removeHashtags() {
         this.partyHashtags.clear();
     }
+
+    public void done() {
+        partyStatus = PartyStatus.DONE;
+    }
 }

@@ -274,4 +274,12 @@ public class PartyService {
 
         return new GetUserRatingVeiwRes(ratingUserInfoList);
     }
+
+    @Transactional(readOnly = false)
+    public void changePartyDone(Long userId, Long partyId) {
+        Party party = partyRepository.findById(partyId)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_PARTY_FAILURE));
+        party.done();
+        fireBasePartyRepository.doneParty(partyId);
+    }
 }
