@@ -217,7 +217,6 @@ public class PartyService {
         PartyParticipant partyParticipant = partyParticipantRepository.findPartyParticipantByUserAndParty(userReference, partyReference)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_PARTY_PARTICIPANT_FAILURE));
         partyParticipant.becomeMember();
-        fireBasePartyRepository.becomeMember(partyId, userId);
 
         PartyParticipant newLeader = partyParticipantRepository.findPartyParticipantByUserAndParty(otherUserReference, partyReference)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_PARTY_PARTICIPANT_FAILURE));
