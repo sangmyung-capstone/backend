@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -115,7 +116,7 @@ public class PartyService {
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
 
         // 해당 식당안의 파티리스트 조회
-        List<Party> parties = partyRepository.findByRestaurant(restaurant);
+        List<Party> parties = partyRepository.findByRestaurantAndStartDateAfter(restaurant, LocalDateTime.now());
         for(Party party : parties){ // 파티 정보 입력.
 
             PartyInfo partyInfo = PartyInfo.builder()

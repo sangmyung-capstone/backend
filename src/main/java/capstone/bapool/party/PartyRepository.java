@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PartyRepository extends JpaRepository<Party, Long> {
@@ -25,7 +26,7 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
      * @param restaurant 식당
      * @return 해당 식당안의 파티리스트
      */
-    List<Party> findByRestaurant(Restaurant restaurant);
+    List<Party> findByRestaurantAndStartDateAfter(Restaurant restaurant, LocalDateTime startDate);
 
 
     @Query(value = "select new capstone.bapool.party.dto.AtePartyInfo(p.id, p.name, res.name, res.imgUrl, res.address, res.category, pp.ratingComplete)\n" +
