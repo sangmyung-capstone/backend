@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
+import static capstone.bapool.config.error.StatusEnum.INVALID_TOKEN;
 import static capstone.bapool.config.error.StatusEnum.OUT_OF_RATING_RANGE;
 
 @Slf4j
@@ -45,18 +46,13 @@ public class UserController {
         return ResponseEntity.ok().body(deleteresult);
     }
 
-    @GetMapping("/profilewithno/{user-id}")
+    @GetMapping("/profile/{user-id}/{other-user-id}")
     public ResponseEntity<ResponseDto> otherUser(
-            @PathVariable("user-id") Long otherUserId){
-        Long userId = 2L;
-        OtherUserRes otherUserRes = userService.findOtherById(userId, otherUserId);
-        return ResponseEntity.ok().body(ResponseDto.create(otherUserRes));
-    }
+            @PathVariable("user-id") Long userId,
+            @PathVariable("other-user-id") Long otherUserId,
+            HttpServletRequest request){
 
-    @GetMapping("/profile/{user-id}")
-    public ResponseEntity<ResponseDto> otherUser(
-            @PathVariable("user-id") Long otherUserId, HttpServletRequest request){
-        Long userId = jwtUtils.resolveRequest(request);
+        log.info("이 요청을 사용할 수 있는 userId = {}",jwtUtils.resolveRequest(request));
         OtherUserRes otherUserRes = userService.findOtherById(userId, otherUserId);
         return ResponseEntity.ok().body(ResponseDto.create(otherUserRes));
     }
