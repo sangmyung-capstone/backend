@@ -96,16 +96,16 @@ public class FireBasePartyRepository {
 
     public void becomeLeader(Long partyId, Long userId) {
         databaseReference.child(partyId.toString())
-                .child("groupUsers")
-                .child(userId.toString())
-                .setValueAsync(true);
+                .child("groupInfo")
+                .child("groupLeaderId")
+                .setValueAsync(userId);
     }
 
     public void becomeMember(Long partyId, Long userId) {
         databaseReference.child(partyId.toString())
                 .child("groupUsers")
                 .child(userId.toString())
-                .setValueAsync(false);
+                .setValueAsync(true);
     }
 
     public void closeParty(Long partyId) {
