@@ -19,7 +19,7 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
      * @param restaurant 식당
      * @return 식당안의 파티 개수
      */
-    Long countByRestaurant(Restaurant restaurant);
+    Long countByRestaurantAndStartDateAfter(Restaurant restaurant, LocalDateTime startDate);
 
     /**
      * 식당안의 파티리스트 조회

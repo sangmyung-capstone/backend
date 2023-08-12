@@ -61,6 +61,7 @@ public class RestaurantController {
         return ResponseEntity.ok().body(response);
     }
 
+
     /**
      * [GET] /restaurants/bottomlist/{user-id}
      * 식당 바텀리스트 이미지

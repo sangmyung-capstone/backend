@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class RestaurantService {
             int partyNum = 0; // 식당 안의 파티개수
             Restaurant restaurant = restaurantRepository.findById(kakaoRestaurant.getId()).orElse(null);
             if(restaurant != null){ // 식당이 db에 저장되어 있으면
-                partyNum = partyRepository.countByRestaurant(restaurant).intValue();
+                partyNum = partyRepository.countByRestaurantAndStartDateAfter(restaurant, LocalDateTime.now()).intValue();
             }
 
             RestaurantInfo restaurantInfo = RestaurantInfo.builder()
@@ -81,7 +82,7 @@ public class RestaurantService {
         int partyNum = 0; // 식당 안의 파티개수
         Restaurant restaurant = restaurantRepository.findById(kakaoRestaurant.getId()).orElse(null);
         if(restaurant != null){ // 식당이 db에 저장되어 있으면
-            partyNum = partyRepository.countByRestaurant(restaurant).intValue();
+            partyNum = partyRepository.countByRestaurantAndStartDateAfter(restaurant, LocalDateTime.now()).intValue();
         }
 
         // 식당의 이미지, 메뉴 크롤링
@@ -131,7 +132,7 @@ public class RestaurantService {
             int partyNum = 0; // 식당 안의 파티개수
             Restaurant restaurant = restaurantRepository.findById(kakaoRestaurant.getId()).orElse(null);
             if(restaurant != null){ // 식당이 db에 저장되어 있으면
-                partyNum = partyRepository.countByRestaurant(restaurant).intValue();
+                partyNum = partyRepository.countByRestaurantAndStartDateAfter(restaurant, LocalDateTime.now()).intValue();
             }
 
             RestaurantInfo restaurantInfo = RestaurantInfo.builder()
