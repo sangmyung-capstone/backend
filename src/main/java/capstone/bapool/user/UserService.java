@@ -41,9 +41,7 @@ public class UserService {
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));    //db에 사용자id가 없다면 처리
 
         // gana-수정 필요해 보임.
-        List<Integer> hashtags = userHashtagRepository.findByUserId(userId)
-                .stream().map((userHashtag -> userHashtag.getHashtagId()))
-                .collect(Collectors.toList());
+        List<UserHashtagInfo> hashtags = userHashtagRepository.findByUserId(userId);
 
         return UserRes.builder()
                 .name(user.getName())
@@ -69,9 +67,7 @@ public class UserService {
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
         User otherUser = userRepository.findById(otherUserId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
-        List<Integer> hashtags = userHashtagRepository.findByUserId(otherUserId)
-                .stream().map((userHashtag -> userHashtag.getHashtagId()))
-                .collect(Collectors.toList());
+        List<UserHashtagInfo> hashtags = userHashtagRepository.findByUserId(otherUserId);
         boolean is_block = blockUserRepository.findByBlockUserAndBlockedUser(user, otherUser)!=null;
 
         return OtherUserRes.builder()

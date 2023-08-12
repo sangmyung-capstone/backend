@@ -51,8 +51,6 @@ public class UserController {
             @PathVariable("user-id") Long userId,
             @PathVariable("other-user-id") Long otherUserId,
             HttpServletRequest request){
-
-        log.info("이 요청을 사용할 수 있는 userId = {}",jwtUtils.resolveRequest(request));
         OtherUserRes otherUserRes = userService.findOtherById(userId, otherUserId);
         return ResponseEntity.ok().body(ResponseDto.create(otherUserRes));
     }

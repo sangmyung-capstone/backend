@@ -28,10 +28,10 @@ public class OtherUserRes {
     double rating;
 
     @JsonProperty("hashtag")
-    List<Integer> hashtag;
+    List<UserHashtagInfo> hashtag;
 
     @Builder
-    public OtherUserRes(Long userId, Integer profileImg, String name, boolean is_block, double rating, List<Integer> hashtag) {
+    public OtherUserRes(Long userId, Integer profileImg, String name, boolean is_block, double rating, List<UserHashtagInfo> hashtag) {
         this.userId = userId;
         this.profileImg = profileImg;
         this.name = name;
