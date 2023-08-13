@@ -1,22 +1,17 @@
 package capstone.bapool.user;
 
 import capstone.bapool.config.error.BaseException;
-import capstone.bapool.config.error.StatusEnum;
 import capstone.bapool.config.response.ResponseDto;
 import capstone.bapool.party.PartyService;
 import capstone.bapool.user.dto.*;
-import capstone.bapool.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.List;
 
-import static capstone.bapool.config.error.StatusEnum.INVALID_TOKEN;
 import static capstone.bapool.config.error.StatusEnum.OUT_OF_RATING_RANGE;
 
 @Slf4j
@@ -26,7 +21,6 @@ import static capstone.bapool.config.error.StatusEnum.OUT_OF_RATING_RANGE;
 public class UserController {
 
     private final UserService userService;
-    private final JwtUtils jwtUtils;
     private final PartyService partyService;
 
 
@@ -49,8 +43,7 @@ public class UserController {
     @GetMapping("/profile/{user-id}/{other-user-id}")
     public ResponseEntity<ResponseDto> otherUser(
             @PathVariable("user-id") Long userId,
-            @PathVariable("other-user-id") Long otherUserId,
-            HttpServletRequest request){
+            @PathVariable("other-user-id") Long otherUserId){
         OtherUserRes otherUserRes = userService.findOtherById(userId, otherUserId);
         return ResponseEntity.ok().body(ResponseDto.create(otherUserRes));
     }
