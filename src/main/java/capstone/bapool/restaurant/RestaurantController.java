@@ -72,9 +72,9 @@ public class RestaurantController {
         log.info("식당 바텀리스트 요청: 식당id 리스트={}", getRestaurantBottomListReq.toString());
 
         // 한번에 3개까지만 조회 가능
-        if(getRestaurantBottomListReq.getRestaurantIdList().size() > 3){
-            throw new BaseException(PAYLOAD_TOO_LARGE);
-        }
+//        if(getRestaurantBottomListReq.getRestaurantIdList().size() > 3){
+//            throw new BaseException(PAYLOAD_TOO_LARGE);
+//        }
 
         GetRestaurantBottomListRes getRestaurantBottomListRes = restaurantService.findRestaurantBottomList(getRestaurantBottomListReq);
 
