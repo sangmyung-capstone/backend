@@ -45,7 +45,7 @@ public class Party extends BaseTimeEntity{
 
     private String detail;
 
-    @OneToMany(mappedBy = "party")
+    @OneToMany(mappedBy = "party", cascade = CascadeType.REMOVE)
     private List<PartyParticipant> partyParticipants = new ArrayList<PartyParticipant>();
 
     @OneToMany(mappedBy = "party", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -1,5 +1,6 @@
 package capstone.bapool.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -44,14 +45,14 @@ public class User extends BaseTimeEntity{
     private List<PartyParticipant> partyParticipants = new ArrayList<PartyParticipant>();
 
     // 차단한 유저
-    @OneToMany(mappedBy = "blockUser")
+    @OneToMany(mappedBy = "blockUser", cascade = CascadeType.REMOVE)
     private List<BlockUser> blockUsers = new ArrayList<>();
 
     // 유저 평점
-    @OneToMany(mappedBy = "evaluatedUser")
+    @OneToMany(mappedBy = "evaluatedUser", cascade = CascadeType.REMOVE)
     private List<UserRating> userRatings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<UserHashtag> userHashtags = new ArrayList<>();
 
     @Builder
