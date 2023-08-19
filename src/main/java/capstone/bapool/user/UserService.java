@@ -140,6 +140,7 @@ public class UserService {
             throw new BaseException(ALREADY_EXIST_NAME_FAILURE);
         }
         user.update(newName, newProfileImg);
+        fireBaseUserDao.updateUserInfo(userId, userInfoReq);
         return false;
     }
 
