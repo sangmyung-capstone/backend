@@ -138,6 +138,7 @@ public class UserService {
         }else{
             user.update(newName, newProfileImg);
         }
+        fireBaseUserDao.updateUserInfo(userId, userInfoReq);
         return false;
     }
 
