@@ -5,14 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class RatingUser {
+public class RatedUser {
 
     @NotNull(message = "user_id가 null이어선 안됩니다")
     @JsonProperty("user_id")

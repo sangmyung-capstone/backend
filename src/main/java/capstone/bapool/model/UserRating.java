@@ -38,6 +38,6 @@ public class UserRating extends BaseTimeEntity{
         this.party = party;
         this.rating = rating;
 
-        this.evaluateUser.addUserRating(this);
+        this.evaluatedUser.getUserRatings().add(this);
     }
 }

@@ -95,7 +95,7 @@ public class UserController {
         log.info("유저 평가하기 요청: userId={}, partyId={}", userId, partyId);
 
         // 평점이 0.0~5.0 사이가 아닌 경우
-        for(RatingUser user : postUserRatingReq.getRatingUserList()){
+        for(RatedUser user : postUserRatingReq.getRatedUserList()){
             if(user.getRating() < 0.0 || 5.0 < user.getRating()){
                 throw new BaseException(OUT_OF_RATING_RANGE);
             }

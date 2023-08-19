@@ -12,10 +12,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +49,7 @@ public class User extends BaseTimeEntity{
     @OneToMany(mappedBy = "evaluatedUser")
     private List<UserRating> userRatings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "evaluatedUser")
     private List<UserHashtag> userHashtags = new ArrayList<>();
 
     @Builder
@@ -86,15 +84,5 @@ public class User extends BaseTimeEntity{
     public void update(String newName, int newProfileImg){
         this.name = newName;
         this.profileImgId = newProfileImg;
-    }
-
-    protected void addUserRating(UserRating userRating){
-        this.userRatings.add(userRating);
-        System.out.println("유저 평점 추가!!");
-    }
-
-    protected void addUserHashtag(UserHashtag userHashtag){
-        this.userHashtags.add(userHashtag);
-        System.out.println("유저 해시태그 추가!!");
     }
 }
