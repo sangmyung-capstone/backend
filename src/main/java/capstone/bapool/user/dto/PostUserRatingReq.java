@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -18,5 +17,5 @@ public class PostUserRatingReq {
     @Valid
     @NotNull(message = "users는 null이어선 안됩니다")
     @JsonProperty("users")
-    private List<RatingUser> ratingUserList;
+    private List<RatedUser> ratedUserList;
 }

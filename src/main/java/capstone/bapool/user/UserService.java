@@ -184,13 +184,13 @@ public class UserService {
         }
 
         // 모든 유저에 대해 평가한 것이 아니면
-        if(postUserRatingReq.getRatingUserList().size() != party.getCurPartyMember()-1){
+        if(postUserRatingReq.getRatedUserList().size() != party.getCurPartyMember()-1){
             log.error("유저 평가하기: 모든 유저에 대해 평가하지 않았습니다. userId={}, partyId={}", userId, partyId);
             throw new BaseException(NOT_SUFFICIENT_NUM_OF_USER);
         }
 
-        for(RatingUser ratingUser : postUserRatingReq.getRatingUserList()){
-            User evaluatedUser = userRepository.findById(ratingUser.getUserId()).orElseThrow(() -> {
+        for(RatedUser ratedUser : postUserRatingReq.getRatedUserList()){
+            User evaluatedUser = userRepository.findById(ratedUser.getUserId()).orElseThrow(() -> {
                 log.error("유저 평가하기: 존재하지 않는 유저입니다. userId-{}", userId);
                 throw new BaseException(NOT_FOUND_USER_FAILURE);
             });
@@ -202,23 +202,30 @@ public class UserService {
             }
 
             // 자기 자신에 대해 평가할 수 없음
-            if(userId.equals(ratingUser.getUserId())){
+            if(userId.equals(ratedUser.getUserId())){
                 log.error("유저 평가하기: 자기 자신에 대해 평가할 수 없습니다. userId={}, partyId={}", evaluatedUser.getId(), partyId);
                 throw new BaseException(CAN_NOT_RATING_MYSELF);
             }
 
             // 유저 평점 반영
-            UserRating userRating = new UserRating(user, evaluatedUser, party, ratingUser.getRating());
+            UserRating userRating = new UserRating(user, evaluatedUser, party, ratedUser.getRating());
             userRatingRepository.save(userRating);
+            log.info("유저 평가하기-유저 평점 반영: partyId={}, 평가한 유저Id={}, 평가당한 유저Id={}, 평점={}", partyId, userId, evaluatedUser.getId(), ratedUser.getRating());
 
             // 유저 해시태그 반영
-            for(int hashtag : ratingUser.getHashtag()){
-                UserHashtag userHashtag = UserHashtag.create(evaluatedUser, hashtag);
+            for(int hashtag : ratedUser.getHashtag()){
+                UserHashtag userHashtag = UserHashtag.builder()
+                        .party(party)
+                        .evaluateUser(user)
+                        .evaluatedUser(evaluatedUser)
+                        .hashtagId(hashtag)
+                        .build();
                 userHashtagRepository.save(userHashtag);
+                log.info("유저 평가하기-유저 해시태그 반영: partyId={}, 평가한 유저={}, 평가당한 유저={}, 해시태그={}", partyId, userId, evaluatedUser.getId(), hashtag);
             }
         }
 
-        // 유저 평가 완료
+        // 유저 평가 완료로 status 변경
         partyParticipant.setRatingComplete();
     }
 }
