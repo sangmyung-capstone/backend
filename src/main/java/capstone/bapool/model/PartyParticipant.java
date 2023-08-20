@@ -2,6 +2,7 @@ package capstone.bapool.model;
 
 import capstone.bapool.config.error.BaseException;
 import capstone.bapool.config.error.StatusEnum;
+import capstone.bapool.model.enumerate.ParticipantStatus;
 import capstone.bapool.model.enumerate.RoleType;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -36,6 +37,10 @@ public class PartyParticipant extends BaseTimeEntity{
     @Enumerated(value = EnumType.STRING)
     private RoleType roleType;
 
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "status")
+    private ParticipantStatus status;
+
     @ColumnDefault("false")
     private Boolean ratingComplete;
 
@@ -49,6 +54,7 @@ public class PartyParticipant extends BaseTimeEntity{
         this.party = party;
         this.roleType = roleType;
         this.ratingComplete = false;
+        this.status = ParticipantStatus.ACTIVE;
         user.getPartyParticipants().add(this);
         party.getPartyParticipants().add(this);
     }
@@ -83,4 +89,7 @@ public class PartyParticipant extends BaseTimeEntity{
         this.ratingComplete = true;
     }
 
+    public void goOut() {
+        this.status = ParticipantStatus.INACTIVE;
+    }
 }
