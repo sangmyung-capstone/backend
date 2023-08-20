@@ -163,24 +163,27 @@ public class PartyService {
                 .orElseThrow(() -> new BaseException(NOT_FOUND_PARTY_FAILURE));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
-        if (party.isLastMember()) {
+        PartyParticipant partyParticipant = partyParticipantRepository.findPartyParticipantByUserAndParty(user, party)
+                .orElseThrow((() -> new BaseException(NOT_FOUND_PARTY_PARTICIPANT_FAILURE)));
+        if (partyParticipant.isLeader()) {
+            throw new BaseException(IS_PARTY_LEADER);
+        }
+
+        if (party.mustRemoved()) {
             validateExists(party, user);
             partyRepository.delete(party);
             fireBasePartyRepository.delete(partyId);
             return;
         }
-
-        PartyParticipant partyParticipant = partyParticipantRepository.findPartyParticipantByUserAndParty(user, party)
-                .orElseThrow((() -> new BaseException(NOT_FOUND_PARTY_PARTICIPANT_FAILURE)));
-        if (partyParticipant.isLeader()) {
-            PartyParticipant memberParticipant = partyParticipantRepository
-                    .findByPartyAndRoleType(party, RoleType.MEMBER);
-            memberParticipant.becomeLeader();
-            fireBasePartyRepository.becomeLeader(partyId, memberParticipant.getUser().getId());
-        }
         int curPartyMember = party.getCurPartyMember();
-        partyParticipantRepository.delete(partyParticipant);
         fireBasePartyRepository.secession(partyId, userId, curPartyMember);
+        // DONE 인상태에서는
+        if (party.isDone()) {
+            partyParticipant.goOut();
+            return;
+        }
+        // DONE 이 아닐때
+        partyParticipantRepository.delete(partyParticipant);
     }
 
     private void validateExists(Party party, User user) {
@@ -218,6 +221,7 @@ public class PartyService {
         PartyParticipant partyParticipant = partyParticipantRepository.findPartyParticipantByUserAndParty(userReference, partyReference)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_PARTY_PARTICIPANT_FAILURE));
         partyParticipant.becomeMember();
+        fireBasePartyRepository.becomeMember(partyId, userId);
 
         PartyParticipant newLeader = partyParticipantRepository.findPartyParticipantByUserAndParty(otherUserReference, partyReference)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_PARTY_PARTICIPANT_FAILURE));

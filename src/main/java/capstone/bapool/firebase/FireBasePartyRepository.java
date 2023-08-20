@@ -91,7 +91,7 @@ public class FireBasePartyRepository {
         databaseReference.child(partyId.toString())
                 .child("groupUsers")
                 .child(userId.toString())
-                .removeValueAsync();
+                .setValueAsync(false);
     }
 
     public void becomeLeader(Long partyId, Long userId) {

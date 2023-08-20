@@ -45,7 +45,7 @@ public class Party extends BaseTimeEntity{
 
     private String detail;
 
-    @OneToMany(mappedBy = "party")
+    @OneToMany(mappedBy = "party", cascade = CascadeType.REMOVE)
     private List<PartyParticipant> partyParticipants = new ArrayList<PartyParticipant>();
 
     @OneToMany(mappedBy = "party", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -75,8 +75,8 @@ public class Party extends BaseTimeEntity{
         this.detail = detail;
     }
 
-    public boolean isLastMember() {
-        if (partyParticipants.size() == 1) {
+    public boolean mustRemoved() {
+        if (partyParticipants.size() == 1 && partyStatus != PartyStatus.DONE) {
             return true;
         }
         return false;
@@ -151,5 +151,9 @@ public class Party extends BaseTimeEntity{
 
     public void done() {
         partyStatus = PartyStatus.DONE;
+    }
+
+    public boolean isDone() {
+        return partyStatus == PartyStatus.DONE;
     }
 }
