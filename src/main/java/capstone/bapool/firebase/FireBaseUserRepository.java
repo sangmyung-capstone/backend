@@ -4,6 +4,7 @@ import capstone.bapool.config.error.BaseException;
 import capstone.bapool.config.error.StatusEnum;
 import capstone.bapool.firebase.dto.FireBaseUser;
 import capstone.bapool.firebase.dto.UserDto;
+import capstone.bapool.user.dto.UserInfoReq;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -91,5 +92,14 @@ public class FireBaseUserRepository {
 
                     }
                 });
+    }
+
+    public void updateUserInfo(Long userId, UserInfoReq userInfoReq) {
+        databaseReference.child(String.valueOf(userId))
+                .child("imgUrl")
+                .setValueAsync(userInfoReq.getProfileImg());
+        databaseReference.child(String.valueOf(userId))
+                .child("nickName")
+                .setValueAsync(userInfoReq.getName());
     }
 }

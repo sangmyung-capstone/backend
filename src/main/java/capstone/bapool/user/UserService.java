@@ -38,7 +38,7 @@ public class UserService {
     @Transactional(readOnly=true)
     public UserRes findById(Long userId) throws BaseException {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));    //db에 사용자id가 없다면 처리
+                .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
 
         // gana-수정 필요해 보임.
         List<UserHashtagInfo> hashtags = userHashtagRepository.findByUserId(userId);
@@ -56,8 +56,8 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
         userRepository.deleteById(user.getId());
-        //firebase에서 채팅방도 나가야 될거같은데
-        fireBaseUserDao.delete(userId);//이거는 firebase에서 삭제만
+
+        fireBaseUserDao.delete(userId);
         return ResponseDto.create(userId+" deleted successfully");
     }
 
@@ -67,6 +67,7 @@ public class UserService {
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
         User otherUser = userRepository.findById(otherUserId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
+
         List<UserHashtagInfo> hashtags = userHashtagRepository.findByUserId(otherUserId);
         boolean is_block = blockUserRepository.findByBlockUserAndBlockedUser(user, otherUser)!=null;
 
@@ -87,28 +88,30 @@ public class UserService {
         User blockedUser = userRepository.findById(blockedUserId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
 
-        if(blockUser != blockedUser){
-            if(blockUserRepository.findByBlockUserAndBlockedUser(blockUser, blockedUser)!=null){
-                blockUserRepository.delete(blockUserRepository.findByBlockUserAndBlockedUser(blockUser, blockedUser));
-                return new BlockUserRes(BlockStatus.UNBLOCK);
-            }else {//else면 차단하기, if면 차단 해제
-                BlockUser blockUserTuple = BlockUser.builder()
-                        .blockUser(blockUser)
-                        .blockedUser(blockedUser)
-                        .build();
-                blockUserRepository.save(blockUserTuple);
-
-                BlockUserRes blockUserRes  = BlockUserRes.builder()
-                        .userId(blockedUser.getId())
-                        .blockStatus(BlockStatus.BLOCK)
-                        .name(blockedUser.getName())
-                        .blockDate(blockUserTuple.getUpdatedDate())
-                        .build();
-                return blockUserRes;
-            }
-        }else{
+        if(blockUser.equals(blockedUser)){
             return new BlockUserRes(BlockStatus.SAMEUSEREXCEPTION);
         }
+
+        BlockUser is_block = blockUserRepository.findByBlockUserAndBlockedUser(blockUser, blockedUser);
+        if(is_block != null){
+            //차단 해제하기
+            blockUserRepository.delete(is_block);
+            return new BlockUserRes(BlockStatus.UNBLOCK);
+        }
+        //차단하기
+        BlockUser blockUserTuple = BlockUser.builder()
+                .blockUser(blockUser)
+                .blockedUser(blockedUser)
+                .build();
+        blockUserRepository.save(blockUserTuple);
+
+        BlockUserRes blockUserRes  = BlockUserRes.builder()
+                .userId(blockedUser.getId())
+                .blockStatus(BlockStatus.BLOCK)
+                .name(blockedUser.getName())
+                .blockDate(blockUserTuple.getUpdatedDate())
+                .build();
+        return blockUserRes;
     }
 
 
@@ -135,9 +138,9 @@ public class UserService {
         int newProfileImg = userInfoReq.getProfileImg();
         if(userRepository.existsUserByName(newName)){
             throw new BaseException(ALREADY_EXIST_NAME_FAILURE);
-        }else{
-            user.update(newName, newProfileImg);
         }
+        user.update(newName, newProfileImg);
+        fireBaseUserDao.updateUserInfo(userId, userInfoReq);
         return false;
     }
 
@@ -181,13 +184,13 @@ public class UserService {
         }
 
         // 모든 유저에 대해 평가한 것이 아니면
-        if(postUserRatingReq.getRatingUserList().size() != party.getCurPartyMember()-1){
+        if(postUserRatingReq.getRatedUserList().size() != party.getCurPartyMember()-1){
             log.error("유저 평가하기: 모든 유저에 대해 평가하지 않았습니다. userId={}, partyId={}", userId, partyId);
             throw new BaseException(NOT_SUFFICIENT_NUM_OF_USER);
         }
 
-        for(RatingUser ratingUser : postUserRatingReq.getRatingUserList()){
-            User evaluatedUser = userRepository.findById(ratingUser.getUserId()).orElseThrow(() -> {
+        for(RatedUser ratedUser : postUserRatingReq.getRatedUserList()){
+            User evaluatedUser = userRepository.findById(ratedUser.getUserId()).orElseThrow(() -> {
                 log.error("유저 평가하기: 존재하지 않는 유저입니다. userId-{}", userId);
                 throw new BaseException(NOT_FOUND_USER_FAILURE);
             });
@@ -199,23 +202,30 @@ public class UserService {
             }
 
             // 자기 자신에 대해 평가할 수 없음
-            if(userId.equals(ratingUser.getUserId())){
+            if(userId.equals(ratedUser.getUserId())){
                 log.error("유저 평가하기: 자기 자신에 대해 평가할 수 없습니다. userId={}, partyId={}", evaluatedUser.getId(), partyId);
                 throw new BaseException(CAN_NOT_RATING_MYSELF);
             }
 
             // 유저 평점 반영
-            UserRating userRating = new UserRating(user, evaluatedUser, party, ratingUser.getRating());
+            UserRating userRating = new UserRating(user, evaluatedUser, party, ratedUser.getRating());
             userRatingRepository.save(userRating);
+            log.info("유저 평가하기-유저 평점 반영: partyId={}, 평가한 유저Id={}, 평가당한 유저Id={}, 평점={}", partyId, userId, evaluatedUser.getId(), ratedUser.getRating());
 
             // 유저 해시태그 반영
-            for(int hashtag : ratingUser.getHashtag()){
-                UserHashtag userHashtag = UserHashtag.create(evaluatedUser, hashtag);
+            for(int hashtag : ratedUser.getHashtag()){
+                UserHashtag userHashtag = UserHashtag.builder()
+                        .party(party)
+                        .evaluateUser(user)
+                        .evaluatedUser(evaluatedUser)
+                        .hashtagId(hashtag)
+                        .build();
                 userHashtagRepository.save(userHashtag);
+                log.info("유저 평가하기-유저 해시태그 반영: partyId={}, 평가한 유저={}, 평가당한 유저={}, 해시태그={}", partyId, userId, evaluatedUser.getId(), hashtag);
             }
         }
 
-        // 유저 평가 완료
+        // 유저 평가 완료로 status 변경
         partyParticipant.setRatingComplete();
     }
 }

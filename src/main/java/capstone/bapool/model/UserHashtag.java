@@ -1,6 +1,7 @@
 package capstone.bapool.model;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,21 +25,33 @@ public class UserHashtag extends BaseTimeEntity{
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "party_id")
+    private Party party;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "evaluate_user")
+    private User evaluateUser;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "evaluated_user")
+    private User evaluatedUser;
 
     @Column(name = "hashtag_id")
     private int hashtagId;
 
-    private UserHashtag(User user, int hashtagId) {
-        this.user = user;
+
+    @Builder
+    private UserHashtag(Party party, User evaluateUser, User evaluatedUser, int hashtagId) {
+        this.party = party;
+        this.evaluateUser = evaluateUser;
+        this.evaluatedUser = evaluatedUser;
         this.hashtagId = hashtagId;
 
-        this.user.addUserHashtag(this);
+        this.evaluatedUser.getUserHashtags().add(this);
     }
 
-    public static UserHashtag create(User user, int hashtagId) {
-        return new UserHashtag(user, hashtagId);
+    public static UserHashtag create(Party party, User evaluateUser, User evaluatedUser, int hashtagId) {
+        return new UserHashtag(party, evaluateUser, evaluatedUser, hashtagId);
     }
 
 }
