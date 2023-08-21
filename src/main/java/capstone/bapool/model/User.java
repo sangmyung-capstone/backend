@@ -50,7 +50,7 @@ public class User extends BaseTimeEntity{
     @OneToMany(mappedBy = "evaluatedUser", cascade = CascadeType.REMOVE)
     private List<UserRating> userRatings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "evaluatedUser", cascade = CascadeType.REMOVE)
     private List<UserHashtag> userHashtags = new ArrayList<>();
 
     @Builder
