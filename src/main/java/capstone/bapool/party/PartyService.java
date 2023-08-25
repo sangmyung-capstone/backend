@@ -165,7 +165,8 @@ public class PartyService {
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
         PartyParticipant partyParticipant = partyParticipantRepository.findPartyParticipantByUserAndParty(user, party)
                 .orElseThrow((() -> new BaseException(NOT_FOUND_PARTY_PARTICIPANT_FAILURE)));
-        if (partyParticipant.isLeader()) {
+
+        if (partyParticipant.isLeader() && party.isNotLastMember()) {
             throw new BaseException(IS_PARTY_LEADER);
         }
 
@@ -175,6 +176,7 @@ public class PartyService {
             fireBasePartyRepository.delete(partyId);
             return;
         }
+
         int curPartyMember = party.getCurPartyMember();
         fireBasePartyRepository.secession(partyId, userId, curPartyMember);
         // DONE 인상태에서는
@@ -182,6 +184,7 @@ public class PartyService {
             partyParticipant.goOut();
             return;
         }
+
         // DONE 이 아닐때
         partyParticipantRepository.delete(partyParticipant);
     }
