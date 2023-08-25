@@ -156,4 +156,8 @@ public class Party extends BaseTimeEntity{
     public boolean isDone() {
         return partyStatus == PartyStatus.DONE;
     }
+
+    public boolean isNotLastMember() {
+        return this.partyParticipants.size() != 1;
+    }
 }
