@@ -42,6 +42,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBaseException(BaseException e) {
         StatusEnum statusEnum = e.getStatusEnum();
 //        log.debug(e.getMessage());
+
         e.printStackTrace();
         return ResponseEntity
                 .status(statusEnum.getCode())
