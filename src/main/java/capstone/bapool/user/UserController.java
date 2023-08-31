@@ -24,7 +24,10 @@ public class UserController {
     private final PartyService partyService;
 
 
-    //마이페이지 로딩
+    /**
+     * [GET] /users/mypage/{user-id}
+     * 마이페이지
+     */
     @GetMapping("/mypage/{user-id}")
     public ResponseEntity<ResponseDto> mypage(@Valid @PathVariable("user-id") Long userId){
         UserRes user = userService.findById(userId);
@@ -32,14 +35,20 @@ public class UserController {
         return ResponseEntity.ok().body(ResponseDto.create(user));
     }
 
-    //회원 탈퇴
-    //프론트랑 상의해서 service에서 반환을 null로 해도괜찮은지 물어보기
+    /**
+     * [DELETE] /users/delete/{user-id}
+     * 탈퇴하기
+     */
     @DeleteMapping("delete/{user-id}")
     public ResponseEntity<ResponseDto> userRemove(@Valid @PathVariable("user-id") Long userId){
         ResponseDto deleteresult = userService.deleteById(userId);
         return ResponseEntity.ok().body(deleteresult);
     }
 
+    /**
+     * [GET] /users/profile/{user-id}/{other-user-id}
+     * 타유저 조회하기
+     */
     @GetMapping("/profile/{user-id}/{other-user-id}")
     public ResponseEntity<ResponseDto> otherUser(
             @PathVariable("user-id") Long userId,
@@ -48,6 +57,10 @@ public class UserController {
         return ResponseEntity.ok().body(ResponseDto.create(otherUserRes));
     }
 
+    /**
+     * [POST] /users/block/{user-id}
+     * 유저 차단하기
+     */
     @PostMapping("/block/{user-id}")
     public ResponseEntity<ResponseDto> blockUserWithReqBody(
             @PathVariable("user-id") Long blockUserId, @Valid @RequestBody BlockUserReq blockUserReq){
@@ -73,15 +86,23 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * [GET] /users/block/{user-id}
+     * 차단리스트
+     */
     @GetMapping("/block/{user-id}")
     public ResponseEntity<ResponseDto> blockUserList(@PathVariable("user-id") Long userId){
         BlockUserListRes blockList = userService.blockList(userId);
         return ResponseEntity.ok().body(ResponseDto.create(blockList));
     }
 
+    /**
+     * [PATCH] /users/info/{user-id}
+     * 유저 정보 변경
+     */
     @PatchMapping("/info/{user-id}")
     public ResponseEntity<ResponseDto> patchUserInfo(
-            @PathVariable("user-id") Long userId, @RequestBody UserInfoReq userInfoReq){
+            @PathVariable("user-id") Long userId, @Valid @RequestBody UserInfoReq userInfoReq){
         return ResponseEntity.ok().body(ResponseDto.create(userService.updateUserInfo(userId, userInfoReq)));
     }
 
