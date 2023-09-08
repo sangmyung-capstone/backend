@@ -45,12 +45,11 @@ public class Party extends BaseTimeEntity{
 
     private String detail;
 
-    @OneToMany(mappedBy = "party", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "party", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<PartyParticipant> partyParticipants = new ArrayList<PartyParticipant>();
 
-    @OneToMany(mappedBy = "party", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "party", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<PartyHashtag> partyHashtags = new ArrayList<>();
-
 
     @Builder
     public Party(Restaurant restaurant, PartyStatus partyStatus, String name, int maxPeople, LocalDateTime startDate, String menu, String detail) {

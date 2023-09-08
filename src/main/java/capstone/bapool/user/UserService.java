@@ -2,11 +2,13 @@ package capstone.bapool.user;
 
 import capstone.bapool.config.error.BaseException;
 import capstone.bapool.config.response.ResponseDto;
+import capstone.bapool.firebase.FireBasePartyRepository;
 import capstone.bapool.firebase.FireBaseUserRepository;
 import capstone.bapool.model.*;
 import capstone.bapool.model.enumerate.BlockStatus;
 import capstone.bapool.model.enumerate.PartyStatus;
 import capstone.bapool.party.PartyParticipantRepository;
+import capstone.bapool.party.PartyService;
 import capstone.bapool.user.dto.BlockUserListRes;
 import capstone.bapool.party.PartyRepository;
 import capstone.bapool.user.dto.*;
@@ -34,8 +36,11 @@ public class UserService {
     private final PartyParticipantRepository partyParticipantRepository;
 
     private final FireBaseUserRepository fireBaseUserDao;
+    private final FireBasePartyRepository fireBasePartyRepository;
 
-    @Transactional(readOnly=true)
+    private final PartyService partyService;
+
+    @Transactional(readOnly = true)
     public UserRes findById(Long userId) throws BaseException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
@@ -52,16 +57,40 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseDto deleteById(Long userId){
+    public ResponseDto deleteById(Long userId) {
+        /**
+         * 파이어 베이스도 처리 필요
+         */
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
-        userRepository.deleteById(user.getId());
+        List<PartyParticipant> partyParticipants = partyParticipantRepository.findPartyParticipantByUser(user);
 
-        fireBaseUserDao.delete(userId);
-        return ResponseDto.create(userId+" deleted successfully");
+        for (PartyParticipant partyParticipant : partyParticipants) {
+            changLeader(partyParticipant);
+            partyService.delete(partyParticipant.getUser().getId(), partyParticipant.getParty().getId());
+        }
+
+        userRepository.delete(user);
+        return ResponseDto.create(userId + " deleted successfully");
     }
 
-    @Transactional(readOnly=true)
+    private void changLeader(PartyParticipant partyParticipant) {
+        // 리더인 경우 다른 사람한테 리더 자리 넘기기
+        if (partyParticipant.isLeader()) {
+            Party party = partyParticipant.getParty();
+            List<PartyParticipant> partyParticipants = party.getPartyParticipants();
+            partyParticipants.stream()
+                    .filter((partyParticipant1) -> partyParticipant1 != partyParticipant)
+                    .findAny()
+                    .ifPresent((partyParticipant1 -> {
+                        partyParticipant1.becomeLeader();
+                        fireBasePartyRepository.becomeLeader(partyParticipant1.getParty().getId(), partyParticipant1.getUser().getId());
+                        partyParticipant.becomeMember();
+                    }));
+        }
+    }
+
+    @Transactional(readOnly = true)
     public OtherUserRes findOtherById(Long userId, Long otherUserId) throws BaseException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
@@ -69,7 +98,7 @@ public class UserService {
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
 
         List<UserHashtagInfo> hashtags = userHashtagRepository.findByUserId(otherUserId);
-        boolean is_block = blockUserRepository.findByBlockUserAndBlockedUser(user, otherUser)!=null;
+        boolean is_block = blockUserRepository.findByBlockUserAndBlockedUser(user, otherUser) != null;
 
         return OtherUserRes.builder()
                 .userId(otherUser.getId())
@@ -82,18 +111,18 @@ public class UserService {
     }
 
     @Transactional
-    public BlockUserRes blockWithReqBody(Long blockedUserId, Long blockUserId){
+    public BlockUserRes blockWithReqBody(Long blockedUserId, Long blockUserId) {
         User blockUser = userRepository.findById(blockUserId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
         User blockedUser = userRepository.findById(blockedUserId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
 
-        if(blockUser.equals(blockedUser)){
+        if (blockUser.equals(blockedUser)) {
             return new BlockUserRes(BlockStatus.SAMEUSEREXCEPTION);
         }
 
         BlockUser is_block = blockUserRepository.findByBlockUserAndBlockedUser(blockUser, blockedUser);
-        if(is_block != null){
+        if (is_block != null) {
             //차단 해제하기
             blockUserRepository.delete(is_block);
             return new BlockUserRes(BlockStatus.UNBLOCK);
@@ -105,7 +134,7 @@ public class UserService {
                 .build();
         blockUserRepository.save(blockUserTuple);
 
-        BlockUserRes blockUserRes  = BlockUserRes.builder()
+        BlockUserRes blockUserRes = BlockUserRes.builder()
                 .userId(blockedUser.getId())
                 .blockStatus(BlockStatus.BLOCK)
                 .name(blockedUser.getName())
@@ -116,11 +145,11 @@ public class UserService {
 
 
     @Transactional(readOnly = true)
-    public BlockUserListRes blockList(Long userId){
+    public BlockUserListRes blockList(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
         List<BlockedUserInfo> blockedUserInfoList = blockUserRepository.findByBlockUserOrderByUpdatedDate(user)
-                .stream().map(BlockUser ->BlockedUserInfo.builder()
+                .stream().map(BlockUser -> BlockedUserInfo.builder()
                         .userId(BlockUser.getBlockedUser().getId())
                         .name(BlockUser.getBlockedUser().getName())
                         .blockDate(BlockUser.getUpdatedDate())
@@ -131,12 +160,12 @@ public class UserService {
     }
 
     @Transactional
-    public boolean updateUserInfo(Long userId, UserInfoReq userInfoReq){
+    public boolean updateUserInfo(Long userId, UserInfoReq userInfoReq) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_USER_FAILURE));
         String newName = userInfoReq.getName();
         int newProfileImg = userInfoReq.getProfileImg();
-        if(userRepository.existsUserByName(newName)){
+        if (userRepository.existsUserByName(newName)) {
             throw new BaseException(ALREADY_EXIST_NAME_FAILURE);
         }
         user.update(newName, newProfileImg);
@@ -146,10 +175,11 @@ public class UserService {
 
     /**
      * 유저 평가하기
-     * @exception BaseException NOT_FOUND_USER_FAILURE, NOT_FOUND_PARTY_FAILURE, PARTY_NOT_DONE, NOT_PARTY_PARTICIPANT
+     *
+     * @throws BaseException NOT_FOUND_USER_FAILURE, NOT_FOUND_PARTY_FAILURE, PARTY_NOT_DONE, NOT_PARTY_PARTICIPANT
      */
     @Transactional
-    public void userRating(Long userId, Long partyId, PostUserRatingReq postUserRatingReq){
+    public void userRating(Long userId, Long partyId, PostUserRatingReq postUserRatingReq) {
         User user = userRepository.findById(userId).orElseThrow(() -> {
             log.error("유저 평가하기: 존재하지 않는 유저입니다. userId-{}", userId);
             throw new BaseException(NOT_FOUND_USER_FAILURE);
@@ -161,48 +191,48 @@ public class UserService {
         });
 
         PartyParticipant partyParticipant = partyParticipantRepository.findPartyParticipantByUserAndParty(user, party)
-            .orElseThrow(() -> {
-                throw new BaseException(NOT_FOUND_PARTY_PARTICIPANT_FAILURE);
-        });
+                .orElseThrow(() -> {
+                    throw new BaseException(NOT_FOUND_PARTY_PARTICIPANT_FAILURE);
+                });
 
         // 아직 유저평가 알람이 가지 않았으면 or 다 먹은 파티가 아니면
-        if(party.getPartyStatus() != PartyStatus.DONE){
+        if (party.getPartyStatus() != PartyStatus.DONE) {
             log.error("유저 평가하기: partyStatus가 Done이 아닙니다. partyId={}", partyId);
             throw new BaseException(PARTY_NOT_DONE);
         }
 
         // 해당 파티에 내가 참여하지 않았으면
-        if(!party.isMeParticipate(user)){
+        if (!party.isMeParticipate(user)) {
             log.error("유저 평가하기: 해당 유저가 참여하지 않은 파티입니다. userId={}, partyId={}", userId, partyId);
             throw new BaseException(NOT_PARTY_PARTICIPANT);
         }
 
         // 이미 평가를 완료한 유저라면
-        if(partyParticipant.getRatingComplete()){
+        if (partyParticipant.getRatingComplete()) {
             log.error("유저 평가하기: 이미 유저평가를 완료했습니다. userId={}, partyId={}", userId, partyId);
             throw new BaseException(ALREADY_RATING_COMPLETE);
         }
 
         // 모든 유저에 대해 평가한 것이 아니면
-        if(postUserRatingReq.getRatedUserList().size() != party.getCurPartyMember()-1){
+        if (postUserRatingReq.getRatedUserList().size() != party.getCurPartyMember() - 1) {
             log.error("유저 평가하기: 모든 유저에 대해 평가하지 않았습니다. userId={}, partyId={}", userId, partyId);
             throw new BaseException(NOT_SUFFICIENT_NUM_OF_USER);
         }
 
-        for(RatedUser ratedUser : postUserRatingReq.getRatedUserList()){
+        for (RatedUser ratedUser : postUserRatingReq.getRatedUserList()) {
             User evaluatedUser = userRepository.findById(ratedUser.getUserId()).orElseThrow(() -> {
                 log.error("유저 평가하기: 존재하지 않는 유저입니다. userId-{}", userId);
                 throw new BaseException(NOT_FOUND_USER_FAILURE);
             });
 
             // 해당 파티에 참여하지 않았으면
-            if(!party.isMeParticipate(evaluatedUser)){
+            if (!party.isMeParticipate(evaluatedUser)) {
                 log.error("유저 평가하기: 해당 유저가 참여하지 않은 파티입니다. userId={}, partyId={}", evaluatedUser.getId(), partyId);
                 throw new BaseException(NOT_PARTY_PARTICIPANT);
             }
 
             // 자기 자신에 대해 평가할 수 없음
-            if(userId.equals(ratedUser.getUserId())){
+            if (userId.equals(ratedUser.getUserId())) {
                 log.error("유저 평가하기: 자기 자신에 대해 평가할 수 없습니다. userId={}, partyId={}", evaluatedUser.getId(), partyId);
                 throw new BaseException(CAN_NOT_RATING_MYSELF);
             }
@@ -213,7 +243,7 @@ public class UserService {
             log.info("유저 평가하기-유저 평점 반영: partyId={}, 평가한 유저Id={}, 평가당한 유저Id={}, 평점={}", partyId, userId, evaluatedUser.getId(), ratedUser.getRating());
 
             // 유저 해시태그 반영
-            for(int hashtag : ratedUser.getHashtag()){
+            for (int hashtag : ratedUser.getHashtag()) {
                 UserHashtag userHashtag = UserHashtag.builder()
                         .party(party)
                         .evaluateUser(user)
