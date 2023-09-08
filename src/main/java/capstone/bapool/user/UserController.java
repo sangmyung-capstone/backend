@@ -39,7 +39,7 @@ public class UserController {
      * [DELETE] /users/delete/{user-id}
      * 탈퇴하기
      */
-    @DeleteMapping("delete/{user-id}")
+    @DeleteMapping("/delete/{user-id}")
     public ResponseEntity<ResponseDto> userRemove(@Valid @PathVariable("user-id") Long userId){
         ResponseDto deleteresult = userService.deleteById(userId);
         return ResponseEntity.ok().body(deleteresult);
