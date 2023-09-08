@@ -289,4 +289,11 @@ public class PartyService {
         party.done();
         fireBasePartyRepository.doneParty(partyId);
     }
+
+    public Party findParty(Long partyId){
+        return partyRepository.findById(partyId).orElseThrow(() -> {
+            log.error("유저 평가하기: 존재하지 않는 파티입니다. partyId-{}", partyId);
+            throw new BaseException(NOT_FOUND_PARTY_FAILURE);
+        });
+    }
 }

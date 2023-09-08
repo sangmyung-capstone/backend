@@ -7,6 +7,7 @@ import capstone.bapool.model.*;
 import capstone.bapool.model.enumerate.BlockStatus;
 import capstone.bapool.model.enumerate.PartyStatus;
 import capstone.bapool.party.PartyParticipantRepository;
+import capstone.bapool.party.PartyService;
 import capstone.bapool.user.dto.BlockUserListRes;
 import capstone.bapool.party.PartyRepository;
 import capstone.bapool.user.dto.*;
@@ -29,9 +30,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final BlockUserRepository blockUserRepository;
     private final UserHashtagRepository userHashtagRepository;
-    private final PartyRepository partyRepository;
     private final UserRatingRepository userRatingRepository;
     private final PartyParticipantRepository partyParticipantRepository;
+    private final PartyService partyService;
 
     private final FireBaseUserRepository fireBaseUserDao;
 
@@ -150,23 +151,18 @@ public class UserService {
      */
     @Transactional
     public void userRating(Long userId, Long partyId, PostUserRatingReq postUserRatingReq){
-        User user = userRepository.findById(userId).orElseThrow(() -> {
-            log.error("유저 평가하기: 존재하지 않는 유저입니다. userId-{}", userId);
-            throw new BaseException(NOT_FOUND_USER_FAILURE);
-        });
+        User user = findUser(userId);
 
-        Party party = partyRepository.findById(partyId).orElseThrow(() -> {
-            log.error("유저 평가하기: 존재하지 않는 파티입니다. partyId-{}", partyId);
-            throw new BaseException(NOT_FOUND_PARTY_FAILURE);
-        });
+        Party party = partyService.findParty(partyId);
 
         PartyParticipant partyParticipant = partyParticipantRepository.findPartyParticipantByUserAndParty(user, party)
             .orElseThrow(() -> {
+                log.error("유저 평가하기: 파티에 참여하지 않은 유저입니다. userId={}, partyId={}", userId, partyId);
                 throw new BaseException(NOT_FOUND_PARTY_PARTICIPANT_FAILURE);
         });
 
-        // 아직 유저평가 알람이 가지 않았으면 or 다 먹은 파티가 아니면
-        if(party.getPartyStatus() != PartyStatus.DONE){
+        // 다 먹은 파티가 아니면
+        if(!party.isDone()){
             log.error("유저 평가하기: partyStatus가 Done이 아닙니다. partyId={}", partyId);
             throw new BaseException(PARTY_NOT_DONE);
         }
@@ -189,43 +185,53 @@ public class UserService {
             throw new BaseException(NOT_SUFFICIENT_NUM_OF_USER);
         }
 
+        // 유저 평가 반영
         for(RatedUser ratedUser : postUserRatingReq.getRatedUserList()){
-            User evaluatedUser = userRepository.findById(ratedUser.getUserId()).orElseThrow(() -> {
-                log.error("유저 평가하기: 존재하지 않는 유저입니다. userId-{}", userId);
-                throw new BaseException(NOT_FOUND_USER_FAILURE);
-            });
-
-            // 해당 파티에 참여하지 않았으면
-            if(!party.isMeParticipate(evaluatedUser)){
-                log.error("유저 평가하기: 해당 유저가 참여하지 않은 파티입니다. userId={}, partyId={}", evaluatedUser.getId(), partyId);
-                throw new BaseException(NOT_PARTY_PARTICIPANT);
-            }
-
-            // 자기 자신에 대해 평가할 수 없음
-            if(userId.equals(ratedUser.getUserId())){
-                log.error("유저 평가하기: 자기 자신에 대해 평가할 수 없습니다. userId={}, partyId={}", evaluatedUser.getId(), partyId);
-                throw new BaseException(CAN_NOT_RATING_MYSELF);
-            }
-
-            // 유저 평점 반영
-            UserRating userRating = new UserRating(user, evaluatedUser, party, ratedUser.getRating());
-            userRatingRepository.save(userRating);
-            log.info("유저 평가하기-유저 평점 반영: partyId={}, 평가한 유저Id={}, 평가당한 유저Id={}, 평점={}", partyId, userId, evaluatedUser.getId(), ratedUser.getRating());
-
-            // 유저 해시태그 반영
-            for(int hashtag : ratedUser.getHashtag()){
-                UserHashtag userHashtag = UserHashtag.builder()
-                        .party(party)
-                        .evaluateUser(user)
-                        .evaluatedUser(evaluatedUser)
-                        .hashtagId(hashtag)
-                        .build();
-                userHashtagRepository.save(userHashtag);
-                log.info("유저 평가하기-유저 해시태그 반영: partyId={}, 평가한 유저={}, 평가당한 유저={}, 해시태그={}", partyId, userId, evaluatedUser.getId(), hashtag);
-            }
+            rateUser(ratedUser, user, party, userId, partyId);
         }
 
         // 유저 평가 완료로 status 변경
         partyParticipant.setRatingComplete();
+    }
+
+    public User findUser(Long userId){
+        return userRepository.findById(userId).orElseThrow(() -> {
+            log.error("유저 평가하기: 존재하지 않는 유저입니다. userId-{}", userId);
+            throw new BaseException(NOT_FOUND_USER_FAILURE);
+        });
+    }
+
+
+    private void rateUser(RatedUser ratedUser, User user, Party party, Long userId, Long partyId){
+        User evaluatedUser = findUser(ratedUser.getUserId());
+
+        // 해당 파티에 참여하지 않았으면
+        if(!party.isMeParticipate(evaluatedUser)){
+            log.error("유저 평가하기: 해당 유저가 참여하지 않은 파티입니다. userId={}, partyId={}", evaluatedUser.getId(), partyId);
+            throw new BaseException(NOT_PARTY_PARTICIPANT);
+        }
+
+        // 자기 자신에 대해 평가할 수 없음
+        if(userId.equals(ratedUser.getUserId())){
+            log.error("유저 평가하기: 자기 자신에 대해 평가할 수 없습니다. userId={}, partyId={}", evaluatedUser.getId(), partyId);
+            throw new BaseException(CAN_NOT_RATING_MYSELF);
+        }
+
+        // 유저 평점 반영
+        UserRating userRating = new UserRating(user, evaluatedUser, party, ratedUser.getRating());
+        userRatingRepository.save(userRating);
+        log.info("유저 평가하기-유저 평점 반영: partyId={}, 평가한 유저Id={}, 평가당한 유저Id={}, 평점={}", partyId, userId, evaluatedUser.getId(), ratedUser.getRating());
+
+        // 유저 해시태그 반영
+        for(int hashtag : ratedUser.getHashtag()){
+            UserHashtag userHashtag = UserHashtag.builder()
+                    .party(party)
+                    .evaluateUser(user)
+                    .evaluatedUser(evaluatedUser)
+                    .hashtagId(hashtag)
+                    .build();
+            userHashtagRepository.save(userHashtag);
+            log.info("유저 평가하기-유저 해시태그 반영: partyId={}, 평가한 유저={}, 평가당한 유저={}, 해시태그={}", partyId, userId, evaluatedUser.getId(), hashtag);
+        }
     }
 }
